@@ -2,6 +2,7 @@
 namespace Modules\Brookr;
 
 use Illuminate\Support\Facades\Event;
+use Modules\Brookr\Events\FormsEvent;
 use Tendoo\Core\Services\TendooModule;
 
 class BrookrModule extends TendooModule
@@ -13,6 +14,6 @@ class BrookrModule extends TendooModule
         /**
          * Register Menus
         **/
-        // Event::listen( 'dashboard.loaded', 'Modules\Brookr\Events\BrookrEvents@menus' );
+        Hook::addFilter( 'public.forms', useThis( FormsEvent::class )->method( 'register' ) );
     }
 }

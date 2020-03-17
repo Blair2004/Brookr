@@ -3,6 +3,6 @@
     <namespace>Brookr</namespace>
     <version>1.0</version>
     <author>Blair Jersyer</author>
-    <name>Secure Intelligent Manager for Transport</name>
-    <description></description>
+    <name>Brookr</name>
+    <description>An standalone application for managing loads.</description>
 </module>
