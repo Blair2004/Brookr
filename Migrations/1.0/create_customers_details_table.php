@@ -14,7 +14,7 @@ class CreateCustomersDetailsTable extends Migration
                 $table->bigIncrements('id');
                 $table->integer( 'user_id' ); // points to the author id
                 $table->integer( 'customers_id' ); // points to the user id
-                $table->string( 'name' )->nullable();
+                $table->string( 'description' )->nullable();
                 $table->string( 'dba' )->nullable();
                 $table->string( 'first_name' )->nullable();
                 $table->string( 'last_name' )->nullable();
@@ -24,18 +24,18 @@ class CreateCustomersDetailsTable extends Migration
                 $table->string( 'fein_ssn' )->nullable();
                 $table->string( 'us_dot' )->nullable();
                 $table->string( 'scac' )->nullable();
-                $table->string( 'mailing_bill_to' )->nullable();
-                $table->string( 'mailing_attention' )->nullable();
-                $table->string( 'mailing_street_1' )->nullable();
-                $table->string( 'mailing_street_2' )->nullable();
-                $table->string( 'mailing_city' )->nullable();
-                $table->string( 'mailing_zip' )->nullable();
-                $table->string( 'address_bill_to' )->nullable();
-                $table->string( 'address_attention' )->nullable();
-                $table->string( 'address_street_1' )->nullable();
-                $table->string( 'address_street_2' )->nullable();
-                $table->string( 'address_city' )->nullable();
-                $table->string( 'address_zip' )->nullable();
+                // $table->string( 'mailing_bill_to' )->nullable();
+                // $table->string( 'mailing_attention' )->nullable();
+                // $table->string( 'mailing_street_1' )->nullable();
+                // $table->string( 'mailing_street_2' )->nullable();
+                // $table->string( 'mailing_city' )->nullable();
+                // $table->string( 'mailing_zip' )->nullable();
+                // $table->string( 'address_bill_to' )->nullable();
+                // $table->string( 'address_attention' )->nullable();
+                // $table->string( 'address_street_1' )->nullable();
+                // $table->string( 'address_street_2' )->nullable();
+                // $table->string( 'address_city' )->nullable();
+                // $table->string( 'address_zip' )->nullable();
                 $table->boolean( 'active' )->default(true);
                 $table->timestamps();
             });

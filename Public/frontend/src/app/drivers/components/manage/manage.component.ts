@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRouteSnapshot, ActivatedRoute } from '@angular/router';
 import { Field, TendooService, TendooFieldsService, Form, ValidationGenerator, TendooFormsService } from '@cloud-breeze/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-manage',
@@ -14,7 +15,8 @@ export class ManageComponent implements OnInit {
   constructor(
     private routeSnapshot: ActivatedRoute,
     private tendoo: TendooService,
-    private tendooForms: TendooFormsService
+    private tendooForms: TendooFormsService,
+    private client: HttpClient
   ) { }
 
   ngOnInit(): void {
@@ -28,8 +30,17 @@ export class ManageComponent implements OnInit {
   }
 
   generateForm() {
-    this.tendooForms.getPublicForm( 'brookr.drivers' + '/' + this.id  ).subscribe( (form:Form) => {
-      this.form   = ValidationGenerator.buildForm( form );
+    this.tendooForms.getPublicForm( 'brookr.drivers' ).subscribe( (form:Form) => {
+      this.form   = form;
     });
+  }
+
+  selectThis( section ) {
+    this.form.sections.forEach( s => s[ 'active' ] = false );
+    section.active  = true;
+  }
+
+  handleSubmit( form: Form ) {
+    console.log( form.formGroup.value );
   }
 }

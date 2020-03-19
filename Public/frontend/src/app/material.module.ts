@@ -4,12 +4,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from "@angular/material/icon";
 import { MatSliderModule } from '@angular/material/slider';
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatInputModule } from '@angular/material/input';
 
 const ImportedModules   = [
   MatButtonModule,
   MatIconModule,
   MatSliderModule,
   MatProgressSpinnerModule,
+  MatInputModule,
 ]
 
 @NgModule({

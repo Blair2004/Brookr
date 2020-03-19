@@ -11,7 +11,7 @@ class CreateRolesAndPermissions extends Migration
 {
     public function up()
     {
-        if ( ! ( $driver = Role::namespace( 'brookr.driver' )->first() ) instanceof Role ) {
+        if ( ! ( $driver = Role::namespace( 'brookr.driver' ) ) instanceof Role ) {
             $driver                 =   new Role;
             $driver->name           =   __( 'Driver' );
             $driver->namespace      =   'brookr.driver';
@@ -19,7 +19,7 @@ class CreateRolesAndPermissions extends Migration
             $driver->save();
         }
 
-        if ( ! ( $dispatcher = Role::namespace( 'brookr.dispatcher' )->first() ) instanceof Role ) {
+        if ( ! ( $dispatcher = Role::namespace( 'brookr.dispatcher' ) ) instanceof Role ) {
             $dispatcher             =   new Role;
             $dispatcher->name       =   __( 'Dispatcher' );
             $dispatcher->namespace  =   'brookr.dispatcher';

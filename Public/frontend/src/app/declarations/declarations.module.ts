@@ -5,15 +5,18 @@ import { MaterialModule } from '../material.module';
 import { CloudBreezeModule } from '@cloud-breeze/core';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { TabsComponent } from '../partials/dashboard/tabs/tabs.component';
 
 
 
 @NgModule({
   declarations: [ 
-    LayoutComponent
+    LayoutComponent, 
+    TabsComponent
   ],
   exports: [
     LayoutComponent,
+    TabsComponent,
     CloudBreezeModule
   ],
   imports: [
@@ -22,7 +25,7 @@ import { HttpClientModule } from '@angular/common/http';
     MaterialModule,
     HttpClientModule,
     CloudBreezeModule.forRoot({
-      base : 'http://laravel-6001.go',
+      base : 'http://laravel-7001.go',
       angular: ''
     })
   ]

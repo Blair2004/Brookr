@@ -11,15 +11,20 @@ class FormsEvent
 {
     public function register( $form, $namespace ) 
     {
-        switch( $namespace ) {
-            case 'brookr.drivers': return $this->driversForm();
-            case 'brookr.trucks': return $this->trucksForm();
-            default: return $form;
+        if ( in_array( $namespace, [
+            'brookr.drivers',
+            'brookr.trucks',
+            'brookr.customers',
+            'brookr.loads',
+        ])) {
+            return $this->loadForm( $namespace );
         }
+
+        return $form;
     }
 
-    public function driversForm()
+    public function loadForm( $namespace, $data = [])
     {
-        return include( dirname( __FILE__ ) . '../forms/drivers.php' );
+        return include( dirname( __FILE__ ) . '/../forms/' . $namespace . '.php' );
     }
 }

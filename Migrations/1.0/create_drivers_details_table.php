@@ -31,17 +31,6 @@ class CreateDriversDetailsTable extends Migration
                 $table->datetime( 'birth_date' )->nullable();
                 $table->string( 'ssn' )->nullable();
                 $table->string( 'fein' )->nullable();
-                // $table->string( 'company_name' )->nullable();
-                // $table->string( 'company_street_1' )->nullable();
-                // $table->string( 'company_street_2' )->nullable();
-                // $table->string( 'company_city' )->nullable();
-                // $table->string( 'company_state' )->nullable();
-                // $table->string( 'company_zip' )->nullable();
-                $table->string( 'address_street_1' )->nullable();
-                $table->string( 'address_street_2' )->nullable();
-                $table->string( 'address_city' )->nullable();
-                $table->string( 'address_state' )->nullable();
-                $table->string( 'address_zip' )->nullable();
                 $table->text( 'medical_card_url' )->nullable();
                 $table->datetime( 'medical_card_expiration' )->nullable();
                 $table->boolean( 'medical_drug_test' )->nullable();

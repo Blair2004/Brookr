@@ -1,27 +1,8 @@
 <app-layout>
-    <h1 *ngIf="mode === 'create'" class="text-2xl mb-2">Creating a driver</h1>
-    <h1 *ngIf="mode === 'edit'" class="text-2xl mb-2">Editing a driver</h1>
-    <div class="tab tab-container">
-        <div class="tabs-header flex" style="margin-bottom: -2px;">
-            <div class="tab px-4 py-2 border-2 border-b-0 bg-gray-100 rounded-t-lg cursor-pointer flex items-center justify center">
-                Hello World
-            </div>
-            <div class="tab px-4 py-2 border-2 bg-gray-300 rounded-t-lg cursor-pointer flex items-center justify center">
-                Hello World
-            </div>
-        </div>
-        <div class="tabs-container bg-gray-100 border-2">
-            <div class="inner-content p-2">
-
-            </div>
-            <div class="footer border-t p-2 flex">
-                <div>
-                    <button class="rounded bg-green-200 text-green-600 text-center px-4 py-2 shadow border border-green-600 active:shadow-none">Save</button>
-                </div>
-            </div>
-        </div>
+    <div class="mb-2">
+        <p *ngIf="mode === 'create'" class="text-2xl mb-2 font-serif text-gray-800">Creating a driver</p>
+        <p class="text-gray-700">Drivers can pickup and deliver loads which are assigned to them or not yet assigned.</p>
     </div>
-    <!-- <form *ngIf="form" [FormGroup]="form.formGroup">
-
-    </form> -->
+    <h1 *ngIf="mode === 'edit'" class="text-2xl mb-2">Editing a driver</h1>
+    <app-tabs *ngIf="form" [form]="form" (submit)="handleSubmit( $event )"></app-tabs>
 </app-layout>

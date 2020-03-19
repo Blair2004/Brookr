@@ -24,4 +24,8 @@ export class LayoutComponent implements OnInit {
   toggleMenu( menu, index ) {
     this.store.dispatch( AppActions.toggleMenu({ menu, index }) );
   }
+
+  toggleSidebar() {
+    this.store.dispatch( AppActions.toggleSidebar() );  
+  }
 }

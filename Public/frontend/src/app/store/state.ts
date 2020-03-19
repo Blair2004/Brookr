@@ -5,10 +5,12 @@ import { AppActions } from './action';
 export interface AppState {
     dashboardMenus: Menu[],
     authenticated : boolean;
+    sidebarToggled: boolean;
 }
 
 export const AppInitialState: AppState = {
     authenticated: false,
+    sidebarToggled: false,
     dashboardMenus: [
         {
             label: 'Dashboard',
@@ -55,6 +57,19 @@ export const AppInitialState: AppState = {
                 }
             ]
         }, {
+            label: 'Customers',
+            toggled: false,
+            icon: 'people',
+            childrens: [
+                {
+                    label: 'List',
+                    path: '/dashboard/customers'
+                }, {
+                    label: 'Create',
+                    path: '/dashboard/customers/create'
+                }
+            ]
+        }, {
             label: 'Settings',
             path: '/dashboard/settings',
             toggled: false,
@@ -67,6 +82,7 @@ const reducer    =   createReducer(
     AppInitialState,
     on( AppActions.login, ( state: AppState ) =>  ({ ...state, authenticated: true })),
     on( AppActions.logout, ( state: AppState ) =>  ({ ...state, authenticated: false })),
+    on( AppActions.toggleSidebar, ( state: AppState ) => ({ ...state, sidebarToggled : ! state.sidebarToggled })),
     on( AppActions.toggleMenu, ( state: AppState, { menu, index }) => {
         if ( state.dashboardMenus[ index ].toggled === false ) {
             state.dashboardMenus.forEach( _menu => _menu.toggled = false );
