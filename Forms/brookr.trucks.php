@@ -65,7 +65,7 @@ return [
                     'type'          =>  'text',
                 ], [
                     'label'         =>  __( 'Purchase Price' ),
-                    'name'          =>  'price',
+                    'name'          =>  'purchase_price',
                     'type'          =>  'number',
                     'validation'    =>  'required'
                 ], [
@@ -83,6 +83,10 @@ return [
                 ], [
                     'label'         =>  __( 'Sold Mileage' ),
                     'name'          =>  'sold_mileage',
+                    'type'          =>  'text',
+                ], [
+                    'label'         =>  __( 'Sold Price' ),
+                    'name'          =>  'sold_price',
                     'type'          =>  'text',
                 ], [
                     'label'         =>  __( 'Status' ),

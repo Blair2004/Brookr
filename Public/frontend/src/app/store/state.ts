@@ -41,6 +41,9 @@ export const AppInitialState: AppState = {
                 }, {
                     label: 'Create',
                     path: '/dashboard/trucks/create'
+                }, {
+                    label: 'Maintenance',
+                    path: '/dashboard/trucks/maintenance'
                 }
             ]
         }, {
