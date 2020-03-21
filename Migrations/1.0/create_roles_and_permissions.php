@@ -180,7 +180,7 @@ class CreateRolesAndPermissions extends Migration
 
     public function down()
     {
-        collect([
+        Role::namespace( 'brookr.dispatcher' )->removePermissions([
             'brookr.create.trucks',
             'brookr.edit.trucks',
             'brookr.delete.trucks',
@@ -196,16 +196,10 @@ class CreateRolesAndPermissions extends Migration
             'brookr.delete.loads',
             'brookr.see.loads',
             'brookr.change.loads-status'
-        ])->each( function( $permission ) {
-            Role::RemovePermissions( 'brookr.dispatcher', $permission );
-        });
+        ]);
 
-        Role::namespace( 'brookr.dispatcher' )->delete();
-
-        collect([
+        Role::namespace( 'brookr.driver' )->removePermissions([
             'brookr.change.loads-status'
-        ])->each( function( $permission ) {
-            Role::RemovePermissions( 'brookr.driver', $permission );
-        });
+        ]);
     }
 }

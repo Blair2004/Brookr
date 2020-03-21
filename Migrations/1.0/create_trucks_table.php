@@ -20,10 +20,10 @@ class CreateTrucksTable extends Migration
                 $table->string('license_number')->nullable();
                 $table->datetime('purchase_date')->nullable();
                 $table->string('purchase_mileage')->nullable();
-                $table->float('purchase_price')->nullable();
+                $table->float( 'purchase_price', 30, 5 )->nullable();
                 $table->string('truck_number')->nullable()->unique();
                 $table->datetime('sold_date')->nullable();
-                $table->float('sold_price')->nullable();
+                $table->float('sold_price', 30, 5 )->nullable();
                 $table->string('sold_mileage')->nullable();
                 $table->text('description')->nullable();
                 $table->text('thumbnail')->nullable();

@@ -25,6 +25,6 @@ class FormsEvent
 
     public function loadForm( $namespace, $data = [])
     {
-        return include( dirname( __FILE__ ) . '/../forms/' . $namespace . '.php' );
+        return include( dirname( __FILE__ ) . '/../Forms/' . $namespace . '.php' );
     }
 }

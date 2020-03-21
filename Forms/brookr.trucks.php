@@ -37,7 +37,13 @@ return [
                     'label'         =>  __( 'Description' ),
                     'name'          =>  'description',
                     'type'          =>  'textarea',
-                ], 
+                ], [
+                    'label'         =>  __( 'Status' ),
+                    'name'          =>  'status',
+                    'type'          =>  'switch',
+                    'validation'    =>  'required',
+                    'description'   =>  __( 'Define wether the truck is available or not.')
+                ]
             ]
         ], [
             'namespace'     =>  'company',
@@ -88,10 +94,6 @@ return [
                     'label'         =>  __( 'Sold Price' ),
                     'name'          =>  'sold_price',
                     'type'          =>  'text',
-                ], [
-                    'label'         =>  __( 'Status' ),
-                    'name'          =>  'status',
-                    'type'          =>  'switch',
                 ],
             ]
         ]

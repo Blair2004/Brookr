@@ -6,10 +6,24 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit {
-
-  constructor() { }
+  entries = [];
+  constructor() {
+    this.entries  = (new Array(20))
+      .fill('')
+      .map( entry => {
+      return {
+        options: [
+          {
+            label: 'Delete',
+            onClick: () => {
+              alert( 'ok' );
+            }
+          }
+      ],
+      };
+    });
+   }
 
   ngOnInit(): void {
   }
-
 }

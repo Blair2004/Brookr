@@ -1,1 +1,39 @@
-<app-layout>List Trucks</app-layout>
+<app-layout>
+    <div class="mb-4 text-gray-800">
+        <span class="block text-2xl mb-2">Trucks List</span> 
+        <p class="text-sm">Manage all the trucks registered on the system</p>
+    </div>
+    <div class="flex w-full">
+        <div class="table rounded shadow bg-gray-100 w-full">
+            <div class="table-header border-b border-gray-400 p-3 text-lg">
+                <span>This is a title</span>
+            </div>
+            <table class="table-auto w-full">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <td class="px-4 py-2">sample</td>
+                        <td class="px-4 py-2">sample</td>
+                        <td class="px-4 py-2">sample</td>
+                        <td class="px-4 py-2 text-right">sample</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let entry of entries" class="bg-gray-100 border-t">
+                        <td class="px-4 py-2">content</td>
+                        <td class="px-4 py-2">content</td>
+                        <td class="px-4 py-2">content</td>
+                        <td class="px-4 py-2 flex items-end flex-col">
+                            <div [matMenuTriggerFor]="optionsMenu" class="border rounded-lg w-8 py-1 px-4 cursor-pointer hover:bg-white hover:border-none hover:shadow flex justify-center items-center">
+                                <mat-icon>more_vert</mat-icon>
+                            </div>
+                            <mat-menu #optionsMenu="matMenu">
+                                <button *ngFor="let button of entry.options" (click)="button.onClick( $event )" mat-menu-item>{{ button.label }}</button>
+                                <button mat-menu-item>Help</button>
+                            </mat-menu>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</app-layout>

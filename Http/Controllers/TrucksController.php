@@ -1,7 +1,7 @@
 <?php
 namespace Modules\Brookr\Http\Controllers;
 
-use Illuminat\Support\Http\Request;
+use Illuminate\Http\Request;
 use Modules\Brookr\Services\TrucksService;
 use Tendoo\Core\Http\Controllers\BaseController;
 

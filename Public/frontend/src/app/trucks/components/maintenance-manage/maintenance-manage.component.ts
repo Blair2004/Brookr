@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TrucksService } from 'src/app/services/trucks.service';
 
 @Component({
   selector: 'app-maintenance-manage',
@@ -7,7 +8,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MaintenanceManageComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private trucksService: TrucksService
+  ) { }
 
   ngOnInit(): void {
   }

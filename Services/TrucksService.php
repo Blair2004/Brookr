@@ -3,6 +3,7 @@ namespace Modules\Brookr\Services;
 
 use Modules\Brookr\Models\Truck;
 use Illuminate\Support\Facades\Auth;
+use Modules\Brookr\Models\TruckMaintenance;
 use Tendoo\Core\Http\Exceptions\NotFoundExcpetion;
 
 class TrucksService
@@ -14,22 +15,24 @@ class TrucksService
      */
     public function createTruck( $fields )
     {
+        $fields                     =   array_merge( $fields[ 'general' ], $fields[ 'company' ] );
         $truck                      =   new Truck;
-        $truck->year                =   $field[ 'year' ];
-        $truck->model               =   $field[ 'model' ];
-        $truck->color               =   $field[ 'color' ];
-        $truck->vin_number          =   $field[ 'vin_number' ];
-        $truck->license_number      =   $field[ 'license_number' ];
-        $truck->purchase_date       =   $field[ 'purchase_date' ];
-        $truck->purchase_mileage    =   $field[ 'purchase_mileage' ];
-        $truck->price               =   $field[ 'purchase_price' ];
-        $truck->truck_number        =   $field[ 'truck_number' ];
-        $truck->sold_date           =   $field[ 'sold_date' ];
-        $truck->sold_price          =   $field[ 'sold_price' ];
-        $truck->sold_mileage        =   $field[ 'sold_mileage' ];
-        $truck->description         =   $field[ 'description' ];
-        $truck->thumbnail           =   $field[ 'thumbnail' ];
-        $truck->status              =   $field[ 'status' ];
+        $truck->year                =   $fields[ 'year' ];
+        $truck->model               =   $fields[ 'model' ];
+        $truck->name                =   $fields[ 'name' ];
+        $truck->color               =   $fields[ 'color' ];
+        $truck->vin_number          =   $fields[ 'vin_number' ];
+        $truck->license_number      =   $fields[ 'license_number' ];
+        $truck->purchase_date       =   $fields[ 'purchase_date' ];
+        $truck->purchase_mileage    =   $fields[ 'purchase_mileage' ];
+        $truck->purchase_price      =   $fields[ 'purchase_price' ];
+        $truck->truck_number        =   $fields[ 'truck_number' ];
+        $truck->sold_date           =   $fields[ 'sold_date' ];
+        $truck->sold_price          =   $fields[ 'sold_price' ];
+        $truck->sold_mileage        =   $fields[ 'sold_mileage' ];
+        $truck->description         =   $fields[ 'description' ];
+        $truck->thumbnail           =   $fields[ 'thumbnail' ];
+        $truck->status              =   $fields[ 'status' ];
         $truck->user_id             =   Auth::id();
         $truck->save();
 
@@ -149,8 +152,15 @@ class TrucksService
         ]);
     }
 
-    public function submitTruckMaintenance( $id, $details )
+    public function submitTruckMaintenance( $id, $fields )
     {
         $truck      =   $this->getTruck( $id );
+
+        $maintenance                    =   new TruckMaintenance;
+        $maintenance->name              =   $fields[ 'name' ];
+        $maintenance->description       =   $fields[ 'description' ];
+        $maintenance->truck_id          =   $fields[ 'truck_id' ];
+        $maintenance->document_url      =   $fields[ 'document_url' ];
+        $maintenance->user_id           =   Auth::id();
     }
 }

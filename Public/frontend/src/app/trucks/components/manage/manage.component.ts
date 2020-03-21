@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { TendooFormsService, Form, ValidationGenerator } from '@cloud-breeze/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TrucksService } from 'src/app/services/trucks.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-manage',
@@ -12,7 +14,10 @@ export class ManageComponent implements OnInit {
   mode = 'create';
   constructor(
     private tendooForm: TendooFormsService,
-    private activeRoute: ActivatedRoute
+    private activeRoute: ActivatedRoute,
+    private trucksService: TrucksService,
+    private snackbar: MatSnackBar,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -26,7 +31,20 @@ export class ManageComponent implements OnInit {
     })
   }
 
-  handleSubmit( form ) {
-    console.log( 'want to submit' );
+  handleSubmit( form: Form ) {
+    form.sections.forEach( section => ValidationGenerator.touchAllFields( section.formGroup ) );
+
+    console.log( this.form.formGroup );
+    if ( this.form.formGroup.invalid ) {
+      return this.snackbar.open( 'Unable to proceed the form is not valid.', 'OK', { duration: 3000 });
+    }
+
+    form.sections.forEach( section => ValidationGenerator.deactivateFields( section.fields ) );
+    this.trucksService.create( form.formGroup.value ).subscribe( result => {
+      this.snackbar.open( result[ 'result' ], 'OK', { duration: 3000 });
+      this.router.navigateByUrl( '/dashboard/trucks' );
+    }, ( result ) => {
+      this.snackbar.open( result[ 'error' ].message || 'An unexpected error has occured.', 'OK', { duration: 3000 });
+    });
   }
 }

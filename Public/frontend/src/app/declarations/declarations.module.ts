@@ -6,6 +6,7 @@ import { CloudBreezeModule } from '@cloud-breeze/core';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { TabsComponent } from '../partials/dashboard/tabs/tabs.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 
 
@@ -17,11 +18,15 @@ import { TabsComponent } from '../partials/dashboard/tabs/tabs.component';
   exports: [
     LayoutComponent,
     TabsComponent,
-    CloudBreezeModule
+    CloudBreezeModule,
+    ReactiveFormsModule,
+    FormsModule,
   ],
   imports: [
     RouterModule,
     CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
     MaterialModule,
     HttpClientModule,
     CloudBreezeModule.forRoot({
