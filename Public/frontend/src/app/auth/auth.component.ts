@@ -3,6 +3,7 @@ import { TendooFieldsService, Field, ValidationGenerator, TendooAuthService, Ten
 import { FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TendooCoreService } from '../services/tendoo-core.service';
 
 @Component({
   selector: 'app-auth',
@@ -16,7 +17,7 @@ export class AuthComponent implements OnInit {
   isLoggingIn   = false;
   constructor(
     private tendooFields: TendooFieldsService,
-    private tendoo: TendooService,
+    private tendoo: TendooCoreService,
     private snackbar: MatSnackBar,
     private router: Router,
     private activatedRoute: ActivatedRoute 

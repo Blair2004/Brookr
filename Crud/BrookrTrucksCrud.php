@@ -37,7 +37,10 @@ class BrookrTrucksCrud extends Crud
      * Adding relation
      */
     public $relations   =  [
-            ];
+        [
+            'tendoo_users', 'brookr_trucks.user_id', '=', 'tendoo_users.id'
+        ]
+    ];
 
     /**
      * Define where statement
@@ -210,24 +213,18 @@ class BrookrTrucksCrud extends Crud
             'model'  =>  [
                 'label'  =>  __( 'Model' )
             ],
-            'vin_number'  =>  [
-                'label'  =>  __( 'Vin_number' )
-            ],
-            'thumbnail'  =>  [
-                'label'  =>  __( 'Thumbnail' )
-            ],
             'status'  =>  [
                 'label'  =>  __( 'Status' )
             ],
-            'user_id'  =>  [
-                'label'  =>  __( 'User_id' )
+            'tendoo_users_username'  =>  [
+                'label'  =>  __( 'User' )
             ],
             'created_at'  =>  [
-                'label'  =>  __( 'Created_at' )
+                'label'  =>  __( 'Created On' )
             ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' )
-            ],
+            '$actions'   =>  [
+                'label' =>  __( 'Actions' )
+            ]
         ];
     }
 
@@ -239,19 +236,19 @@ class BrookrTrucksCrud extends Crud
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit.licence',
+                'namespace'     =>      'edit.truck',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      '/dashboard/crud/brookr.trucks/edit/#'
+                'url'           =>      '/dashboard/trucks/edit/{id}'
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  'tendoo/crud/brookr.trucks' . '/#',
+                'url'       =>  url( '/api/brookr/trucks/{id}' ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a licence' )
+                    'title'     =>  __( 'Delete a truck' )
                 ]
             ]
         ];

@@ -17,8 +17,13 @@ class TrucksController extends BaseController
         return $this->truckService->createTruck( $request->all() );
     }
 
-    public function deleteTrucks( $id )
+    public function deleteTruck( $id )
     {
-        $this->truckService->deleteTruck( $id );
+        return $this->truckService->deleteTruck( $id );
+    }
+
+    public function editTruck( $id, Request $request )
+    {
+        return $this->truckService->editTruck( $id, $request->all() );
     }
 }

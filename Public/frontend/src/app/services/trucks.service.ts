@@ -15,9 +15,9 @@ export class TrucksService {
     this.baseUrl  = this.tendoo[ 'config' ].base;
   }
 
-  create( fields ) {
-    console.log( this.tendoo );
-    return this.tendoo.post( this.baseUrl + '/api/brookr/trucks', fields );
+  save( fields, identifier = undefined ) {
+    console.log( identifier );
+    return this.tendoo[ identifier != undefined ? 'put' : 'post' ]( this.baseUrl + `/api/brookr/trucks${ identifier === undefined ? '' : '/' + identifier }`, fields );
   }
 
   delete( id ) {

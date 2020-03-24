@@ -7,7 +7,8 @@ import { DeclarationsModule } from './declarations/declarations.module';
 import { StoreModule } from '@ngrx/store';
 import { AppReducer } from './store/state';
 import { CommonModule } from '@angular/common';
-import { CloudBreezeModule } from '@cloud-breeze/core';
+import { CloudBreezeModule, TendooService } from '@cloud-breeze/core';
+import { TendooCoreService } from './services/tendoo-core.service';
 
 @NgModule({
   declarations: [
@@ -21,15 +22,10 @@ import { CloudBreezeModule } from '@cloud-breeze/core';
     StoreModule.forRoot({ 
       state : AppReducer
     }),
-    CloudBreezeModule.forRoot({
-      base : 'http://laravel-7001.go',
-      angular: ''
-    })
   ],
-  exports: [
-    CloudBreezeModule
-  ],
-  providers: [],
+  // providers: [
+  //   { provide: TendooCoreService, useExisting: TendooService }
+  // ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

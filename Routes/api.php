@@ -10,4 +10,5 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::put( 'api/brookr/trucks-maintenance/{id}', 'TrucksController@editMaintenance' );
     Route::put( 'api/brookr/drivers/{id}', 'DriversController@editDriver' );
     Route::put( 'api/brookr/customers/{id}', 'CustomersController@editCustomer' );
+    Route::delete( 'api/brookr/trucks/{id}', 'TrucksController@deleteTruck' );
 });

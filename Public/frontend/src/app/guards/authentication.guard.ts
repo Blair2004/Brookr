@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { TendooService } from '@cloud-breeze/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TendooCoreService } from '../services/tendoo-core.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationGuard implements CanActivate {
   constructor(
-    private tendoo: TendooService,
+    private tendoo: TendooCoreService,
     private router: Router,
     private snackbar: MatSnackBar
   ) {}

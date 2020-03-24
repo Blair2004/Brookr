@@ -9,8 +9,8 @@ class CreateTrucksMaintenanceTable extends Migration
 {
     public function up()
     {
-        if ( ! Schema::hasTable( 'brookr_trucks_maintenance' ) ) {
-            Schema::create( 'brookr_trucks_maintenance', function (Blueprint $table) {
+        if ( ! Schema::hasTable( 'brookr_trucks_maintenances' ) ) {
+            Schema::create( 'brookr_trucks_maintenances', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
@@ -24,8 +24,8 @@ class CreateTrucksMaintenanceTable extends Migration
 
     public function down()
     {
-        if ( Schema::hasTable( 'brookr_trucks_maintenance' ) ) {
-            Schema::drop( 'brookr_trucks_maintenance' );
+        if ( Schema::hasTable( 'brookr_trucks_maintenances' ) ) {
+            Schema::drop( 'brookr_trucks_maintenances' );
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Modules\Brookr\Events;
 **/
 class FormsEvent
 {
-    public function register( $form, $namespace ) 
+    public function register( $form, $namespace, $index ) 
     {
         if ( in_array( $namespace, [
             'brookr.drivers',
@@ -17,13 +17,13 @@ class FormsEvent
             'brookr.customers',
             'brookr.loads',
         ])) {
-            return $this->loadForm( $namespace );
+            return $this->loadForm( $namespace, $index );
         }
 
         return $form;
     }
 
-    public function loadForm( $namespace, $data = [])
+    public function loadForm( $namespace, $index )
     {
         return include( dirname( __FILE__ ) . '/../Forms/' . $namespace . '.php' );
     }

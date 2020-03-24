@@ -23,7 +23,7 @@
                     </div>
                 </ng-container>
                 <ng-container *ngIf="menu.childrens === undefined || menu.childrens.length === 0">
-                    <a [routerLink]="menu.path" class="flex hover:bg-gray-300 px-4 py-2 items-center cursor-pointer menu rounded overflow-hidden">
+                    <a (click)="toggleSidebar()" [routerLink]="menu.path" class="flex hover:bg-gray-300 px-4 py-2 items-center cursor-pointer menu rounded overflow-hidden">
                         <div class="menu-icon w-5 h-5 pr-2 flex items-center justify-center">
                             <mat-icon>{{ menu.icon }}</mat-icon>
                         </div>
@@ -36,7 +36,7 @@
                     </a>
                 </ng-container>
                 <ng-container *ngIf="menu.toggled">
-                    <a [routerLink]="childMenu.path" *ngFor="let childMenu of menu.childrens" class="cursor-pointer menu rounded overflow-hidden flex hover:bg-gray-300 px-4 py-2 items-center">
+                    <a (click)="toggleSidebar()" [routerLink]="childMenu.path" *ngFor="let childMenu of menu.childrens" class="cursor-pointer menu rounded overflow-hidden flex hover:bg-gray-300 px-4 py-2 items-center">
                         <div class="menu-icon w-5 h-5 pr-2 flex items-center justify-center">
                         </div>
                         <div class="menu-text pl-2 flex items-center justify-between flex-auto">

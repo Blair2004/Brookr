@@ -24,7 +24,7 @@
     "@angular/platform-browser": "~9.0.5",
     "@angular/platform-browser-dynamic": "~9.0.5",
     "@angular/router": "~9.0.5",
-    "@cloud-breeze/core": "^2.0.1-beta.3",
+    "@cloud-breeze/core": "^2.0.1-beta.4",
     "@ngrx/store": "^8.6.0",
     "moment": "^2.24.0",
     "ngx-captcha": "8.0.1",

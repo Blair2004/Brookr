@@ -12,3 +12,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 mat-card.p-0 {
     padding: 0 !important;
 }
+
+mat-card-title.mb-0 {
+    margin-bottom: 0px;
+}
+.mat-dialog-container {
+    padding: 0 !important;
+}

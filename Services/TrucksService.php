@@ -4,7 +4,7 @@ namespace Modules\Brookr\Services;
 use Modules\Brookr\Models\Truck;
 use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Models\TruckMaintenance;
-use Tendoo\Core\Http\Exceptions\NotFoundExcpetion;
+use Tendoo\Core\Exceptions\NotFoundException;
 
 class TrucksService
 {
@@ -32,7 +32,7 @@ class TrucksService
         $truck->sold_mileage        =   $fields[ 'sold_mileage' ];
         $truck->description         =   $fields[ 'description' ];
         $truck->thumbnail           =   $fields[ 'thumbnail' ];
-        $truck->status              =   $fields[ 'status' ];
+        $truck->status              =   $fields[ 'status' ] ? 'available' : 'unavailable';
         $truck->user_id             =   Auth::id();
         $truck->save();
 
@@ -54,7 +54,13 @@ class TrucksService
         $truck      =   Truck::find( $id );
 
         if ( $truck instanceof Truck ) {
+
+            $truck->maintenance->each( function( $report ) {
+                $report->delete();
+            });
+
             $truck->delete();
+            
             return [
                 'statuts'   =>  'success',
                 'message'   =>  __( 'The truck has been deleted' )
@@ -76,11 +82,12 @@ class TrucksService
      * @param array fields
      * @return void
      */
-    public function editTruck( $id, $fields )
+    public function editTruck( $id, $field )
     {
         $truck                      =   Truck::find( $id );
 
         if( $truck instanceof Truck ) {
+            $field                      =   array_merge( $field[ 'general' ], $field[ 'company' ] );
             $truck->year                =   $field[ 'year' ];
             $truck->model               =   $field[ 'model' ];
             $truck->color               =   $field[ 'color' ];
@@ -88,14 +95,14 @@ class TrucksService
             $truck->license_number      =   $field[ 'license_number' ];
             $truck->purchase_date       =   $field[ 'purchase_date' ];
             $truck->purchase_mileage    =   $field[ 'purchase_mileage' ];
-            $truck->price               =   $field[ 'purchase_price' ];
+            $truck->purchase_price      =   $field[ 'purchase_price' ];
             $truck->truck_number        =   $field[ 'truck_number' ];
             $truck->sold_date           =   $field[ 'sold_date' ];
             $truck->sold_price          =   $field[ 'sold_price' ];
             $truck->sold_mileage        =   $field[ 'sold_mileage' ];
             $truck->description         =   $field[ 'description' ];
             $truck->thumbnail           =   $field[ 'thumbnail' ];
-            $truck->status              =   $field[ 'status' ];
+            $truck->status              =   $field[ 'status' ] ? 'available' : 'unavailable';
             $truck->user_id             =   Auth::id();
             $truck->save();
     

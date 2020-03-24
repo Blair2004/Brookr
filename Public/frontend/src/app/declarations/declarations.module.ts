@@ -23,6 +23,7 @@ import { TableComponent } from '../partials/dashboard/table/table.component';
     TableComponent,
     ReactiveFormsModule,
     FormsModule,
+    CloudBreezeModule
   ],
   imports: [
     RouterModule,
@@ -31,6 +32,10 @@ import { TableComponent } from '../partials/dashboard/table/table.component';
     FormsModule,
     MaterialModule,
     HttpClientModule,
+    CloudBreezeModule.forRoot({
+      base : 'http://laravel-7001.go',
+      angular: ''
+    })
   ]
 })
 export class DeclarationsModule { }

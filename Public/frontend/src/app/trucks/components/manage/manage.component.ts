@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class ManageComponent implements OnInit {
   form: Form;
   mode = 'create';
+  identifier;
   constructor(
     private tendooForm: TendooFormsService,
     private activeRoute: ActivatedRoute,
@@ -23,25 +24,25 @@ export class ManageComponent implements OnInit {
   ngOnInit(): void {
     this.activeRoute.paramMap.subscribe( param => {
       if ( param.get( 'id' ) ) {
-        this.mode   = 'edit';
+        this.mode         = 'edit';
+        this.identifier   = param.get( 'id' );
       } 
-    })
-    this.tendooForm.getPublicForm( 'brookr.trucks' ).subscribe( ( form: Form ) => {
-      this.form   = form;
+      this.tendooForm.getPublicForm( 'brookr.trucks', +param.get( 'id' ) ).subscribe( ( form: Form ) => {
+        this.form   = form;
+      })
     })
   }
 
   handleSubmit( form: Form ) {
     form.sections.forEach( section => ValidationGenerator.touchAllFields( section.formGroup ) );
 
-    console.log( this.form.formGroup );
     if ( this.form.formGroup.invalid ) {
       return this.snackbar.open( 'Unable to proceed the form is not valid.', 'OK', { duration: 3000 });
     }
 
     form.sections.forEach( section => ValidationGenerator.deactivateFields( section.fields ) );
-    this.trucksService.create( form.formGroup.value ).subscribe( result => {
-      this.snackbar.open( result[ 'result' ], 'OK', { duration: 3000 });
+    this.trucksService.save( form.formGroup.value, this.identifier ).subscribe( result => {
+      this.snackbar.open( result[ 'message' ], 'OK', { duration: 3000 });
       this.router.navigateByUrl( '/dashboard/trucks' );
     }, ( result ) => {
       this.snackbar.open( result[ 'error' ].message || 'An unexpected error has occured.', 'OK', { duration: 3000 });
