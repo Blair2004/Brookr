@@ -7,18 +7,20 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { TabsComponent } from '../partials/dashboard/tabs/tabs.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { TableComponent } from '../partials/dashboard/table/table.component';
 
 
 
 @NgModule({
   declarations: [ 
     LayoutComponent, 
-    TabsComponent
+    TabsComponent, 
+    TableComponent
   ],
   exports: [
     LayoutComponent,
     TabsComponent,
-    CloudBreezeModule,
+    TableComponent,
     ReactiveFormsModule,
     FormsModule,
   ],
@@ -29,10 +31,6 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     FormsModule,
     MaterialModule,
     HttpClientModule,
-    CloudBreezeModule.forRoot({
-      base : 'http://laravel-7001.go',
-      angular: ''
-    })
   ]
 })
 export class DeclarationsModule { }

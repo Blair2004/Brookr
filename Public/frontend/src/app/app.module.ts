@@ -7,6 +7,7 @@ import { DeclarationsModule } from './declarations/declarations.module';
 import { StoreModule } from '@ngrx/store';
 import { AppReducer } from './store/state';
 import { CommonModule } from '@angular/common';
+import { CloudBreezeModule } from '@cloud-breeze/core';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,14 @@ import { CommonModule } from '@angular/common';
     DeclarationsModule,
     StoreModule.forRoot({ 
       state : AppReducer
+    }),
+    CloudBreezeModule.forRoot({
+      base : 'http://laravel-7001.go',
+      angular: ''
     })
+  ],
+  exports: [
+    CloudBreezeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

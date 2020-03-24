@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { TendooFieldsService, Field, ValidationGenerator, TendooAuthService } from '@cloud-breeze/core';
+import { TendooFieldsService, Field, ValidationGenerator, TendooAuthService, TendooService } from '@cloud-breeze/core';
 import { FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -15,18 +15,23 @@ export class AuthComponent implements OnInit {
   loaded        = false;
   isLoggingIn   = false;
   constructor(
-    private tendoo: TendooFieldsService,
-    private tendooAuth: TendooAuthService,
+    private tendooFields: TendooFieldsService,
+    private tendoo: TendooService,
     private snackbar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute 
   ) { }
 
   ngOnInit(): void {
-    this.tendoo.getPublicFields( 'brookr.login' ).subscribe( ( fields: Field[] ) => {
+    this.tendooFields.getPublicFields( 'brookr.login' ).subscribe( ( fields: Field[] ) => {
       const result  = ValidationGenerator.buildFormGroup( fields );
       this.form     = result.formGroup;
       this.fields   = result.fields;
       this.loaded   = true;
+      // debug
+      this.form.get( 'username' ).setValue( 'admin' );
+      this.form.get( 'password' ).setValue( 'sanches' );
+      this.login();
     }, ( result ) => {
       this.snackbar.open( result[ 'error' ][ 'message' ] || result.message || 'An unexpected error has occured', 'TRY AGAIN' )
         .afterDismissed()
@@ -47,10 +52,14 @@ export class AuthComponent implements OnInit {
 
     this.isLoggingIn  = true;
     ValidationGenerator.deactivateFields( this.fields );
-    this.tendooAuth.login( this.form.value ).subscribe( result => {
-      this.tendoo.setCredentials( result[ 'user' ], result[ 'token' ]);
-      this.router.navigateByUrl( '/dashboard' );
-      this.snackbar.open( result[ 'message' ], null, { duration: 3000 });
+    this.tendoo.auth.login( this.form.value ).subscribe( result => {
+      this.activatedRoute.queryParamMap.subscribe( param => {
+        const path = param.get( 'redirect' ) || '/dashboard';
+        this.tendoo.auth.setCredentials( result[ 'user' ], result[ 'token' ]);
+        console.log( 'will redirect', path, result[ 'user' ], this.tendoo.auth.getUser() );
+        this.snackbar.open( result[ 'message' ], null, { duration: 3000 });
+        this.router.navigateByUrl( path );
+      })
     }, ( result ) => {
       this.isLoggingIn  = false;
       ValidationGenerator.enableFields( this.fields );
