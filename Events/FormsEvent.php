@@ -14,6 +14,7 @@ class FormsEvent
         if ( in_array( $namespace, [
             'brookr.drivers',
             'brookr.trucks',
+            'brookr.trucks-maintenances',
             'brookr.customers',
             'brookr.loads',
         ])) {

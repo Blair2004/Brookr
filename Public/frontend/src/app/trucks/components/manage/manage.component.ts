@@ -27,7 +27,7 @@ export class ManageComponent implements OnInit {
         this.mode         = 'edit';
         this.identifier   = param.get( 'id' );
       } 
-      this.tendooForm.getPublicForm( 'brookr.trucks', +param.get( 'id' ) ).subscribe( ( form: Form ) => {
+      this.tendooForm.getPublicForm( 'brookr.trucks', this.identifier ).subscribe( ( form: Form ) => {
         this.form   = form;
       })
     })

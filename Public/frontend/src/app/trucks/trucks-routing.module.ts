@@ -9,10 +9,11 @@ const routes: Routes = [
   { path: '', component: ListComponent },
   { path: 'create', component: ManageComponent },
   { path: 'edit/:id', component: ManageComponent },
-  { path: ':id/maintenance', component: MaintenanceListComponent },
-  { path: ':id/maintenance/edit', component: MaintenanceManageComponent },
-  { path: 'maintenance/new', component: MaintenanceManageComponent },
-  { path: 'maintenance', component: MaintenanceListComponent },
+  { path: ':id/maintenances', component: MaintenanceListComponent },
+  { path: ':id/maintenances/edit', component: MaintenanceManageComponent },
+  { path: 'maintenances/manage', component: MaintenanceManageComponent },
+  { path: 'maintenances/manage/:id', component: MaintenanceManageComponent },
+  { path: 'maintenances', component: MaintenanceListComponent },
 ];
 
 @NgModule({

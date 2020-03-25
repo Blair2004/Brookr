@@ -1,8 +1,10 @@
 <?php
 namespace Modules\Brookr\Services;
 
+use Illuminate\Support\Str;
 use Modules\Brookr\Models\Truck;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Modules\Brookr\Models\TruckMaintenance;
 use Tendoo\Core\Exceptions\NotFoundException;
 
@@ -159,15 +161,40 @@ class TrucksService
         ]);
     }
 
-    public function submitTruckMaintenance( $id, $fields )
+    public function submitTruckMaintenance( $fields )
     {
-        $truck      =   $this->getTruck( $id );
+        $truck      =   $this->getTruck( $fields[ 'truck_id' ] );
 
         $maintenance                    =   new TruckMaintenance;
         $maintenance->name              =   $fields[ 'name' ];
         $maintenance->description       =   $fields[ 'description' ];
+        $maintenance->cost              =   $fields[ 'cost' ];
         $maintenance->truck_id          =   $fields[ 'truck_id' ];
-        $maintenance->document_url      =   $fields[ 'document_url' ];
         $maintenance->user_id           =   Auth::id();
+        $maintenance->save();
+                
+        $maintenance->document_url      =   $this->saveBase64ToJPG( 
+            $fields[ 'document_url' ], 
+            Str::slug( 'maintenance-document-' . $fields[ 'truck_id' ] . '-' . $maintenance->id ) 
+        );
+
+        $maintenance->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The maintenance report has been created' ),
+            'data'      =>  compact( 'maintenance' )
+        ];
+    }
+
+    private function saveBase64ToJPG( $base64, $filename )
+    {
+        $image      =   str_replace('data:image/png;base64,', '', $base64);
+        $image      =   str_replace(' ', '+', $base64);
+        $filename   =   str_random(10).'.'.'png';
+        $complete   =   '/brookr/trucks-maintenances/' . $filename;
+        File::put( storage_path() . $complete, base64_decode($image));
+
+        return url( $complete );
     }
 }

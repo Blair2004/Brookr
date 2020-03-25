@@ -26,4 +26,9 @@ class TrucksController extends BaseController
     {
         return $this->truckService->editTruck( $id, $request->all() );
     }
+
+    public function saveMaintenance( Request $request )
+    {
+        return $this->truckService->createMaintenance( $request->all() );
+    }
 }
