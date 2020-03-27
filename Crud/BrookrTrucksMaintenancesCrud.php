@@ -212,10 +212,13 @@ class BrookrTrucksMaintenancesCrud extends Crud
             'name'  =>  [
                 'label'  =>  __( 'Name' )
             ],
-            'truck_id'  =>  [
+            'cost'  =>  [
+                'label'  =>  __( 'Name' )
+            ],
+            'brookr_trucks_name'  =>  [
                 'label'  =>  __( 'Truck' )
             ],
-            'user_id'  =>  [
+            'tendoo_users_username'  =>  [
                 'label'  =>  __( 'By' )
             ],
             'created_at'  =>  [

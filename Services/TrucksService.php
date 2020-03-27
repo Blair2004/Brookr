@@ -173,10 +173,12 @@ class TrucksService
         $maintenance->user_id           =   Auth::id();
         $maintenance->save();
                 
-        $maintenance->document_url      =   $this->saveBase64ToJPG( 
-            $fields[ 'document_url' ], 
-            Str::slug( 'maintenance-document-' . $fields[ 'truck_id' ] . '-' . $maintenance->id ) 
-        );
+        if ( ! empty( $fields[ 'document_url' ] ) ) {
+            $maintenance->document_url      =   $this->saveBase64ToJPG( 
+                $fields[ 'document_url' ], 
+                Str::slug( 'maintenance-document-' . $fields[ 'truck_id' ] . '-' . $maintenance->id ) 
+            );
+        }
 
         $maintenance->save();
 
@@ -191,7 +193,7 @@ class TrucksService
     {
         $image      =   str_replace('data:image/png;base64,', '', $base64);
         $image      =   str_replace(' ', '+', $base64);
-        $filename   =   str_random(10).'.'.'png';
+        $filename   =   Str::random(10).'.'.'png';
         $complete   =   '/brookr/trucks-maintenances/' . $filename;
         File::put( storage_path() . $complete, base64_decode($image));
 

@@ -1,5 +1,6 @@
 <?php
 Route::middleware([ 'tendoo.auth' ])->group( function() {
+    Route::get( 'api/brookr/trucks', 'TrucksController@getTrucks' );
     Route::post( 'api/brookr/trucks', 'TrucksController@saveTruck' );
     Route::post( 'api/brookr/loads', 'LoadsController@saveLoad' );
     Route::post( 'api/brookr/trucks-maintenances', 'TrucksController@saveMaintenance' );

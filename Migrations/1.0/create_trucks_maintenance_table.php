@@ -15,8 +15,8 @@ class CreateTrucksMaintenanceTable extends Migration
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
                 $table->integer( 'truck_id' );
-                $table->float( 'cost', 11, 5 );
-                $table->text( 'document_url' );
+                $table->float( 'cost', 11, 5 )->default(0);
+                $table->text( 'document_url' )->nullable();
                 $table->integer( 'user_id' );
                 $table->timestamps();
             });

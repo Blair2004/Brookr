@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TendooCoreService } from './tendoo-core.service';
+import { TrucksService } from './trucks.service';
 
 @Injectable({
   providedIn: 'root'
@@ -7,10 +8,11 @@ import { TendooCoreService } from './tendoo-core.service';
 export class TrucksMaintenancesService {
 
   constructor(
-    private tendoo: TendooCoreService
+    private tendoo: TendooCoreService,
   ) { }
 
   saveMaintenance( fields, identifier = null ) {
-    return this.tendoo[ identifier === null ? 'post' : 'put' ]( `${this.tendoo[ 'config' ].base }/api/brookr/trucks-maintenances${ identifier !== null ? `/${identifier}` : '' }`, fields );
-  }
+    const method    =   ( [ '', null ].includes( identifier ) ? 'post' : 'put' );
+    return this.tendoo[ method ]( `${this.tendoo[ 'config' ].base}/api/brookr/trucks-maintenances`, fields );
+  } 
 }

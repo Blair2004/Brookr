@@ -33,8 +33,8 @@ import { TableComponent } from '../partials/dashboard/table/table.component';
     MaterialModule,
     HttpClientModule,
     CloudBreezeModule.forRoot({
-      base : 'http://laravel-7001.go',
-      angular: ''
+      base : 'http://laravel-7001.std',
+      angular: '' 
     })
   ]
 })

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TrucksService } from 'src/app/services/trucks.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TendooCoreService } from 'src/app/services/tendoo-core.service';
@@ -46,10 +45,11 @@ export class MaintenanceManageComponent implements OnInit {
     this.form.sections.forEach( section => ValidationGenerator.deactivateFields( section.fields ) );
     this.trucksMaintenances.saveMaintenance( this.form.formGroup.value, this.identifier || '' ).subscribe( result => {
       this.snackbar.open( result[ 'message' ], 'OK', { duration: 3000 });
-      if ( this.identifier ) {
+      if ( ! this.identifier ) {
         this.router.navigateByUrl( '/dashboard/trucks/maintenances' );
       }
     }, ( result ) => {
+      this.form.sections.forEach( section => ValidationGenerator.enableFields( section.fields ) );
       this.snackbar.open( result[ 'error' ].message || 'An unexpected error has occured', 'OK' );
     })
   }

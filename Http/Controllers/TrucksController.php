@@ -29,6 +29,12 @@ class TrucksController extends BaseController
 
     public function saveMaintenance( Request $request )
     {
-        return $this->truckService->createMaintenance( $request->all() );
+        $fields     =   $request->all();
+        return $this->truckService->submitTruckMaintenance( $fields[ 'general' ] );
+    }
+
+    public function getTrucks()
+    {
+        return $this->truckService->getTrucks();
     }
 }
