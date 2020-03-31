@@ -13,6 +13,7 @@ export class TabsComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    console.log( this.form );
     this.renderable.forEach( (section, index) => {
       if ( index === 0 ) {
         section[ 'active' ] = true;

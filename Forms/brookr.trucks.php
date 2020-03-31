@@ -55,7 +55,7 @@ return [
                     'label'         =>  __( 'Status' ),
                     'name'          =>  'status',
                     'type'          =>  'switch',
-                    'value'         =>  isset( $truck->status ) ? true : false,
+                    'value'         =>  @$truck->status === 'available' ? true : false,
                     'description'   =>  __( 'Define wether the truck is available or not.')
                 ]
             ]

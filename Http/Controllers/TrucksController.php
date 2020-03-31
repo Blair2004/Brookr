@@ -33,8 +33,19 @@ class TrucksController extends BaseController
         return $this->truckService->submitTruckMaintenance( $fields[ 'general' ] );
     }
 
+    public function editMaintenance( Request $request, $index )
+    {
+        $fields     =   $request->all();
+        return $this->truckService->udpateMaintenance( $index, $fields[ 'general' ] );
+    }
+
     public function getTrucks()
     {
         return $this->truckService->getTrucks();
+    }
+
+    public function deleteTruckMaintenance( $id )
+    {
+        return $this->truckService->deleteTruckMaintenanceRecord( $id );
     }
 }

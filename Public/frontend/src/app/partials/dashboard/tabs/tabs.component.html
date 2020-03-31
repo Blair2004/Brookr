@@ -4,7 +4,8 @@
             'bg-gray-100' : section.active,
             'bg-gray-300' : ! section.active
         }" *ngFor="let section of renderable" class="tab px-4 py-2 border-2 border-b-0 rounded-t-lg cursor-pointer flex items-center justify center">
-            {{ section.title }}
+            {{ section.title }} 
+            <span *ngIf="form.formGroup.errors !== null" class="inline-block ml-2 rounded-full flex justify-center items-center h-6 w-6 bg-red-700 text-white">5</span>
         </div>
     </div>
     <div class="bg-gray-100 border-2">

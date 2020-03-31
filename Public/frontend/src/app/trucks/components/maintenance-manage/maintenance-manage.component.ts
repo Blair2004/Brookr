@@ -42,15 +42,25 @@ export class MaintenanceManageComponent implements OnInit {
       return this.snackbar.open( 'Unable to proceed the form is not valid.', 'OK', { duration: 3000 });
     }
     
-    this.form.sections.forEach( section => ValidationGenerator.deactivateFields( section.fields ) );
+    this.fieldsControl( 'disable' );
     this.trucksMaintenances.saveMaintenance( this.form.formGroup.value, this.identifier || '' ).subscribe( result => {
       this.snackbar.open( result[ 'message' ], 'OK', { duration: 3000 });
       if ( ! this.identifier ) {
         this.router.navigateByUrl( '/dashboard/trucks/maintenances' );
+      } else {
+        this.fieldsControl( 'enable' );
       }
     }, ( result ) => {
+      this.fieldsControl( 'enable' );
       this.form.sections.forEach( section => ValidationGenerator.enableFields( section.fields ) );
       this.snackbar.open( result[ 'error' ].message || 'An unexpected error has occured', 'OK' );
     })
+  }
+
+  fieldsControl( action ) {
+    switch( action ) {
+      case 'disable' : this.form.sections.forEach( section => ValidationGenerator.deactivateFields( section.fields ) );break;
+      case 'enable' : this.form.sections.forEach( section => ValidationGenerator.enableFields( section.fields ) );break;
+    }
   }
 }

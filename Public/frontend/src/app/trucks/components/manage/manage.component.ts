@@ -43,8 +43,11 @@ export class ManageComponent implements OnInit {
     form.sections.forEach( section => ValidationGenerator.deactivateFields( section.fields ) );
     this.trucksService.save( form.formGroup.value, this.identifier ).subscribe( result => {
       this.snackbar.open( result[ 'message' ], 'OK', { duration: 3000 });
-      this.router.navigateByUrl( '/dashboard/trucks' );
+      if ( ! this.identifier ) {
+        this.router.navigateByUrl( '/dashboard/trucks' );
+      }
     }, ( result ) => {
+      form.sections.forEach( section => ValidationGenerator.enableFields( section.fields ) );
       this.snackbar.open( result[ 'error' ].message || 'An unexpected error has occured.', 'OK', { duration: 3000 });
     });
   }

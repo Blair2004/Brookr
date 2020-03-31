@@ -213,7 +213,7 @@ class BrookrTrucksMaintenancesCrud extends Crud
                 'label'  =>  __( 'Name' )
             ],
             'cost'  =>  [
-                'label'  =>  __( 'Name' )
+                'label'  =>  __( 'Cost' )
             ],
             'brookr_trucks_name'  =>  [
                 'label'  =>  __( 'Truck' )

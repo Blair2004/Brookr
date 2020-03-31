@@ -199,4 +199,64 @@ class TrucksService
 
         return url( $complete );
     }
+
+    /**
+     * Delete an existing truck record
+     * @param int truck maintenance id
+     * @param array
+     */
+    public function deleteTruckMaintenanceRecord( $id )
+    {
+        $maintenance     =   $this->getTruckMaintenance( $id );
+        $maintenance->delete();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The truck report has been deleted' )
+        ];
+    }
+
+    /**
+     * get existing truck maintenance using
+     * a defined identifier
+     * @param int truck maintenance id
+     * @return array
+     */
+    public function getTruckMaintenance( $id )
+    {
+        $maintenance    =   TruckMaintenance::find( $id );
+
+        if ( $maintenance instanceof TruckMaintenance ) {
+            return $maintenance;
+        }
+
+        throw new NotFoundException([
+            'status'    =>  'failed',
+            'message'   =>  __( 'Unable to find the truck maintenance entry using the provided identifier.' )
+        ]);
+    }
+
+    /**
+     * Update a specific maintenance using
+     * the provided identifier
+     * @param int id
+     * @param array fields
+     * @return array response
+     */
+    public function udpateMaintenance( $id, $fields )
+    {
+        $maintenance    =   $this->getTruckMaintenance( $id );
+
+        foreach( $fields as $key => $value ) {
+            $maintenance->$key  =   $value;
+        }
+        
+        $maintenance->user_id   =   Auth::id();
+        $maintenance->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The maintenance has been correctly updated' )
+        ];
+    }
 }

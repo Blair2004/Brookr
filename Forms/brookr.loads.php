@@ -1,4 +1,17 @@
 <?php
+
+use Tendoo\Core\Models\Role;
+use Modules\Brookr\Models\Truck;
+use Tendoo\Core\Services\Helper;
+use Modules\Brookr\Services\TrucksService;
+
+$rawCustomers   =   Role::namespace( 'brookr.customer' )->users;
+$customers      =   Helper::toJsOptions( $rawCustomers, [ 'id', 'username' ]);
+$rawDrivers     =   Role::namespace( 'brookr.driver' )->users;
+$drivers        =   Helper::toJsOptions( $rawDrivers, [ 'id', 'username' ]);
+$trucksService  =   new TrucksService;
+$trucks         =   Helper::toJsOptions( $trucksService->getTrucks( 'available' ), [ 'id', 'name' ]);
+
 return [
     'sections'      =>      [
         [
@@ -23,7 +36,7 @@ return [
                     'label'         =>  __( 'Brooker' ),
                     'name'          =>  'brooker_id',
                     'type'          =>  'select',
-                    'options'       =>  [],
+                    'options'       =>  $customers,
                     'description'   =>  __( 'The brooker providing the load.' ),
                     'validation'    =>  'required'
                 ], [
@@ -52,13 +65,13 @@ return [
                     'label'         =>  __( 'Driver' ),
                     'name'          =>  'driver_id',
                     'type'          =>  'select',
-                    'options'       =>  [],
+                    'options'       =>  $drivers,
                     'description'   =>  __( 'Assigned driver can be empty. Unassigned loads can be handled by available drivers.' )
                 ], [
                     'label'         =>  __( 'Truck Assigned' ),
                     'name'          =>  'truck_id',
                     'type'          =>  'select',
-                    'options'       =>  [],
+                    'options'       =>  $trucks,
                     'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
                 ], [
                     'label'         =>  __( 'Rate' ),
@@ -96,7 +109,7 @@ return [
                 ], [
                     'label'         =>  __( 'Pickup City' ),
                     'name'          =>  'pickup_city',
-                    'type'          =>  'datetime',
+                    'type'          =>  'text',
                     'description'   =>  __( 'When the loads should be picked up by the driver.' ),
                 ], [
                     'label'         =>  __( 'Delivery City' ),

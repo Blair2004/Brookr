@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRouteSnapshot, ActivatedRoute } from '@angular/router';
+import { ActivatedRouteSnapshot, ActivatedRoute, Router } from '@angular/router';
 import { Field, TendooService, TendooFieldsService, Form, ValidationGenerator, TendooFormsService } from '@cloud-breeze/core';
 import { HttpClient } from '@angular/common/http';
+import { DriversService } from 'src/app/services/drivers.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-manage',
@@ -16,7 +18,10 @@ export class ManageComponent implements OnInit {
     private routeSnapshot: ActivatedRoute,
     private tendoo: TendooService,
     private tendooForms: TendooFormsService,
-    private client: HttpClient
+    private client: HttpClient,
+    private driversService: DriversService,
+    private snackbar: MatSnackBar,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -30,17 +35,38 @@ export class ManageComponent implements OnInit {
   }
 
   generateForm() {
-    this.tendooForms.getPublicForm( 'brookr.drivers' ).subscribe( (form:Form) => {
+    this.tendooForms.getPublicForm( 'brookr.drivers', +this.id > 0 ? +this.id : undefined ).subscribe( (form:Form) => {
       this.form   = form;
     });
   }
 
-  selectThis( section ) {
+  selectThis( section ) { 
     this.form.sections.forEach( s => s[ 'active' ] = false );
     section.active  = true;
   }
 
   handleSubmit( form: Form ) {
-    console.log( form.formGroup.value );
+    this.form.sections.forEach( s => ValidationGenerator.touchAllFields( s.formGroup ) );
+
+    if ( this.form.formGroup.invalid ) {
+      return this.snackbar.open( 'Unable to proceed, the form is invalid', 'OK', { duration: 3000 });
+    }
+
+    this.setFieldsState( 'disable' );
+    this.driversService.setDriver( this.form.formGroup.value, +this.id > 0 ? +this.id : null ).subscribe( result => {
+      this.setFieldsState( 'enable' );
+      this.snackbar.open( result[ 'message' ], 'OK', { duration : 3000 });
+
+      if ( ! this.id ) {
+        this.router.navigateByUrl( '/dashboard/drivers' );
+      }
+    }, ( result ) => {
+      this.snackbar.open( result[ 'error' ].message || result[ 'message' ] || 'An unexpected error has occured', 'OK', { duration : 3000 });
+      this.setFieldsState( 'enable' );
+    })
+  }
+
+  setFieldsState( state ) {
+    this.form.sections.forEach( s => ValidationGenerator[ state === 'disabled' ? 'deactivateFields' : 'enableFields' ]( s.fields ) );
   }
 }

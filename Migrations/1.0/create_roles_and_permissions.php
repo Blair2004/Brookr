@@ -27,6 +27,14 @@ class CreateRolesAndPermissions extends Migration
             $dispatcher->save();
         }
 
+        if ( ! ( $customer = Role::namespace( 'brookr.customer' ) ) instanceof Role ) {
+            $customer                   =   new Role;
+            $customer->name             =   __( 'Customer' );
+            $customer->namespace        =   'brookr.customer';
+            $customer->description      =   __( 'Transfer Loads to the dispatcher.' );
+            $customer->save();
+        }
+
         if ( ! ( $canCreateTrucks = Permission::namespace( 'brookr.create.trucks' )->first() ) instanceof Permission ) {
             $canCreateTrucks               =   new Permission;
             $canCreateTrucks->name         =   __( 'Can create trucks' );
@@ -176,6 +184,17 @@ class CreateRolesAndPermissions extends Migration
         ])->each( function( $permission ) use ( $driver ) {
             Role::addPermission( $driver->namespace, $permission->namespace );
         });
+
+        /**
+         * let's modify existing
+         * user table
+         */
+        if ( ! Schema::hasColumn( 'tendoo_users', 'brookr_avatar' ) ) {
+            Schema::table( 'tendoo_users', function( $table ) {
+                $table->boolean( 'brookr_driver_available' );
+                $table->string( 'brookr_avatar' );
+            });
+        }
     }
 
     public function down()
@@ -201,5 +220,11 @@ class CreateRolesAndPermissions extends Migration
         Role::namespace( 'brookr.driver' )->removePermissions([
             'brookr.change.loads-status'
         ]);
+
+        if ( Schema::hasColumn( 'tendoo_users', 'brookr_avatar' ) ) {
+            Schema::table( 'tendoo_users', function( $table ) {
+                $table->dropColumn([ 'brookr_avatar', 'brookr_driver_available' ]);
+            });
+        }
     }
 }

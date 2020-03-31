@@ -28,6 +28,8 @@ class CreateAddressesTable extends Migration
                 $table->string( 'address_city' )->nullable();
                 $table->string( 'address_zip' )->nullable();
                 $table->string( 'address_state' )->nullable();
+                $table->integer( 'user_id' );
+                $table->timestamps();
             });
         }
     }

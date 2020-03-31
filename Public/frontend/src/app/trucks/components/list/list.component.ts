@@ -43,9 +43,9 @@ export class ListComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading  = true;
     this.tendooCrud.getConfig( 'brookr.trucks', { ...this.sort, ...this.search, ...this.page }).subscribe( ( crud: BrookrTableConfig ) => {
-      this.isLoading  = false;
-      this.config   = crud;
-      this.config.title   = 'Trucks List';
+      this.isLoading      =   false;
+      this.config         =   crud;
+      this.config.title   =   'Trucks List';
     }, ( result ) => {
       this.snackbar.open( 'An error has occured while loading the entries.', 'OK', { duration: 5000 });
     });
