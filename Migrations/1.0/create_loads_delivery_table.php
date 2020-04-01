@@ -19,7 +19,7 @@ class CreateLoadsDeliveryTable extends Migration
                 $table->string( 'pickup_reference' );
                 $table->integer( 'truck_id' )->nullable();
                 $table->string( 'pickup_city' );
-                $table->string( 'destination_city' );
+                $table->string( 'delivery_city' );
                 $table->text( 'delivery_document_url' ); // Proof of Delivery
                 $table->text( 'rate_document_url' ); // Proof of Delivery
                 $table->integer( 'driver_id' )->nullable();

@@ -17,7 +17,7 @@ export class ListComponent implements OnInit {
   search = {};
   page = {};
   perPage = {
-    per_page : 2
+    per_page : 20
   }
 
   constructor(

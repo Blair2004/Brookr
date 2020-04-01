@@ -15,7 +15,7 @@ class BrookrLoadsCrud extends Crud
     /**
      * define the base table
      */
-    protected $table      =   'brookr_loads';
+    protected $table      =   'brookr_loads_delivery';
 
     /**
      * base route name
@@ -37,7 +37,7 @@ class BrookrLoadsCrud extends Crud
      * Adding relation
      */
     public $relations   =  [
-        [ 'tendoo_users', 'brookr_loads.id', '=', 'tendoo_users.user_id' ],
+        [ 'tendoo_users', 'brookr_loads_delivery.user_id', '=', 'tendoo_users.id' ],
     ];
 
     /**
@@ -216,19 +216,19 @@ class BrookrLoadsCrud extends Crud
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit.licence',
+                'namespace'     =>      'edit.loads',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      '/dashboard/crud/brookr.loads/edit/#'
+                'url'           =>      '/dashboard/loads/edit/{id}'
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  'tendoo/crud/brookr.loads' . '/#',
+                'url'       =>  url( '/api/brookr/loads/{id}' ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a licence' )
+                    'title'     =>  __( 'Delete a Loads Delivery' )
                 ]
             ]
         ];
@@ -284,8 +284,8 @@ class BrookrLoadsCrud extends Crud
     {
         return  [
             'list'  =>  '/dashboard/loads/',
-            'create'    =>  '/dashboard/loads//create',
-            'edit'      =>  '/dashboard/loads//edit/#'
+            'create'    =>  '/dashboard/loads/create',
+            'edit'      =>  '/dashboard/loads/edit/{id}'
         ];
     }
 

@@ -119,7 +119,7 @@ return [
                 ], [
                     'label'         =>  __( 'delivery Document' ),
                     'name'          =>  'delivery_document_url',
-                    'type'          =>  'text',
+                    'type'          =>  'image',
                     'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
                 ], 
             ]

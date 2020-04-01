@@ -52,6 +52,10 @@ class DriversService
 
             $driverDetails->user_id                     =   Auth::id();
             $driverDetails->driver_id                   =   $user->id;
+            $driverDetails->first_name                  =   $fields[ 'personnal' ][ 'first_name' ];
+            $driverDetails->last_name                   =   $fields[ 'personnal' ][ 'last_name' ];
+            $driverDetails->phone_cell                  =   $fields[ 'personnal' ][ 'phone_cell' ];
+            $driverDetails->phone_home                  =   $fields[ 'personnal' ][ 'phone_home' ];
             $driverDetails->company_driver              =   $fields[ 'professional' ][ 'company_driver' ];
             $driverDetails->fein                        =   $fields[ 'professional' ][ 'fein' ];
             $driverDetails->ssn                         =   $fields[ 'professional' ][ 'ssn' ];
@@ -70,15 +74,31 @@ class DriversService
             $driverDetails->medical_card_expiration     =   $fields[ 'medical' ][ 'medical_card_expiration' ];
             $driverDetails->medical_drug_test           =   $fields[ 'medical' ][ 'medical_drug_test' ];
             $driverDetails->save();
+
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The driver has been created' ),
+                'data'      =>  [
+                    'users'     => $user
+                ]
+            ];
         }
     }
 
     public function setDriversAddresses( $fields, $result, $id = null )
     {
+        $user       =   $result[ 'data' ][ 'user' ];
+
         if ( $id !== null ) {
             $address    =   Address::find( $id );
         } else {
-            $address                    =   new Address;
+            $address    =   Address::where( 'reference_id', $user->id )
+                ->where( 'reference_type', 'driver' )
+                ->first();
+                
+            if ( ! $address instanceof Address ) {
+                $address                    =   new Address;
+            }
         }
         
         $address->user_id               =   Auth::id();
