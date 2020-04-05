@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { TendooFieldsService, Field, ValidationGenerator, TendooAuthService, TendooService } from '@cloud-breeze/core';
 import { FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
-import { TendooCoreService } from '../services/tendoo-core.service';
+import { TendooService } from '@cloud-breeze/services';
+import { ValidationGenerator } from "@cloud-breeze/utilities";
+import { Field } from '@cloud-breeze/core';
 
 @Component({
   selector: 'app-auth',
@@ -16,15 +17,14 @@ export class AuthComponent implements OnInit {
   loaded        = false;
   isLoggingIn   = false;
   constructor(
-    private tendooFields: TendooFieldsService,
-    private tendoo: TendooCoreService,
+    private tendoo: TendooService,
     private snackbar: MatSnackBar,
     private router: Router,
     private activatedRoute: ActivatedRoute 
   ) { }
 
   ngOnInit(): void {
-    this.tendooFields.getPublicFields( 'brookr.login' ).subscribe( ( fields: Field[] ) => {
+    this.tendoo.fields.getPublicFields( 'brookr.login' ).subscribe( ( fields: Field[] ) => {
       const result  = ValidationGenerator.buildFormGroup( fields );
       this.form     = result.formGroup;
       this.fields   = result.fields;

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { TendooCoreService } from 'src/app/services/tendoo-core.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TableConfig } from '@cloud-breeze/core';
 import { TrucksMaintenancesService } from 'src/app/services/trucks-maintenances.service';
 import { MatDialog } from '@angular/material/dialog';
+import { TendooService } from '@cloud-breeze/services';
 
 @Component({
   selector: 'app-maintenance-list',
@@ -20,7 +20,7 @@ export class MaintenanceListComponent implements OnInit {
   constructor(
     private snackbar: MatSnackBar,
     private router: Router,
-    private tendoo: TendooCoreService,
+    private tendoo: TendooService,
     private snapshot: ActivatedRoute,
     private truckMaintenance: TrucksMaintenancesService,
     private dialog: MatDialog,

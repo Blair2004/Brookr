@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { TendooCoreService } from './tendoo-core.service';
 import { TrucksService } from './trucks.service';
+import { TendooService } from '@cloud-breeze/services';
 
 @Injectable({
   providedIn: 'root'
@@ -8,14 +8,14 @@ import { TrucksService } from './trucks.service';
 export class TrucksMaintenancesService {
   baseUrl: string;
   constructor(
-    private tendoo: TendooCoreService,
+    private tendoo: TendooService,
   ) { 
-    this.baseUrl  = this.tendoo[ 'config' ].base;
+    this.baseUrl  = this.tendoo.baseUrl;
   }
 
   saveMaintenance( fields, identifier = null ) {
     const method    =   ( [ '', null ].includes( identifier ) ? 'post' : 'put' );
-    return this.tendoo[ method ]( `${this.tendoo[ 'config' ].base}/api/brookr/trucks-maintenances${ identifier ? '/' + identifier : '' }`, fields );
+    return this.tendoo[ method ]( `${this.tendoo.baseUrl}/api/brookr/trucks-maintenances${ identifier ? '/' + identifier : '' }`, fields );
   } 
 
   deleteMaintenance( id ) {

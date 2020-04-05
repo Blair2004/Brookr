@@ -29,7 +29,7 @@
             ],
             "styles": [
               "src/styles.scss",
-              "src/tailwind-compiled.css",
+              "src/tailwind-compiled.css"
             ],
             "scripts": []
           },

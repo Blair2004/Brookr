@@ -1,9 +1,9 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { BrookrTableConfig } from '../../../interfaces/TableConfig';
-import { TendooCrudService } from '@cloud-breeze/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { TendooService } from '@cloud-breeze/services';
 
 @Component({
   selector: 'app-list',
@@ -20,7 +20,7 @@ export class ListComponent implements OnInit {
   searchEnabled   = false;
 
   constructor(
-    private tendooCrud: TendooCrudService,
+    private tendoo: TendooService,
     private snackbar: MatSnackBar,
     private dialog: MatDialog,
     private router: Router
@@ -42,7 +42,7 @@ export class ListComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading  = true;
-    this.tendooCrud.getConfig( 'brookr.trucks', { ...this.sort, ...this.search, ...this.page }).subscribe( ( crud: BrookrTableConfig ) => {
+    this.tendoo.crud.getConfig( 'brookr.trucks', { ...this.sort, ...this.search, ...this.page }).subscribe( ( crud: BrookrTableConfig ) => {
       this.isLoading      =   false;
       this.config         =   crud;
       this.config.title   =   'Trucks List';
@@ -53,7 +53,7 @@ export class ListComponent implements OnInit {
 
   handleAction( event ) {
     if ( event.menu.type === 'DELETE' ) {
-      this.tendooCrud.delete( event.menu.url.replace( '{id}', event.row.id ) ).subscribe( result => {
+      this.tendoo.crud.delete( event.menu.url.replace( '{id}', event.row.id ) ).subscribe( result => {
         this.snackbar.open( result[ 'message' ], 'OK', { duration: 3000 });
         this.ngOnInit();
         this.dialog.getDialogById( event.menu.namespace ).close();

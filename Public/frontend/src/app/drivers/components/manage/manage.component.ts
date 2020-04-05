@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRouteSnapshot, ActivatedRoute, Router } from '@angular/router';
-import { Field, TendooService, TendooFieldsService, Form, ValidationGenerator, TendooFormsService } from '@cloud-breeze/core';
 import { HttpClient } from '@angular/common/http';
 import { DriversService } from 'src/app/services/drivers.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TendooService } from '@cloud-breeze/services';
+import { Form } from '@cloud-breeze/core';
+import { ValidationGenerator } from '@cloud-breeze/utilities';
 
 @Component({
   selector: 'app-manage',
@@ -17,7 +19,6 @@ export class ManageComponent implements OnInit {
   constructor(
     private routeSnapshot: ActivatedRoute,
     private tendoo: TendooService,
-    private tendooForms: TendooFormsService,
     private client: HttpClient,
     private driversService: DriversService,
     private snackbar: MatSnackBar,
@@ -35,7 +36,7 @@ export class ManageComponent implements OnInit {
   }
 
   generateForm() {
-    this.tendooForms.getPublicForm( 'brookr.drivers', +this.id > 0 ? +this.id : undefined ).subscribe( (form:Form) => {
+    this.tendoo.forms.getPublicForm( 'brookr.drivers', +this.id > 0 ? +this.id : undefined ).subscribe( (form:Form) => {
       this.form   = form;
     });
   }

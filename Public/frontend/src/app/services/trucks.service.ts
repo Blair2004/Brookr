@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { TendooService } from '@cloud-breeze/core';
-import { TendooCoreService } from './tendoo-core.service';
+import { TendooService } from '@cloud-breeze/services';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +10,9 @@ export class TrucksService {
 
   constructor(
     private http: HttpClient,
-    private tendoo: TendooCoreService
+    private tendoo: TendooService
   ) { 
-    this.baseUrl  = this.tendoo[ 'config' ].base;
+    this.baseUrl  = this.tendoo.baseUrl;
   }
 
   save( fields, identifier = undefined ) {

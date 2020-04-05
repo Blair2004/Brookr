@@ -4,43 +4,49 @@ namespace Modules\Brookr\Listeners;
 use Modules\Brookr\Models\Truck;
 use Modules\Brookr\Models\Driver;
 use Modules\Brookr\Services\TrucksService;
-use Modules\Brookr\Events\LoadDispatchEvent;
+use Modules\Brookr\Services\DriversService;
+use Modules\Brookr\Events\AfterCreateLoadEvent;
+use Modules\Brookr\Events\BeforeCreateLoadEvent;
+use Modules\Brookr\Events\BeforeUpdateDriverEvent;
 
 class BrookrListener
 {
     public function __construct()
     {
         $this->trucksService    =   new TrucksService;
+        $this->driversService   =   new DriversService;
     }
     
     public function subscribe( $event )
     {
         $event->listen(
-            LoadDispatchEvent::class,
-            BrookrListener::class . '@markDriverAsBusy'
+            AfterCreateLoadEvent::class,
+            DriversService::class . '@handleMarkDriverBusy'
         );
 
         $event->listen(
-            LoadDispatchEvent::class,
-            BrookrListener::class . '@markTruckAsBusy'
+            AfterCreateLoadEvent::class,
+            TrucksService::class . '@handleMarkTruckBusy'
+        );
+
+        $event->listen(
+            BeforeUpdateDriverEvent::class,
+            DriversService::class . '@handleCanUpdateDriverStatus'
+        );
+
+        $event->listen(
+            BeforeCreateLoadEvent::class,
+            DriversService::class . '@handleChangeDriverStatus'
+        );
+
+        $event->listen(
+            BeforeCreateLoadEvent::class,
+            TruckService::class . '@canAssignTruck'
         );
     }
 
-    public function markDriverAsBusy( LoadDispatchEvent $event )
+    public function markDriverAsBusy( AfterCreateLoadEvent $event )
     {
-        $driver     =   Driver::find( $event->load->driver_id );
-        $driver->brookr_driver_status   =   0;
-        $driver->save();
+        
     }
-
-    public function markTruckAsBusy( LoadDispatchEvent $event )
-    {
-        $truck      =   $this->trucksService->getTruck( $event->load->truck_id );
-
-        if ( $truck instanceof Truck ) {
-            $truck->status  =   'busy';
-            $truck->save();
-        }
-    }
-
 }

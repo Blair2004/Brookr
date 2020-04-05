@@ -7,8 +7,7 @@ import { DeclarationsModule } from './declarations/declarations.module';
 import { StoreModule } from '@ngrx/store';
 import { AppReducer } from './store/state';
 import { CommonModule } from '@angular/common';
-import { CloudBreezeModule, TendooService } from '@cloud-breeze/core';
-import { TendooCoreService } from './services/tendoo-core.service';
+import { CoreModule } from '@cloud-breeze/core';
 
 @NgModule({
   declarations: [
@@ -19,13 +18,11 @@ import { TendooCoreService } from './services/tendoo-core.service';
     BrowserAnimationsModule,
     AppRoutingModule,
     DeclarationsModule,
+    CoreModule,
     StoreModule.forRoot({ 
       state : AppReducer
     }),
   ],
-  // providers: [
-  //   { provide: TendooCoreService, useExisting: TendooService }
-  // ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

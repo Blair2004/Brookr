@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TendooCoreService } from 'src/app/services/tendoo-core.service';
-import { ValidationGenerator, Form } from '@cloud-breeze/core';
 import { TrucksMaintenancesService } from 'src/app/services/trucks-maintenances.service';
+import { TendooService } from '@cloud-breeze/services';
+import { Form } from '@cloud-breeze/core';
+import { ValidationGenerator } from '@cloud-breeze/utilities';
 
 @Component({
   selector: 'app-maintenance-manage',
@@ -18,7 +19,7 @@ export class MaintenanceManageComponent implements OnInit {
     private trucksMaintenances: TrucksMaintenancesService,
     private snapshot: ActivatedRoute,
     private snackbar: MatSnackBar,
-    private tendoo: TendooCoreService,
+    private tendoo: TendooService,
     private router: Router
   ) { }
 

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { TendooCoreService } from 'src/app/services/tendoo-core.service';
 import { TableConfig } from '@cloud-breeze/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { TendooService } from '@cloud-breeze/services';
 
 @Component({
   selector: 'app-list',
@@ -21,7 +21,7 @@ export class ListComponent implements OnInit {
   }
 
   constructor(
-    private tendoo: TendooCoreService,
+    private tendoo: TendooService,
     private snackbar: MatSnackBar,
     private dialog: MatDialog,
     private router: Router

@@ -12,6 +12,7 @@ class CreateLoadsDeliveryTable extends Migration
         if ( ! Schema::hasTable( 'brookr_loads_delivery' ) ) {
             Schema::create( 'brookr_loads_delivery', function (Blueprint $table) {
                 $table->bigIncrements('id');
+                $table->string( 'name' );
                 $table->datetime( 'pickup_date' );
                 $table->datetime( 'delivery_date' );
                 $table->integer( 'brooker_id' );

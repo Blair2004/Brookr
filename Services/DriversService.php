@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Modules\Brookr\Models\DriverDetail;
 use Tendoo\Core\Exceptions\NotFoundException;
+use Modules\Brookr\Events\AfterCreateLoadEvent;
+use Modules\Brookr\Events\BeforeUpdateDriverEvent;
 
 class DriversService 
 {
@@ -49,6 +51,16 @@ class DriversService
             if ( ! $driverDetails instanceof DriverDetail ) {
                 $driverDetails  =   new DriverDetail;
             }
+
+            /**
+             * This will check if the driver 
+             * status could be changed
+             */
+            event( new BeforeUpdateDriverEvent( 
+                $user, 
+                $driverDetails, 
+                $fields[ 'professional' ][ 'status' ] 
+            ) );
 
             $driverDetails->user_id                     =   Auth::id();
             $driverDetails->driver_id                   =   $user->id;
@@ -178,5 +190,26 @@ class DriversService
             'status'    =>  'failed',
             'message'   =>  __( 'Unable to find the requested role' )
         ]);
+    }
+
+    /**
+     * Will verify if a driver status 
+     * can be changed and throw an error if it shouldn't.
+     * @param SetDriverEvent $event
+     * @return void
+     */
+    public function handleCanUpdateDriverStatus( SetDriverEvent $event )
+    {
+        $ongoingLoadDelivery    =   $event->driver->loads()->ongoing()->count();
+        if ( $ongoingLoadDelivery > 0 && $event->status === 'available' ) {
+            throw new Exception( __( 'Cannot change the status of the driver, since he\'s assigned to an ongoing delivery.' ) );
+        }
+    }
+
+    public function handleMarkDriverBusy( AfterCreateLoadEvent $event )
+    {
+        $driver     =   Driver::find( $event->load->driver_id );
+        $driver->brookr_driver_status   =   0;
+        $driver->save();
     }
 }

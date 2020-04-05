@@ -2,11 +2,12 @@
 namespace Modules\Brookr\Services;
 
 use Illuminate\Support\Str;
-use Modules\Brookr\Models\Truck;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Modules\Brookr\Models\TruckMaintenance;
 use Tendoo\Core\Exceptions\NotFoundException;
+use Modules\Brookr\Models\Truck;
+use Modules\Brookr\Models\TruckMaintenance;
+use Modules\Brookr\Events\AfterCreateLoadEvent;
 
 class TrucksService
 {
@@ -258,5 +259,21 @@ class TrucksService
             'status'    =>  'success',
             'message'   =>  __( 'The maintenance has been correctly updated' )
         ];
+    }
+
+    /**
+     * Will make a truck as busy
+     * while a load is being dispatched
+     * @param AfterCreateLoadEvent $event
+     * @return void
+     */
+    public function handleMarkTruckBusy( AfterCreateLoadEvent $event )
+    {
+        $truck      =   $this->trucksService->getTruck( $event->load->truck_id );
+
+        if ( $truck instanceof Truck ) {
+            $truck->status  =   'busy';
+            $truck->save();
+        }
     }
 }

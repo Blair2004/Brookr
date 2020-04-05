@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TendooCoreService } from './tendoo-core.service';
+import { TendooService } from '@cloud-breeze/services';
 
 @Injectable({
   providedIn: 'root'
@@ -8,24 +8,24 @@ export class CustomersService {
   baseUrl: string;
 
   constructor(
-    private tendooService: TendooCoreService
+    private tendoo: TendooService
   ) {
-    this.baseUrl  = this.tendooService[ 'config' ].base;
+    this.baseUrl  = this.tendoo.baseUrl;
   }
 
   createCustomer( fields ) {
-    return this.tendooService.post( `${this.baseUrl}/api/brookr/customers`, fields );
+    return this.tendoo.post( `${this.baseUrl}/api/brookr/customers`, fields );
   }
 
   updateCustomer( id, fields ) {
-    return this.tendooService.put( `${this.baseUrl}/api/brookr/customers/${id}`, fields );
+    return this.tendoo.put( `${this.baseUrl}/api/brookr/customers/${id}`, fields );
   }
 
   deleteCustomer( id ) {
-    return this.tendooService.delete( `${this.baseUrl}/api/brookr/customers/${id}` );
+    return this.tendoo.delete( `${this.baseUrl}/api/brookr/customers/${id}` );
   }
 
   getCustomers() {
-    return this.tendooService.get( `${this.baseUrl}/api/brookr/customers` );
+    return this.tendoo.get( `${this.baseUrl}/api/brookr/customers` );
   }
 }

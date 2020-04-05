@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TendooCoreService } from './tendoo-core.service';
+import { TendooService } from '@cloud-breeze/services';
 
 @Injectable({
   providedIn: 'root'
@@ -7,9 +7,10 @@ import { TendooCoreService } from './tendoo-core.service';
 export class DriversService {
   baseUrl: string;
   constructor(
-    private tendoo: TendooCoreService
+    private tendoo: TendooService
   ) { 
-    this.baseUrl    = this.tendoo[ 'config' ].base;
+    this.baseUrl    = this.tendoo.baseUrl;
+    console.log( this.baseUrl );
   }
 
   setDriver( form, identifier = null ) {

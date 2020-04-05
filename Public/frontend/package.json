@@ -1,8 +1,9 @@
 {
-  "name": "brokr",
+  "name": "brookr",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "postinstall": "ngcc",
     "prestart": "ngtw build",
     "start": "ng serve & ngtw watch",
     "build": "ngtw build && ng build",
@@ -24,7 +25,9 @@
     "@angular/platform-browser": "~9.0.5",
     "@angular/platform-browser-dynamic": "~9.0.5",
     "@angular/router": "~9.0.5",
-    "@cloud-breeze/core": "^2.0.1-beta.4",
+    "@cloud-breeze/core": "^2.0.2-beta.4",
+    "@cloud-breeze/utilities": "^0.0.2",
+    "@cloud-breeze/services": "^0.0.6",
     "@ngrx/store": "^8.6.0",
     "moment": "^2.24.0",
     "ngx-captcha": "8.0.1",

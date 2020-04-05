@@ -24,7 +24,6 @@ return [
                     'name'          =>  'name',
                     'type'          =>  'text',
                     'description'   =>  __( 'This can be automatically be generated.' ),
-                    'validation'    =>  'required'
                 ], 
             ]
         ], [

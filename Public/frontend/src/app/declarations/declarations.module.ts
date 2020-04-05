@@ -2,14 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LayoutComponent } from '../partials/dashboard/layout/layout.component';
 import { MaterialModule } from '../material.module';
-import { CloudBreezeModule } from '@cloud-breeze/core';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { TabsComponent } from '../partials/dashboard/tabs/tabs.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TableComponent } from '../partials/dashboard/table/table.component';
-
-
+import { ServicesModule } from "@cloud-breeze/services";
+import { CoreModule } from '@cloud-breeze/core';
 
 @NgModule({
   declarations: [ 
@@ -23,19 +22,22 @@ import { TableComponent } from '../partials/dashboard/table/table.component';
     TableComponent,
     ReactiveFormsModule,
     FormsModule,
-    CloudBreezeModule
+    ServicesModule,
+    CoreModule,
+    MaterialModule,
   ],
   imports: [
     RouterModule,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    CoreModule,
     MaterialModule,
+    ServicesModule.forRoot({
+      base: 'http://laravel-7001.std/api',
+      angular: ''
+    }),
     HttpClientModule,
-    CloudBreezeModule.forRoot({
-      base : 'http://laravel-7001.std',
-      angular: '' 
-    })
   ]
 })
 export class DeclarationsModule { }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { TableConfig, TendooCrudService } from "@cloud-breeze/core";
+import { TableConfig } from '@cloud-breeze/core';
+import { TendooService } from '@cloud-breeze/services';
 
 @Component({
   selector: 'app-dashboard',
@@ -33,11 +34,11 @@ export class DashboardComponent implements OnInit {
   }
 
   constructor(
-    private crudService: TendooCrudService
+    private tendoo: TendooService
   ) { }
 
   ngOnInit(): void {
-    this.crudService.get( '/brookr/loads' ).subscribe( result => {
+    this.tendoo.crud.get( '/brookr/loads' ).subscribe( result => {
       console.log( result );
     })
   }
