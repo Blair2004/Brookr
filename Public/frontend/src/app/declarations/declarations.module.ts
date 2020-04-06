@@ -22,7 +22,6 @@ import { CoreModule } from '@cloud-breeze/core';
     TableComponent,
     ReactiveFormsModule,
     FormsModule,
-    ServicesModule,
     CoreModule,
     MaterialModule,
   ],
@@ -33,10 +32,6 @@ import { CoreModule } from '@cloud-breeze/core';
     FormsModule,
     CoreModule,
     MaterialModule,
-    ServicesModule.forRoot({
-      base: 'http://laravel-7001.std/api',
-      angular: ''
-    }),
     HttpClientModule,
   ]
 })

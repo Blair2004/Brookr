@@ -8,6 +8,9 @@ import { StoreModule } from '@ngrx/store';
 import { AppReducer } from './store/state';
 import { CommonModule } from '@angular/common';
 import { CoreModule } from '@cloud-breeze/core';
+import { ServicesModule } from '@cloud-breeze/services';
+
+export const serviceCalled   = ServicesModule;
 
 @NgModule({
   declarations: [
@@ -22,6 +25,10 @@ import { CoreModule } from '@cloud-breeze/core';
     StoreModule.forRoot({ 
       state : AppReducer
     }),
+    ServicesModule.forRoot({
+      angular: '',
+      base: 'http://laravel-7001.std/api/'
+    })
   ],
   bootstrap: [AppComponent]
 })
