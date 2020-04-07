@@ -1,19 +1,20 @@
 <?php
 namespace Modules\Brookr\Providers;
 
+use Tendoo\Core\Services\Options;
 use Illuminate\Support\ServiceProvider;
 use Modules\Brookr\Services\LoadsService;
+use Modules\Brookr\Services\TrucksService;
 
 class BrookrServiceProvider extends ServiceProvider
 {
-    protected $subscribe    =   [
-        EventsListener::class
-    ];
-    
     public function register()
     {
         $this->app->singleton( LoadsService::class, function() {
-            new LoadsService( new TrucksService );
+            return new LoadsService( 
+                new TrucksService,
+                app()->make( Options::class )
+            );
         });
     }
 }

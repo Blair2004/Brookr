@@ -1,0 +1,5 @@
+{
+    "require": {
+        "pelmered/fake-car": "^1.4"
+    }
+}

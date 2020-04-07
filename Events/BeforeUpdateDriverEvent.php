@@ -1,6 +1,7 @@
 <?php
 namespace Modules\Brookr\Events;
 
+use Tendoo\Core\Models\User;
 use Modules\Brookr\Models\Driver;
 use Illuminate\Queue\SerializesModels;
 use Modules\Brookr\Models\DriverDetail;

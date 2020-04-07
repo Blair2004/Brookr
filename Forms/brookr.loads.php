@@ -3,14 +3,19 @@
 use Tendoo\Core\Models\Role;
 use Modules\Brookr\Models\Truck;
 use Tendoo\Core\Services\Helper;
+use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Services\TrucksService;
+
+if ( ! empty( $index ) ) {
+    $load   =   LoadDelivery::find( $index );
+}
 
 $rawCustomers   =   Role::namespace( 'brookr.customer' )->users;
 $customers      =   Helper::toJsOptions( $rawCustomers, [ 'id', 'username' ]);
 $rawDrivers     =   Role::namespace( 'brookr.driver' )->users;
 $drivers        =   Helper::toJsOptions( $rawDrivers, [ 'id', 'username' ]);
 $trucksService  =   new TrucksService;
-$trucks         =   Helper::toJsOptions( $trucksService->getTrucks( 'available' ), [ 'id', 'name' ]);
+$trucks         =   Helper::toJsOptions( $trucksService->getTrucks( 'available' ), [ 'id', [ 'name', 'model' ], ' - ' ] );
 
 return [
     'sections'      =>      [
@@ -23,6 +28,7 @@ return [
                     'label'         =>  __( 'Loads Name' ),
                     'name'          =>  'name',
                     'type'          =>  'text',
+                    'value'         =>  $load->name ?? '',
                     'description'   =>  __( 'This can be automatically be generated.' ),
                 ], 
             ]
@@ -34,6 +40,7 @@ return [
                 [
                     'label'         =>  __( 'Brooker' ),
                     'name'          =>  'brooker_id',
+                    'value'         =>  $load->brooker_id ?? '',
                     'type'          =>  'select',
                     'options'       =>  $customers,
                     'description'   =>  __( 'The brooker providing the load.' ),
@@ -41,16 +48,19 @@ return [
                 ], [
                     'label'         =>  __( 'Trailer Reference' ),
                     'name'          =>  'trailer_reference',
+                    'value'         =>  $load->trailer_reference ?? '',
                     'type'          =>  'text',
                     'description'   =>  __( 'The trailer reference.' )
                 ], [
                     'label'         =>  __( 'Load Reference' ),
                     'name'          =>  'load_reference',
+                    'value'         =>  $load->load_reference ?? '',
                     'type'          =>  'text',
                     'description'   =>  __( 'The load reference.' )
                 ], [
                     'label'         =>  __( 'Pickup Reference' ),
                     'name'          =>  'pickup_reference',
+                    'value'         =>  $load->pickup_reference ?? '',
                     'type'          =>  'text',
                     'description'   =>  __( 'The pickup reference.' )
                 ], 
@@ -63,18 +73,21 @@ return [
                 [
                     'label'         =>  __( 'Driver' ),
                     'name'          =>  'driver_id',
+                    'value'         =>  $load->driver_id ?? '',
                     'type'          =>  'select',
                     'options'       =>  $drivers,
                     'description'   =>  __( 'Assigned driver can be empty. Unassigned loads can be handled by available drivers.' )
                 ], [
                     'label'         =>  __( 'Truck Assigned' ),
                     'name'          =>  'truck_id',
+                    'value'         =>  $load->truck_id ?? '',
                     'type'          =>  'select',
                     'options'       =>  $trucks,
                     'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
                 ], [
                     'label'         =>  __( 'Rate' ),
                     'name'          =>  'cost',
+                    'value'         =>  $load->cost ?? '',
                     'type'          =>  'number',
                     'validation'    =>  'required',
                     'description'   =>  __( 'The actual cost of the transport.' )
@@ -92,6 +105,7 @@ return [
                 [
                     'label'         =>  __( 'Pickup Date' ),
                     'name'          =>  'pickup_date',
+                    'value'         =>  $load->pickup_date ?? '',
                     'type'          =>  'datetime',
                     'data'          =>  [
                         'startDate' =>  1990
@@ -100,6 +114,7 @@ return [
                 ], [
                     'label'         =>  __( 'Delivery Date' ),
                     'name'          =>  'delivery_date',
+                    'value'         =>  $load->delivery_date ?? '',
                     'type'          =>  'datetime',
                     'data'          =>  [
                         'startDate' =>  1990
@@ -108,16 +123,19 @@ return [
                 ], [
                     'label'         =>  __( 'Pickup City' ),
                     'name'          =>  'pickup_city',
+                    'value'         =>  $load->pickup_city ?? '',
                     'type'          =>  'text',
                     'description'   =>  __( 'When the loads should be picked up by the driver.' ),
                 ], [
                     'label'         =>  __( 'Delivery City' ),
                     'name'          =>  'delivery_city',
+                    'value'         =>  $load->delivery_city ?? '',
                     'type'          =>  'text',
                     'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
                 ], [
                     'label'         =>  __( 'delivery Document' ),
                     'name'          =>  'delivery_document_url',
+                    'value'         =>  $load->delivery_document_url ?? '',
                     'type'          =>  'image',
                     'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
                 ], 

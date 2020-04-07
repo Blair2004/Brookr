@@ -38,6 +38,14 @@ class BrookrLoadsCrud extends Crud
      */
     public $relations   =  [
         [ 'tendoo_users', 'brookr_loads_delivery.user_id', '=', 'tendoo_users.id' ],
+        [ 'tendoo_users as driver', 'brookr_loads_delivery.driver_id', '=', 'driver.id' ],
+        [ 'brookr_trucks', 'brookr_loads_delivery.truck_id', '=', 'brookr_trucks.id' ],
+    ];
+
+    public $pick    =   [
+        'tendoo_users'  =>  [ 'username' ],
+        'driver'        =>  [ 'username' ],
+        'brookr_trucks' =>  [ 'name' ],
     ];
 
     /**
@@ -205,7 +213,34 @@ class BrookrLoadsCrud extends Crud
      */
     public function getColumns() {
         return [
-                    ];
+            'name'  =>  [
+                'label'     =>  __( 'Name' ),
+            ],
+            'pickup_date'  =>  [
+                'label'     =>  __( 'Pickup Date' ),
+            ],
+            'delivery_date'  =>  [
+                'label'     =>  __( 'Delivery Date' ),
+            ],
+            'load_reference'  =>  [
+                'label'     =>  __( 'Load Reference' ),
+            ],
+            'pickup_reference'  =>  [
+                'label'     =>  __( 'Pickup Reference' ),
+            ],
+            'driver_username'  =>  [
+                'label'     =>  __( 'Driver' ),
+            ],
+            'brookr_trucks_name'  =>  [
+                'label'     =>  __( 'Truck' ),
+            ],
+            'status'  =>  [
+                'label'     =>  __( 'Status' ),
+            ],
+            '$actions'  =>  [
+                'label' =>  __( 'Actions' )
+            ]
+        ];
     }
 
     /**

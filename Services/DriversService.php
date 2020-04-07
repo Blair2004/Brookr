@@ -4,12 +4,15 @@ namespace Modules\Brookr\Services;
 use Exception;
 use Tendoo\Core\Models\Role;
 use Tendoo\Core\Models\User;
+use Modules\Brookr\Models\Driver;
 use Modules\Brookr\Models\Address;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Modules\Brookr\Models\DriverDetail;
 use Tendoo\Core\Exceptions\NotFoundException;
 use Modules\Brookr\Events\AfterCreateLoadEvent;
+use Modules\Brookr\Events\BeforeCreateLoadEvent;
+use Modules\Brookr\Events\BeforeDeleteLoadEvent;
 use Modules\Brookr\Events\BeforeUpdateDriverEvent;
 
 class DriversService 
@@ -57,7 +60,7 @@ class DriversService
              * status could be changed
              */
             event( new BeforeUpdateDriverEvent( 
-                $user, 
+                Driver::find( $user->id ), 
                 $driverDetails, 
                 $fields[ 'professional' ][ 'status' ] 
             ) );
@@ -195,10 +198,10 @@ class DriversService
     /**
      * Will verify if a driver status 
      * can be changed and throw an error if it shouldn't.
-     * @param SetDriverEvent $event
+     * @param BeforeUpdateDriverEvent $event
      * @return void
      */
-    public function handleCanUpdateDriverStatus( SetDriverEvent $event )
+    public function handleCanUpdateDriverStatus( BeforeUpdateDriverEvent $event )
     {
         $ongoingLoadDelivery    =   $event->driver->loads()->ongoing()->count();
         if ( $ongoingLoadDelivery > 0 && $event->status === 'available' ) {
@@ -206,10 +209,47 @@ class DriversService
         }
     }
 
-    public function handleMarkDriverBusy( AfterCreateLoadEvent $event )
+    public function handleMarkDriverUnavailable( AfterCreateLoadEvent $event )
     {
         $driver     =   Driver::find( $event->load->driver_id );
-        $driver->brookr_driver_status   =   0;
+        $driver->brookr_driver_available   =   false;
         $driver->save();
+    }
+
+    public function handleChangeDriverStatus( BeforeCreateLoadEvent $event )
+    {
+        if ( $event->driver->brookr_driver_available ) {
+            throw new Exception( __( 'This driver cannot be assigned to this load as he\'s currently unavailable.' ) );
+        }
+    }
+
+    /**
+     * If the driver has been changed,
+     * we'll free the old driver
+     */
+    public function handleFreedDriverIfDifferent( BeforeEditLoadEvent $event )
+    {
+        $newDriverID    =   ( int ) $event->fields[ 'drivers' ][ 'driver_id' ];
+
+        if ( $newDriverID !== $event->driver->id ) {
+            $event->driver->brookr_driver_available     =   true;
+            $event->driver->save();
+
+            $driver     =   Driver::find( $newDriverID );
+            $driver->brookr_driver_available    =   false;
+            $driver->save();
+        }
+    }
+
+    /**
+     * Since the load is about to be
+     * deleted, let's freed the driver
+     * @param BeforeDeleteLoadEvent $event
+     * @return void
+     */
+    public function handleFreedDriver( BeforeDeleteLoadEvent $event )
+    {
+        $event->driver->brookr_driver_available     =   true;
+        $event->driver->save();
     }
 }

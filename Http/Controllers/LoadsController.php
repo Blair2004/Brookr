@@ -16,4 +16,14 @@ class LoadsController extends BaseController
     {
         return $this->loadsService->create( $request->all() );
     }
+
+    public function editLoad( Request $request, $id )
+    {
+        return $this->loadsService->edit( $id, $request->all() );
+    }
+
+    public function deleteLoad( $id )
+    {
+        return $this->loadsService->deleteLoad( $id );
+    }
 }

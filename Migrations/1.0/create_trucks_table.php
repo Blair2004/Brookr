@@ -27,7 +27,7 @@ class CreateTrucksTable extends Migration
                 $table->string('sold_mileage')->nullable();
                 $table->text('description')->nullable();
                 $table->text('thumbnail')->nullable();
-                $table->string( 'status' )->default( 'available' ); // available, busy
+                $table->string( 'status' )->default( 'available' ); // available, unavailable
                 $table->integer( 'user_id' );
                 $table->timestamps();
             });

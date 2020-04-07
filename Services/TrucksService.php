@@ -2,12 +2,14 @@
 namespace Modules\Brookr\Services;
 
 use Illuminate\Support\Str;
+use Modules\Brookr\Models\Truck;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Tendoo\Core\Exceptions\NotFoundException;
-use Modules\Brookr\Models\Truck;
 use Modules\Brookr\Models\TruckMaintenance;
+use Tendoo\Core\Exceptions\NotFoundException;
+use Modules\Brookr\Events\BeforeEditLoadEvent;
 use Modules\Brookr\Events\AfterCreateLoadEvent;
+use Modules\Brookr\Events\BeforeDeleteLoadEvent;
 
 class TrucksService
 {
@@ -136,7 +138,7 @@ class TrucksService
         switch( $status ) {
             case 'all' : return Truck::get();
             case 'available' : return Truck::where([ 'status' => 'available' ])->get();
-            case 'busy' : return Truck::where([ 'status' => 'busy' ])->get();
+            case 'unavailable' : return Truck::where([ 'status' => 'unavailable' ])->get();
         }
 
         return [];
@@ -262,18 +264,48 @@ class TrucksService
     }
 
     /**
-     * Will make a truck as busy
+     * Will make a truck as unavailable
      * while a load is being dispatched
      * @param AfterCreateLoadEvent $event
      * @return void
      */
-    public function handleMarkTruckBusy( AfterCreateLoadEvent $event )
+    public function handleMarkTruckUnavailable( AfterCreateLoadEvent $event )
     {
-        $truck      =   $this->trucksService->getTruck( $event->load->truck_id );
+        $truck      =   $this->getTruck( $event->load->truck_id );
 
         if ( $truck instanceof Truck ) {
-            $truck->status  =   'busy';
+            $truck->status  =   'unavailable';
             $truck->save();
         }
+    }
+
+    /**
+     * Freed a truck if it has been changed 
+     * from a load delivery
+     * @param BeforeEditLoadEvent
+     */
+    public function handleFreedTruckIfDifferent( BeforeEditLoadEvent $event )
+    {
+        $newTruckID     =   $event->fields[ 'drivers' ][ 'truck_id' ];
+        if ( intval( $newTruckID ) !== intval( $event->truck->id ) ) {
+            $event->truck->status   =   'available';
+            $event->truck->save();
+
+            $truck      =   Truck::find( $newTruckID );
+            $truck->status  =   'unavailable';
+            $truck->save();
+        }
+    }
+
+    /**
+     * Free a truck when the 
+     * load is deleted
+     * @param BeforeDeleteLoadEvent
+     * @return void
+     */
+    public function handleFreedTruck( BeforeDeleteLoadEvent $event )
+    {
+        $event->truck->status   =   'available';
+        $event->truck->save();
     }
 }

@@ -8,6 +8,8 @@ use Modules\Brookr\Events\FormsEvent;
 use Modules\Brookr\Events\FieldsEvent;
 use Tendoo\Core\Services\TendooModule;
 
+include( dirname( __FILE__ ) . '/vendor/autoload.php' );
+
 class BrookrModule extends TendooModule
 {
     public function __construct()

@@ -17,6 +17,7 @@ class FormsEvent
             'brookr.trucks-maintenances',
             'brookr.customers',
             'brookr.loads',
+            'brookr.settings',
         ])) {
             return $this->loadForm( $namespace, $index );
         }

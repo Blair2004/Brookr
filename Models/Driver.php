@@ -10,6 +10,10 @@ class Driver extends User
 {
     protected $table = 'tendoo_users';
 
+    protected $cats     =   [
+        'brookr_driver_available'   =>  'boolean'
+    ];
+
     protected static function booted()
     {
         static::addGlobalScope( new DriversScope );
