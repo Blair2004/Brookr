@@ -32,6 +32,20 @@ class CreateTrucksTable extends Migration
                 $table->timestamps();
             });
         }
+
+        if ( ! Schema::hasTable( 'brookr_trailers' ) ) {
+            Schema::create( 'brookr_trailers', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('name');
+                $table->string( 'trailer_reference' )->nullable();
+                $table->text('description')->nullable();
+                $table->float( 'rent_price' )->default(0);
+                $table->integer( 'driver_id' );
+                $table->string( 'status' )->default( 'available' ); // available, unavailable
+                $table->integer( 'user_id' );
+                $table->timestamps();
+            });
+        }
     }
 
     public function down()

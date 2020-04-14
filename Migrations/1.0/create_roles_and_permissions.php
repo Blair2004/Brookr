@@ -191,8 +191,8 @@ class CreateRolesAndPermissions extends Migration
          */
         if ( ! Schema::hasColumn( 'tendoo_users', 'brookr_avatar' ) ) {
             Schema::table( 'tendoo_users', function( $table ) {
-                $table->boolean( 'brookr_driver_available' );
-                $table->string( 'brookr_avatar' );
+                $table->string( 'brookr_driver_status' )->default( 'available' )->nullable();
+                $table->string( 'brookr_avatar' )->nullable();
             });
         }
     }
@@ -217,13 +217,16 @@ class CreateRolesAndPermissions extends Migration
             'brookr.change.loads-status'
         ]);
 
-        Role::namespace( 'brookr.driver' )->removePermissions([
-            'brookr.change.loads-status'
-        ]);
+        $role   =   Role::namespace( 'brookr.driver' );
+        if ( $role instanceof Role ) {
+            $role->removePermissions([
+                'brookr.change.loads-status'
+            ]);
+        } 
 
         if ( Schema::hasColumn( 'tendoo_users', 'brookr_avatar' ) ) {
             Schema::table( 'tendoo_users', function( $table ) {
-                $table->dropColumn([ 'brookr_avatar', 'brookr_driver_available' ]);
+                $table->dropColumn([ 'brookr_avatar', 'brookr_driver_status' ]);
             });
         }
     }

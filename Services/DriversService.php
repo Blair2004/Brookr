@@ -8,8 +8,10 @@ use Modules\Brookr\Models\Driver;
 use Modules\Brookr\Models\Address;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Modules\Brookr\Models\DriverDetail;
+use Modules\Brookr\Models\LoadDelivery;
+use Modules\Brookr\Models\DriversDetail;
 use Tendoo\Core\Exceptions\NotFoundException;
+use Modules\Brookr\Events\BeforeEditLoadEvent;
 use Modules\Brookr\Events\AfterCreateLoadEvent;
 use Modules\Brookr\Events\BeforeCreateLoadEvent;
 use Modules\Brookr\Events\BeforeDeleteLoadEvent;
@@ -41,6 +43,11 @@ class DriversService
         ];
     }
 
+    public function get( $id )
+    {
+        return Driver::findOrFail( $id );
+    }
+
     public function proceedDetailsRegistration( $fields, $result )
     {
         if ( $result[ 'status' ] === 'success' ) {
@@ -49,10 +56,10 @@ class DriversService
             /**
              * let's figure out if the use has 
              */
-            $driverDetails  =   DriverDetail::where( 'driver_id', $user->id )->first();
+            $driversDetails  =   DriversDetail::where( 'driver_id', $user->id )->first();
 
-            if ( ! $driverDetails instanceof DriverDetail ) {
-                $driverDetails  =   new DriverDetail;
+            if ( ! $driversDetails instanceof DriversDetail ) {
+                $driversDetails  =   new DriversDetail;
             }
 
             /**
@@ -61,34 +68,34 @@ class DriversService
              */
             event( new BeforeUpdateDriverEvent( 
                 Driver::find( $user->id ), 
-                $driverDetails, 
+                $driversDetails, 
                 $fields[ 'professional' ][ 'status' ] 
             ) );
 
-            $driverDetails->user_id                     =   Auth::id();
-            $driverDetails->driver_id                   =   $user->id;
-            $driverDetails->first_name                  =   $fields[ 'personnal' ][ 'first_name' ];
-            $driverDetails->last_name                   =   $fields[ 'personnal' ][ 'last_name' ];
-            $driverDetails->phone_cell                  =   $fields[ 'personnal' ][ 'phone_cell' ];
-            $driverDetails->phone_home                  =   $fields[ 'personnal' ][ 'phone_home' ];
-            $driverDetails->company_driver              =   $fields[ 'professional' ][ 'company_driver' ];
-            $driverDetails->fein                        =   $fields[ 'professional' ][ 'fein' ];
-            $driverDetails->ssn                         =   $fields[ 'professional' ][ 'ssn' ];
-            $driverDetails->fuel_card                   =   $fields[ 'professional' ][ 'fuel_card' ];
-            $driverDetails->deduct_tools                =   $fields[ 'professional' ][ 'deduct_tools' ] ? true : false;
-            $driverDetails->deduct_fuel                 =   $fields[ 'professional' ][ 'deduct_fuel' ] ? true : false;
-            $driverDetails->work_hired_date             =   $fields[ 'professional' ][ 'work_hired_date' ];
-            $driverDetails->work_terminated_date        =   $fields[ 'professional' ][ 'work_terminated_date' ];
-            $driverDetails->escrow_starting_balance     =   $fields[ 'professional' ][ 'escrow_starting_balance' ] ?? 0;
-            $driverDetails->ipass                       =   $fields[ 'professional' ][ 'ipass' ];
-            $driverDetails->comments                    =   $fields[ 'professional' ][ 'comments' ] ?? '';
-            $driverDetails->status                      =   $fields[ 'professional' ][ 'status' ] ?? 'unavailable';
-            $driverDetails->sms_notifications           =   $fields[ 'notifications' ][ 'sms_notifications' ] === true;
-            $driverDetails->email_notifications         =   $fields[ 'notifications' ][ 'email_notifications' ] === true;
-            // $driverDetails->medical_card_url         =   $fields[ 'medical' ][ 'medical_card_url' ];
-            $driverDetails->medical_card_expiration     =   $fields[ 'medical' ][ 'medical_card_expiration' ];
-            $driverDetails->medical_drug_test           =   $fields[ 'medical' ][ 'medical_drug_test' ];
-            $driverDetails->save();
+            $driversDetails->user_id                     =   Auth::id();
+            $driversDetails->driver_id                   =   $user->id;
+            $driversDetails->first_name                  =   $fields[ 'personnal' ][ 'first_name' ];
+            $driversDetails->last_name                   =   $fields[ 'personnal' ][ 'last_name' ];
+            $driversDetails->phone_cell                  =   $fields[ 'personnal' ][ 'phone_cell' ];
+            $driversDetails->phone_home                  =   $fields[ 'personnal' ][ 'phone_home' ];
+            $driversDetails->company_id                  =   $fields[ 'professional' ][ 'company_id' ];
+            $driversDetails->fein                        =   $fields[ 'professional' ][ 'fein' ];
+            $driversDetails->ssn                         =   $fields[ 'professional' ][ 'ssn' ];
+            $driversDetails->fuel_card                   =   $fields[ 'professional' ][ 'fuel_card' ];
+            $driversDetails->deduct_tools                =   $fields[ 'professional' ][ 'deduct_tools' ] ? true : false;
+            $driversDetails->deduct_fuel                 =   $fields[ 'professional' ][ 'deduct_fuel' ] ? true : false;
+            $driversDetails->work_hired_date             =   $fields[ 'professional' ][ 'work_hired_date' ];
+            $driversDetails->work_terminated_date        =   $fields[ 'professional' ][ 'work_terminated_date' ];
+            $driversDetails->escrow_starting_balance     =   $fields[ 'professional' ][ 'escrow_starting_balance' ] ?? 0;
+            $driversDetails->ipass                       =   $fields[ 'professional' ][ 'ipass' ];
+            $driversDetails->comments                    =   $fields[ 'professional' ][ 'comments' ] ?? '';
+            $driversDetails->status                      =   $fields[ 'professional' ][ 'status' ] ?? 'unavailable';
+            $driversDetails->sms_notifications           =   $fields[ 'notifications' ][ 'sms_notifications' ] === true;
+            $driversDetails->email_notifications         =   $fields[ 'notifications' ][ 'email_notifications' ] === true;
+            // $driversDetails->medical_card_url         =   $fields[ 'medical' ][ 'medical_card_url' ];
+            $driversDetails->medical_card_expiration     =   $fields[ 'medical' ][ 'medical_card_expiration' ];
+            $driversDetails->medical_drug_test           =   $fields[ 'medical' ][ 'medical_drug_test' ];
+            $driversDetails->save();
 
             return [
                 'status'    =>  'success',
@@ -154,7 +161,7 @@ class DriversService
                 $this->saveDriverAsUser([
                     'role_id'   =>  $role->id,
                     'password'  =>  Hash::make( $authentication[ 'password' ]),
-                    'active'    =>  $fields[ 'professional' ][ 'status' ] === 'active',
+                    'active'    =>  $fields[ 'professional' ][ 'status' ] === 'available',
                 ], $user );
 
                 return [
@@ -175,7 +182,7 @@ class DriversService
                         'email'     =>  $authentication[ 'email' ],
                         'username'  =>  $authentication[ 'username' ],
                         'password'  =>  Hash::make( $authentication[ 'password' ]),
-                        'active'    =>  $fields[ 'professional' ][ 'status' ] === 'active',
+                        'active'    =>  $fields[ 'professional' ][ 'status' ] === 'available',
                     ], $user );
 
                     return [
@@ -203,22 +210,28 @@ class DriversService
      */
     public function handleCanUpdateDriverStatus( BeforeUpdateDriverEvent $event )
     {
-        $ongoingLoadDelivery    =   $event->driver->loads()->ongoing()->count();
-        if ( $ongoingLoadDelivery > 0 && $event->status === 'available' ) {
-            throw new Exception( __( 'Cannot change the status of the driver, since he\'s assigned to an ongoing delivery.' ) );
+        if ( $event->driver instanceof Driver ) {
+            $ongoingLoadDelivery    =   $event->driver->loads()->ongoing()->count();
+            if ( $ongoingLoadDelivery > 0 && $event->status === 'available' ) {
+                throw new Exception( __( 'Cannot change the status of the driver, since he\'s assigned to an ongoing delivery.' ) );
+            }
         }
     }
 
     public function handleMarkDriverUnavailable( AfterCreateLoadEvent $event )
     {
-        $driver     =   Driver::find( $event->load->driver_id );
-        $driver->brookr_driver_available   =   false;
-        $driver->save();
+        if ( $event->load instanceof LoadDelivery ) {
+            $driver     =   Driver::find( $event->load->driver_id );
+            if ( $driver instanceof Driver ) {
+                $driver->brookr_driver_status   =   'unavailable';
+                $driver->save();
+            }
+        }
     }
 
     public function handleChangeDriverStatus( BeforeCreateLoadEvent $event )
     {
-        if ( $event->driver->brookr_driver_available ) {
+        if ( $event->driver instanceof Driver && $event->driver->brookr_driver_status === 'unavailable' ) {
             throw new Exception( __( 'This driver cannot be assigned to this load as he\'s currently unavailable.' ) );
         }
     }
@@ -229,15 +242,21 @@ class DriversService
      */
     public function handleFreedDriverIfDifferent( BeforeEditLoadEvent $event )
     {
-        $newDriverID    =   ( int ) $event->fields[ 'drivers' ][ 'driver_id' ];
+        $newDriverID    =   ( int ) $event->fields[ 'driver_id' ];
 
-        if ( $newDriverID !== $event->driver->id ) {
-            $event->driver->brookr_driver_available     =   true;
-            $event->driver->save();
-
+        if ( $event->driver instanceof Driver && $newDriverID !== $event->driver->id ) {
+            
             $driver     =   Driver::find( $newDriverID );
-            $driver->brookr_driver_available    =   false;
+
+            if ( $driver->brookr_driver_status === 'unavailable' ) {
+                throw new Exception( __( 'Cannot assign this driver as he is not available.' ) );
+            }
+
+            $driver->brookr_driver_status    =   'unavailable';
             $driver->save();
+
+            $event->driver->brookr_driver_status     =   'available';
+            $event->driver->save();
         }
     }
 
@@ -249,7 +268,9 @@ class DriversService
      */
     public function handleFreedDriver( BeforeDeleteLoadEvent $event )
     {
-        $event->driver->brookr_driver_available     =   true;
-        $event->driver->save();
+        if ( $event->driver instanceof Driver ) {
+            $event->driver->brookr_driver_status     =   true;
+            $event->driver->save();
+        }
     }
 }

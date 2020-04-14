@@ -18,6 +18,8 @@ class CreateLoadsDeliveryTable extends Migration
                 $table->integer( 'brooker_id' )->nullable();
                 $table->string( 'load_reference' )->nullable();
                 $table->string( 'pickup_reference' )->nullable();
+                $table->string( 'empty_trailer' )->nullable();
+                $table->string( 'drop_trailer' )->nullable();
                 $table->integer( 'truck_id' )->nullable();
                 $table->string( 'pickup_city' )->nullable();
                 $table->string( 'delivery_city' )->nullable();
@@ -26,7 +28,10 @@ class CreateLoadsDeliveryTable extends Migration
                 $table->integer( 'driver_id' )->nullable();
                 $table->string( 'trailer_reference' )->nullable();
                 $table->string( 'status' ); // pending, shipped, delivered
-                $table->float( 'cost' );
+                $table->float( 'cost' )->default(0);
+                $table->boolean( 'visible' )->default(false);
+                $table->float( 'escort_fees' )->default(0);
+                $table->float( 'lumper_fees' )->default(0);
                 $table->integer( 'user_id' );
                 $table->timestamps();
             });

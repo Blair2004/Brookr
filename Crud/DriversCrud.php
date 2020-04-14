@@ -33,11 +33,20 @@ class DriversCrud extends Crud
      */
     protected $model      =   \Tendoo\Core\Models\User::class;
 
+    public $pick     =   [
+        'tendoo_users'              =>  [ 'brookr_driver_status', 'username', 'email', 'created_at' ],
+        'brookr_drivers_details'    =>  [ 'brookr_drivers_details_company_id' ],
+    ];
+
     /**
      * Adding relation
      */
     public $relations   =  [
-        [ 'tendoo_roles', 'tendoo_roles.id', '=', 'tendoo_users.role_id' ]
+        [ 'tendoo_roles', 'tendoo_roles.id', '=', 'tendoo_users.role_id' ],
+        'leftJoin' =>  [
+            [ 'brookr_drivers_details', 'brookr_drivers_details.driver_id', '=', 'tendoo_users.id' ],
+            [ 'brookr_companies', 'brookr_drivers_details.company_id', '=', 'brookr_companies.id', 'left' ]
+        ]
     ];
 
     /**
@@ -216,11 +225,14 @@ class DriversCrud extends Crud
             'id'  =>  [
                 'label'  =>  __( 'Id' )
             ],
-            'username'  =>  [
-                'label'  =>  __( 'Username' )
+            'brookr_drivers_details_first_name'  =>  [
+                'label'  =>  __( 'Name' )
             ],
-            'active'  =>  [
+            'brookr_driver_status'  =>  [
                 'label'  =>  __( 'Status' )
+            ],
+            'brookr_companies_name' =>  [
+                'label' =>  __( 'Company' )
             ],
             'email'  =>  [
                 'label'  =>  __( 'Email' )
@@ -239,11 +251,48 @@ class DriversCrud extends Crud
      */
     public function setActions( $entry, $namespace )
     {
-        $entry->active          =   ( bool ) $entry->active ? __( 'Available' ) : __( 'Unavailable' );
+        switch( $entry->brookr_driver_status ) {
+            case 'available' : 
+                $entry->brookr_driver_status = __( 'Available' );
+            break;
+            case 'unavailable' : 
+                $entry->brookr_driver_status = __( 'Unavailable' );
+            break;
+            case 'disabled' : 
+                $entry->brookr_driver_status = __( 'Not Working' );
+            break;
+            default : 
+                $entry->brookr_driver_status = __( 'Unknown Status' );
+            break;
+        }
+
+        $names      =   ( $entry->brookr_drivers_details_first_name . ' ' . $entry->brookr_drivers_details_last_name );
+        $entry->brookr_drivers_details_first_name   =   empty( $entry->brookr_drivers_details_first_name ) ? $entry->username : $names;
+
+        $entry->brookr_companies_name   =   empty( $entry->brookr_companies_name ) ? __( 'N/A' ) : $entry->brookr_companies_name;
+
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit.driver',
+                'type'          =>      'GOTO',
+                'index'         =>      'id',
+                'url'           =>      '/dashboard/drivers/edit/{id}'
+            ], [
+                'label'         =>      __( 'Make Payment' ),
+                'namespace'     =>      'open.payment',
+                'type'          =>      'GOTO',
+                'index'         =>      'id',
+                'url'           =>      '/dashboard/drivers/edit/{id}'
+            ], [
+                'label'         =>      __( 'See Settlement' ),
+                'namespace'     =>      'open.settlement',
+                'type'          =>      'GOTO',
+                'index'         =>      'id',
+                'url'           =>      '/dashboard/drivers/edit/{id}'
+            ], [
+                'label'         =>      __( 'See Loads' ),
+                'namespace'     =>      'open.loads',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
                 'url'           =>      '/dashboard/drivers/edit/{id}'

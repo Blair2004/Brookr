@@ -15,7 +15,7 @@ class BeforeEditLoadEvent
     public $truck;
     public $fields;
 
-    public function __construct( LoadDelivery $load, Driver $driver, Truck $truck, $fields )
+    public function __construct( LoadDelivery $load, Driver $driver = null, Truck $truck = null, $fields = [])
     {
         $this->load     =   $load;
         $this->driver   =   $driver;

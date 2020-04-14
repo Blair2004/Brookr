@@ -25,6 +25,7 @@ class CreateDashboardReport extends Migration
                 $table->float( 'assigned_trucks' )->default(0);
                 $table->datetime( 'from_date' );
                 $table->datetime( 'to_date' );
+                $table->timestamps();
             });
         }
     }

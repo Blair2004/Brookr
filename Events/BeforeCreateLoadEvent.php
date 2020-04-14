@@ -15,7 +15,7 @@ class BeforeCreateLoadEvent
     public $details;
     public $fields;
 
-    public function __construct( Driver $driver, Truck $truck, $fields )
+    public function __construct( Driver $driver = null, Truck $truck = null, $fields )
     {
         $this->driver       =   $driver;
         $this->truck        =   $truck;

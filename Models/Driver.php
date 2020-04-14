@@ -11,7 +11,6 @@ class Driver extends User
     protected $table = 'tendoo_users';
 
     protected $cats     =   [
-        'brookr_driver_available'   =>  'boolean'
     ];
 
     protected static function booted()
@@ -21,7 +20,12 @@ class Driver extends User
 
     public function scopeAvailable( $query )
     {
-        return $query->where( 'brookr_driver_available', 1 );
+        return $query->where( 'brookr_driver_status', 'available' );
+    }
+
+    public function scopeUnavailable( $query )
+    {
+        return $query->where( 'brookr_driver_status', 'unavailable' );
     }
 
     public function loads()

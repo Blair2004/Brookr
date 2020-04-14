@@ -1,8 +1,9 @@
 <?php
+namespace Modules\Brookr\Services;
 
 use Modules\Brookr\Models\Notification;
 
-class NotificationService
+class NotificationsService
 {
     public function notify( $details, $user )
     {
@@ -12,6 +13,7 @@ class NotificationService
         $notification->actions      =   ! empty( @$details[ 'actions' ] ) ? json_encode( @$details[ 'actions' ] ) : '[]';
         $notification->action       =   $details[ 'action' ] ?? '';
         $notification->read         =   false;
+        $notification->user_id      =   $user;
         $notification->save();
     }
 

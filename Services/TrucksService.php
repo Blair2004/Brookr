@@ -1,6 +1,7 @@
 <?php
 namespace Modules\Brookr\Services;
 
+use Exception;
 use Illuminate\Support\Str;
 use Modules\Brookr\Models\Truck;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,11 @@ use Modules\Brookr\Events\BeforeDeleteLoadEvent;
 
 class TrucksService
 {
+    public function get( $id )
+    {
+        return Truck::findOrFail( $id );
+    }
+
     /**
      * create a truc entity
      * @param array fields
@@ -271,12 +277,14 @@ class TrucksService
      */
     public function handleMarkTruckUnavailable( AfterCreateLoadEvent $event )
     {
-        $truck      =   $this->getTruck( $event->load->truck_id );
-
-        if ( $truck instanceof Truck ) {
-            $truck->status  =   'unavailable';
-            $truck->save();
-        }
+        try {
+            $truck      =   $this->getTruck( $event->load->truck_id );
+            
+            if ( $truck instanceof Truck ) {
+                $truck->status  =   'unavailable';
+                $truck->save();
+            }
+        } catch( Exception $exception ){}
     }
 
     /**
@@ -286,8 +294,8 @@ class TrucksService
      */
     public function handleFreedTruckIfDifferent( BeforeEditLoadEvent $event )
     {
-        $newTruckID     =   $event->fields[ 'drivers' ][ 'truck_id' ];
-        if ( intval( $newTruckID ) !== intval( $event->truck->id ) ) {
+        $newTruckID     =   $event->fields[ 'truck_id' ];
+        if ( $event->truck instanceof Truck && intval( $newTruckID ) !== intval( $event->truck->id ) ) {
             $event->truck->status   =   'available';
             $event->truck->save();
 
@@ -305,7 +313,9 @@ class TrucksService
      */
     public function handleFreedTruck( BeforeDeleteLoadEvent $event )
     {
-        $event->truck->status   =   'available';
-        $event->truck->save();
+        if ( $event->truck instanceof Truck ) {
+            $event->truck->status   =   'available';
+            $event->truck->save();
+        }
     }
 }

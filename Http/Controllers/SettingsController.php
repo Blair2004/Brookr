@@ -8,6 +8,7 @@ use Modules\Brookr\Models\Notification;
 use Modules\Brookr\Services\FakerService;
 use Modules\Brookr\Services\DriversService;
 use Tendoo\Core\Http\Controllers\BaseController;
+use Modules\Brookr\Services\NotificationsService;
 
 class SettingsController extends BaseController
 {
@@ -34,7 +35,7 @@ class SettingsController extends BaseController
          * Only brookr options
          * should be saved
          */
-        collect([ 'sms', 'general' ])->each( function( $group ) use( $fields ){
+        collect([ 'sms', 'general', 'notifications' ])->each( function( $group ) use( $fields ){
             foreach( ( array ) @$fields[ $group ] as $name => $value ) {
                 if ( substr( $name, 0, 7 ) === 'brookr_' ) {
                     $this->optionsService->set( $name, $value );
@@ -53,5 +54,23 @@ class SettingsController extends BaseController
         return Notification::for( Auth::id() )
             ->exclude( $request->input( 'excluded' ) )
             ->get();
+    }
+
+    public function deleteNotification( $id )
+    {
+        $notification   =   new NotificationsService;
+        $notification->delete( $id );
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The notification has been deleted' )
+        ];
+    }
+
+    public function permissions()
+    {
+        return Role::get()->map( function( $role ) {
+            $role->permissions;
+            return $role;
+        });
     }
 }

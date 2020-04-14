@@ -1,13 +1,15 @@
 <?php
 namespace Modules\Brookr\Crud;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Tendoo\Core\Services\Crud;
-use Tendoo\Core\Services\Field;
-use Tendoo\Core\Services\Helper;
 use Tendoo\Core\Models\User;
 use Tendoo\Core\Facades\Hook;
+use Tendoo\Core\Services\Crud;
+use Tendoo\Core\Services\Field;
 use Tendoo\Core\Services\Users;
+use Tendoo\Core\Services\Helper;
+use Tendoo\Core\Services\Options;
+use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Models\LoadDelivery;
 
 class BrookrLoadsCrud extends Crud
@@ -38,14 +40,16 @@ class BrookrLoadsCrud extends Crud
      */
     public $relations   =  [
         [ 'tendoo_users', 'brookr_loads_delivery.user_id', '=', 'tendoo_users.id' ],
-        [ 'tendoo_users as driver', 'brookr_loads_delivery.driver_id', '=', 'driver.id' ],
-        [ 'brookr_trucks', 'brookr_loads_delivery.truck_id', '=', 'brookr_trucks.id' ],
+        'leftJoin'  =>  [
+            [ 'tendoo_users as driver', 'brookr_loads_delivery.driver_id', '=', 'driver.id' ],
+            [ 'brookr_trucks', 'brookr_loads_delivery.truck_id', '=', 'brookr_trucks.id' ]
+        ],
     ];
 
     public $pick    =   [
         'tendoo_users'  =>  [ 'username' ],
         'driver'        =>  [ 'username' ],
-        'brookr_trucks' =>  [ 'name' ],
+        'brookr_trucks' =>  [ 'brookr_trucks_name' ],
     ];
 
     /**
@@ -72,6 +76,13 @@ class BrookrLoadsCrud extends Crud
     public function __construct()
     {
         parent::__construct();
+
+        $this->options      =   app()->make( Options::class );
+        $this->statuses     =   collect( preg_split( '/[\r\n]+/', $this->options->get( 'brookr_loads_status' ), NULL, PREG_SPLIT_NO_EMPTY) )->mapWithKeys( function( $name ) {
+            return [ 
+                Str::slug( $name )  =>  ucfirst( $name )
+            ];
+        });
 
         Hook::addFilter( 'crud.entry', [ $this, 'setActions' ], 10, 2 );
     }
@@ -248,12 +259,29 @@ class BrookrLoadsCrud extends Crud
      */
     public function setActions( $entry, $namespace )
     {
-        $entry->{'$actions'}    =   [
+        $entry->status              =   $this->statuses[ $entry->status ] ?? $entry->status;
+        $entry->brookr_trucks_name  =   $entry->brookr_trucks_name ?? __( 'N/A' );
+        $entry->driver_username     =   $entry->driver_username ?? __( 'N/A' );
+        $entry->{'$actions'}        =   [
             [
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit.loads',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
+                'url'           =>      '/dashboard/loads/edit/{id}'
+            ], [
+                'label'         =>      __( 'Change Status' ),
+                'namespace'     =>      'open.change_status',
+                'type'          =>      'OPEN',
+                'index'         =>      'id',
+                'id'            =>      $entry->id,
+                'url'           =>      '/dashboard/loads/edit/{id}'
+            ], [
+                'label'         =>      __( 'Assign Driver' ),
+                'namespace'     =>      'open.assign_driver',
+                'type'          =>      'OPEN',
+                'index'         =>      'id',
+                'id'            =>      $entry->id,
                 'url'           =>      '/dashboard/loads/edit/{id}'
             ], [
                 'label'     =>  __( 'Delete' ),

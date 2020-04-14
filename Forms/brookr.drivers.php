@@ -1,8 +1,10 @@
 <?php
 
 use Tendoo\Core\Models\User;
+use Tendoo\Core\Services\Helper;
 use Modules\Brookr\Models\Address;
-use Modules\Brookr\Models\DriverDetail;
+use Modules\Brookr\Models\DriversDetail;
+use Modules\Brookr\Services\CompaniesService;
 
 $driver     =   new stdClass;
 $details    =   new stdClass;
@@ -10,7 +12,7 @@ $address    =   new stdClass;
 
 if ( ! empty( $index ) ) {
     $driver     =   User::find( $index );
-    $details    =   DriverDetail::where( 'driver_id', $index )->first();
+    $details    =   DriversDetail::where( 'driver_id', $index )->first();
     $address    =   Address::where( 'reference_type', 'driver' )
         ->where( 'reference_id', $index )
         ->first();
@@ -19,6 +21,10 @@ if ( ! empty( $index ) ) {
 if ( $driver instanceof User && $driver->role->namespace !== 'brookr.driver' ) {
     throw new Exception( __( 'The requested user is not a driver.' ) );
 }
+
+$companiesService   =   app()->make( CompaniesService::class );
+$companies          =   $companiesService->getAll();
+$companiesOptions   =   Helper::toJsOptions( $companies, [ 'id', 'name' ]);
 
 return [
     'sections'      =>      [
@@ -84,47 +90,47 @@ return [
                 [
                     'label'         =>  __( 'Company' ),
                     'appearance'    =>  'outline',
-                    'name'          =>  'company_driver',
-                    'value'         =>  $details->first_name ?? '',
+                    'name'          =>  'company_id',
+                    'value'         =>  $details->company_id ?? '',
                     'type'          =>  'select',
-                    'options'       =>  [],
+                    'options'       =>  $companiesOptions,
                     'description'   =>  __( 'Assign the driver to an existing company.' ),
                 ], [
                     'label'         =>  __( 'FEIN' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'fein',
-                    'value'         =>  $details->first_name ?? '',
+                    'value'         =>  $details->fein ?? '',
                     'type'          =>  'text',
                 ], [
                     'label'         =>  __( 'SSN' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'ssn',
-                    'value'         =>  $details->first_name ?? '',
+                    'value'         =>  $details->ssn ?? '',
                     'type'          =>  'text',
                     'description'   =>  __( 'The social security number.' ),
                 ], [
                     'label'         =>  __( 'Fuel Card' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'fuel_card',
-                    'value'         =>  $details->first_name ?? '',
+                    'value'         =>  $details->fuel_card ?? '',
                     'type'          =>  'text',
                 ], [
                     'label'         =>  __( 'Deduct Tools' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'deduct_tools',
-                    'value'         =>  $details->first_name ?? '',
+                    'value'         =>  $details->deduct_tools ?? '',
                     'type'          =>  'switch',
                 ], [
                     'label'         =>  __( 'Deduct Fuel' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'deduct_fuel',
-                    'value'         =>  $details->first_name ?? '',
+                    'value'         =>  $details->deduct_fuel ?? '',
                     'type'          =>  'switch',
                 ], [
                     'label'         =>  __( 'Hired Since' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'work_hired_date',
-                    'value'         =>  $details->first_name ?? '',
+                    'value'         =>  $details->work_hired_date ?? '',
                     'type'          =>  'datetime',
                     'data'          =>  [
                         'startDate'     =>  '1900',
@@ -133,7 +139,7 @@ return [
                     'label'         =>  __( 'Termination date' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'work_terminated_date',
-                    'value'         =>  $details->first_name ?? '',
+                    'value'         =>  $details->work_terminated_date ?? '',
                     'type'          =>  'datetime',
                     'data'          =>  [
                         'startDate'     =>  '1900',
@@ -143,33 +149,36 @@ return [
                     'label'         =>  __( 'Escrow Starting Balance' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'escrow_starting_balance',
-                    'value'         =>  $details->first_name ?? '',
+                    'value'         =>  $details->escrow_starting_balance ?? '',
                     'type'          =>  'number',
                 ], [
                     'label'         =>  __( 'IPass' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'ipass',
-                    'value'         =>  $details->first_name ?? '',
+                    'value'         =>  $details->ipass ?? '',
                     'type'          =>  'text',
                 ], [
                     'label'         =>  __( 'Comments' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'comments',
-                    'value'         =>  $details->first_name ?? '',
+                    'value'         =>  $details->comments ?? '',
                     'type'          =>  'textarea'
                 ], [
                     'label'         =>  __( 'Status' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'status',
-                    'value'         =>  $details->first_name ?? '',
+                    'value'         =>  $details->status ?? '',
                     'type'          =>  'select',
                     'options'       =>  [
                         [
-                            'label'     =>  __( 'Active' ),
-                            'value'     =>  'active',
+                            'label'     =>  __( 'Available' ),
+                            'value'     =>  'available',
                         ], [
-                            'label'     =>  __( 'Unactive' ),
-                            'value'     =>  'unactive',
+                            'label'     =>  __( 'Unavailable' ),
+                            'value'     =>  'unavailable',
+                        ], [
+                            'label'     =>  __( 'Not Working' ),
+                            'value'     =>  'disabled',
                         ]
                     ]
                 ]

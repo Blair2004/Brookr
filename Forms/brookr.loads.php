@@ -3,9 +3,11 @@
 use Tendoo\Core\Models\Role;
 use Modules\Brookr\Models\Truck;
 use Tendoo\Core\Services\Helper;
+use Tendoo\Core\Services\Options;
 use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Services\TrucksService;
 
+$load       =   new stdClass;
 if ( ! empty( $index ) ) {
     $load   =   LoadDelivery::find( $index );
 }
@@ -15,7 +17,14 @@ $customers      =   Helper::toJsOptions( $rawCustomers, [ 'id', 'username' ]);
 $rawDrivers     =   Role::namespace( 'brookr.driver' )->users;
 $drivers        =   Helper::toJsOptions( $rawDrivers, [ 'id', 'username' ]);
 $trucksService  =   new TrucksService;
-$trucks         =   Helper::toJsOptions( $trucksService->getTrucks( 'available' ), [ 'id', [ 'name', 'model' ], ' - ' ] );
+$trucks         =   Helper::toJsOptions( ! empty( $index ) ? $trucksService->getTrucks( 'all' ) : $trucksService->getTrucks( 'available' ), [ 'id', [ 'name', 'model' ], ' - ' ] );
+
+$options        =   app()->make( Options::class );
+$loadStatus     =   collect( preg_split( '/[\r\n]+/', $options->get( 'brookr_loads_status' ), NULL, PREG_SPLIT_NO_EMPTY) )->mapWithKeys( function( $name ) {
+    return [ 
+        Str::slug( $name )  =>  ucfirst( $name )
+    ];
+});
 
 return [
     'sections'      =>      [
@@ -63,46 +72,26 @@ return [
                     'value'         =>  $load->pickup_reference ?? '',
                     'type'          =>  'text',
                     'description'   =>  __( 'The pickup reference.' )
-                ], 
-            ]
-        ], [
-            'namespace'     =>  'drivers',
-            'title'         =>  __( 'Drivers Details' ),
-            'description'   =>  __( 'All details for the assigned driver' ),
-            'fields'        =>  [
-                [
-                    'label'         =>  __( 'Driver' ),
-                    'name'          =>  'driver_id',
-                    'value'         =>  $load->driver_id ?? '',
+                ], [
+                    'label'         =>  __( 'Empty Trailer' ),
+                    'name'          =>  'empty_trailer',
+                    'value'         =>  $load->empty_trailer ?? '',
+                    'type'          =>  'text',
+                    'description'   =>  __( 'The empty trailer reference.' )
+                ], [
+                    'label'         =>  __( 'Drop Trailer' ),
+                    'name'          =>  'drop_trailer',
+                    'value'         =>  $load->drop_trailer ?? '',
+                    'type'          =>  'text',
+                    'description'   =>  __( 'The drop trailer reference.' )
+                ], [
+                    'label'         =>  __( 'Status' ),
+                    'name'          =>  'status',
+                    'value'         =>  $load->status ?? '',
                     'type'          =>  'select',
-                    'options'       =>  $drivers,
-                    'description'   =>  __( 'Assigned driver can be empty. Unassigned loads can be handled by available drivers.' )
+                    'options'       =>  Helper::kvToJsOptions( $loadStatus ),
+                    'description'   =>  __( 'The delivery load status.' )
                 ], [
-                    'label'         =>  __( 'Truck Assigned' ),
-                    'name'          =>  'truck_id',
-                    'value'         =>  $load->truck_id ?? '',
-                    'type'          =>  'select',
-                    'options'       =>  $trucks,
-                    'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
-                ], [
-                    'label'         =>  __( 'Rate' ),
-                    'name'          =>  'cost',
-                    'value'         =>  $load->cost ?? '',
-                    'type'          =>  'number',
-                    'validation'    =>  'required',
-                    'description'   =>  __( 'The actual cost of the transport.' )
-                ], [
-                    'label'         =>  __( 'Rate Document URL' ),
-                    'name'          =>  'rate_document_url',
-                    'type'          =>  'image',
-                ], 
-            ]
-        ], [
-            'namespace'     =>  'pickup_delivery',
-            'title'         =>  __( 'Pickup & Delivery' ),
-            'description'   =>  __( 'All details about pickup and delivery' ),
-            'fields'        =>  [
-                [
                     'label'         =>  __( 'Pickup Date' ),
                     'name'          =>  'pickup_date',
                     'value'         =>  $load->pickup_date ?? '',
@@ -138,8 +127,65 @@ return [
                     'value'         =>  $load->delivery_document_url ?? '',
                     'type'          =>  'image',
                     'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
+                ], [
+                    'label'         =>  __( 'Rate Document URL' ),
+                    'name'          =>  'rate_document_url',
+                    'type'          =>  'image',
+                ], [
+                    'label'         =>  __( 'Publicly Visible' ),
+                    'name'          =>  'visible',
+                    'description'   =>  __( 'If is publicly visible, any available driver could self-assign to the load delivery.' ),
+                    'value'         =>  $load->visible ?? false,
+                    'type'          =>  'switch',
                 ], 
             ]
-        ]
+        ], [
+            'namespace'     =>  'drivers',
+            'title'         =>  __( 'Drivers Details' ),
+            'description'   =>  __( 'All details for the assigned driver' ),
+            'fields'        =>  [
+                [
+                    'label'         =>  __( 'Driver' ),
+                    'name'          =>  'driver_id',
+                    'value'         =>  $load->driver_id ?? '',
+                    'type'          =>  'select',
+                    'options'       =>  $drivers,
+                    'description'   =>  __( 'Assigned driver can be empty. Unassigned loads can be handled by available drivers.' )
+                ], [
+                    'label'         =>  __( 'Truck Assigned' ),
+                    'name'          =>  'truck_id',
+                    'value'         =>  $load->truck_id ?? '',
+                    'type'          =>  'select',
+                    'options'       =>  $trucks,
+                    'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
+                ], [
+                    'label'         =>  __( 'Rate' ),
+                    'name'          =>  'cost',
+                    'value'         =>  $load->cost ?? '',
+                    'type'          =>  'number',
+                     'description'   =>  __( 'The actual cost of the transport.' )
+                ], [
+                    'label'         =>  __( 'Escort Fees' ),
+                    'name'          =>  'escort_fees',
+                    'value'         =>  $load->escort_fees ?? '',
+                    'type'          =>  'number',
+                    'description'   =>  __( 'The actual escort fees if provided.' )
+                ], [
+                    'label'         =>  __( 'Lumper Fees' ),
+                    'name'          =>  'lumper_fees',
+                    'value'         =>  $load->lumper_fees ?? '',
+                    'type'          =>  'number',
+                    'description'   =>  __( 'The actual lumper fees if provided.' )
+                ],
+            ]
+        ], 
+        // [
+        //     'namespace'     =>  'pickup_delivery',
+        //     'title'         =>  __( 'Pickup & Delivery' ),
+        //     'description'   =>  __( 'All details about pickup and delivery' ),
+        //     'fields'        =>  [
+                
+        //     ]
+        // ]
     ]
 ];

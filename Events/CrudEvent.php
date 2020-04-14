@@ -2,6 +2,7 @@
 namespace Modules\Brookr\Events;
 
 use Modules\Brookr\Crud\DriversCrud;
+use Modules\Brookr\Crud\CompaniesCrud;
 use Modules\Brookr\Crud\BrookrLoadsCrud;
 use Modules\Brookr\Crud\BrookrTrucksCrud;
 use Modules\Brookr\Crud\BrookrCustomersCrud;
@@ -16,6 +17,7 @@ class CrudEvent
             case 'brookr.loads':                return BrookrLoadsCrud::class;
             case 'brookr.trucks-maintenance':   return BrookrTrucksMaintenancesCrud::class;
             case 'brookr.drivers':              return DriversCrud::class;
+            case 'brookr.companies':            return CompaniesCrud::class;
             default :                           return $namespace;
         }
     }

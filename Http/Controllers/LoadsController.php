@@ -26,4 +26,14 @@ class LoadsController extends BaseController
     {
         return $this->loadsService->deleteLoad( $id );
     }
+
+    public function updateLoadAssignation( $load, Request $request )
+    {
+        return $this->loadsService->updateLoadAssignation( $load, $request->input( 'drivers' ) );
+    }
+
+    public function updateLoadStatus( $load, Request $request )
+    {
+        return $this->loadsService->updateLoadStatus( $load, $request->input( 'load' ) );
+    }
 }
