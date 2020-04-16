@@ -102,6 +102,15 @@ return [
                     'value'         =>  $details->fein ?? '',
                     'type'          =>  'text',
                 ], [
+                    'label'         =>  __( 'Driver License Expiration' ),
+                    'appearance'    =>  'outline',
+                    'name'          =>  'driving_license_expiration',
+                    'value'         =>  $details->driving_license_expiration ?? '',
+                    'type'          =>  'datetime',
+                    'data'          =>  [
+                        'startDate'     =>  '1900',
+                    ],
+                ], [
                     'label'         =>  __( 'SSN' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'ssn',
@@ -172,13 +181,10 @@ return [
                     'options'       =>  [
                         [
                             'label'     =>  __( 'Available' ),
-                            'value'     =>  'available',
+                            'value'     =>  'unassigned',
                         ], [
                             'label'     =>  __( 'Unavailable' ),
                             'value'     =>  'unavailable',
-                        ], [
-                            'label'     =>  __( 'Not Working' ),
-                            'value'     =>  'disabled',
                         ]
                     ]
                 ]

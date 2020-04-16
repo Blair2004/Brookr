@@ -226,7 +226,13 @@ class CreateRolesAndPermissions extends Migration
 
         if ( Schema::hasColumn( 'tendoo_users', 'brookr_avatar' ) ) {
             Schema::table( 'tendoo_users', function( $table ) {
-                $table->dropColumn([ 'brookr_avatar', 'brookr_driver_status' ]);
+                $table->dropColumn([ 'brookr_avatar' ]);
+            });
+        }
+        
+        if ( Schema::hasColumn( 'tendoo_users', 'brookr_driver_status' ) ) {
+            Schema::table( 'tendoo_users', function( $table ) {
+                $table->dropColumn([ 'brookr_driver_status' ]);
             });
         }
     }

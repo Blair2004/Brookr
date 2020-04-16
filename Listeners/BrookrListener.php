@@ -14,7 +14,10 @@ use Modules\Brookr\Events\AfterCreateLoadEvent;
 use Modules\Brookr\Events\AfterDeleteLoadEvent;
 use Modules\Brookr\Events\BeforeCreateLoadEvent;
 use Modules\Brookr\Events\BeforeDeleteLoadEvent;
+use Modules\Brookr\Events\AfterCreateDriverEvent;
+use Modules\Brookr\Events\BeforeDeleteTruckEvent;
 use Modules\Brookr\Services\NotificationsService;
+use Modules\Brookr\Events\BeforeDeleteDriverEvent;
 use Modules\Brookr\Events\BeforeUpdateDriverEvent;
 
 class BrookrListener
@@ -91,8 +94,28 @@ class BrookrListener
         );
 
         $event->listen(
+            AfterCreateTruckEvent::class,
+            DashboardService::class . '@increaseTrucks'
+        );
+
+        $event->listen(
+            BeforeDeleteTruckEvent::class,
+            DashboardService::class . '@reduceTrucks'
+        );
+
+        $event->listen(
             BeforeDeleteLoadEvent::class,
             DashboardService::class . '@reduceLoad'
+        );
+
+        $event->listen(
+            AfterCreateDriverEvent::class,
+            DashboardService::class . '@increaseDrivers'
+        );
+
+        $event->listen(
+            BeforeDeleteDriverEvent::class,
+            DashboardService::class . '@reduceDrivers'
         );
     }
 

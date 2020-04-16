@@ -15,7 +15,7 @@ class BeforeUpdateDriverEvent
     public $details;
     public $status;
 
-    public function __construct( Driver $driver, DriversDetail $details, $status )
+    public function __construct( Driver $driver, DriversDetail $details = null, $status = null )
     {
         $this->driver       =   $driver;
         $this->details      =   $details;

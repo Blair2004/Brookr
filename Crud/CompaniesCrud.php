@@ -241,10 +241,10 @@ class CompaniesCrud extends Crud
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  'tendoo/crud/brookr.companies' . '/#',
+                'url'       =>  url( 'api/brookr/companies/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a licence' )
+                    'title'     =>  __( 'Delete a company' )
                 ]
             ]
         ];

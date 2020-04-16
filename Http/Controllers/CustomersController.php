@@ -22,4 +22,9 @@ class CustomersController extends BaseController
     {
         return $this->customersService->registerCustomer( $request->all(), $index );
     }
+
+    public function deleteCustomer( $id )
+    {
+        return $this->customersService->deleteCustomer( $id );
+    }
 }

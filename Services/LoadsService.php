@@ -198,4 +198,11 @@ class LoadsService
             'message'   =>  __( 'The load status has been changed.' )
         ];
     }
+
+    public function getUnassigned( $total = 10, $order = 'asc' )
+    {
+        return LoadDelivery::where( 'status', 'pending' )->orderBy( 'created_at', $order )
+            ->limit( $total )
+            ->get();
+    }
 }

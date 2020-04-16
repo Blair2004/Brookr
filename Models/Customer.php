@@ -4,14 +4,19 @@ namespace Modules\Brookr\Models;
 use Tendoo\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Brookr\Models\LoadDelivery;
-use Modules\Brookr\Models\Scopes\DriversScope;
+use Modules\Brookr\Models\Scopes\CustomerScope;
 
-class Driver extends User
+class Customer extends User
 {
     protected $table = 'tendoo_users';
 
     protected $cats     =   [
     ];
+
+    public static function booted()
+    {
+        static::addGlobalScope( new CustomerScope );
+    }
 
     public static function boot()
     {
@@ -20,11 +25,6 @@ class Driver extends User
         Driver::deleting( function( $instance ) {
             $instance->details->delete();
         });
-    }
-
-    protected static function booted()
-    {
-        static::addGlobalScope( new DriversScope );
     }
 
     public function scopeAvailable( $query )

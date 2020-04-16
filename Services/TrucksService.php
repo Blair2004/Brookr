@@ -8,9 +8,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Modules\Brookr\Models\TruckMaintenance;
 use Tendoo\Core\Exceptions\NotFoundException;
+use Modules\Brookr\Events\AfterEditTruckEvent;
 use Modules\Brookr\Events\BeforeEditLoadEvent;
 use Modules\Brookr\Events\AfterCreateLoadEvent;
+use Modules\Brookr\Events\BeforeEditTruckEvent;
+use Modules\Brookr\Events\AfterCreateTruckEvent;
 use Modules\Brookr\Events\BeforeDeleteLoadEvent;
+use Modules\Brookr\Events\BeforeCreateTruckEvent;
+use Modules\Brookr\Events\BeforeDeleteTruckEvent;
 
 class TrucksService
 {
@@ -26,6 +31,8 @@ class TrucksService
      */
     public function createTruck( $fields )
     {
+        event( new BeforeCreateTruckEvent( $fields ) );
+
         $fields                     =   array_merge( $fields[ 'general' ], $fields[ 'company' ] );
         $truck                      =   new Truck;
         $truck->year                =   $fields[ 'year' ];
@@ -46,6 +53,8 @@ class TrucksService
         $truck->status              =   $fields[ 'status' ] ? 'available' : 'unavailable';
         $truck->user_id             =   Auth::id();
         $truck->save();
+
+        event( new AfterCreateTruckEvent( $truck ) );
 
         return [
             'status'    =>  'success',
@@ -69,6 +78,8 @@ class TrucksService
             $truck->maintenance->each( function( $report ) {
                 $report->delete();
             });
+
+            event( new BeforeDeleteTruckEvent( $truck ) );
 
             $truck->delete();
             
@@ -98,6 +109,9 @@ class TrucksService
         $truck                      =   Truck::find( $id );
 
         if( $truck instanceof Truck ) {
+
+            event( new BeforeEditTruckEvent( $truck ) );
+
             $field                      =   array_merge( $field[ 'general' ], $field[ 'company' ] );
             $truck->year                =   $field[ 'year' ];
             $truck->model               =   $field[ 'model' ];
@@ -116,6 +130,8 @@ class TrucksService
             $truck->status              =   $field[ 'status' ] ? 'available' : 'unavailable';
             $truck->user_id             =   Auth::id();
             $truck->save();
+
+            event( new AfterEditTruckEvent( $truck ) );
     
             return [
                 'status'    =>  'success',

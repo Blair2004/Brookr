@@ -74,4 +74,19 @@ class CompaniesService
     {
         return Company::get();
     }
+
+    /**
+     * Delete an existing company
+     * @param int company id
+     * @return array
+     */
+    public function deleteCompany( $id )
+    {
+        Company::findOrFail( $id )->delete();
+        
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The company has been successfully deleted' )
+        ];
+    }
 }

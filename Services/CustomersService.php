@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Tendoo\Core\Models\Role;
 use Tendoo\Core\Models\User;
 use Modules\Brookr\Models\Address;
+use Modules\Brookr\Models\Customer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -96,6 +97,17 @@ class CustomersService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The customer address has been saved' )
+        ];
+    }
+
+    public function deleteCustomer( $id )
+    {
+        $customer   =   Customer::findOrFail( $id );
+        $customer->delete();
+
+        return [
+            'status'    =>  'failed',
+            'message'   =>  __( 'The customer has been deleted.' )
         ];
     }
 }

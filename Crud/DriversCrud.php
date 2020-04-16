@@ -35,7 +35,8 @@ class DriversCrud extends Crud
 
     public $pick     =   [
         'tendoo_users'              =>  [ 'brookr_driver_status', 'username', 'email', 'created_at' ],
-        'brookr_drivers_details'    =>  [ 'brookr_drivers_details_company_id' ],
+        // 'brookr_drivers_details'    =>  [ 'brookr_drivers_details_company_id', 'brookr_drivers_details_first_name', 'brookr_drivers_details_last_name' ],
+        // 'brookr_companies'          =>  [ 'brookr_company_name', 'name' ]
     ];
 
     /**
@@ -64,7 +65,7 @@ class DriversCrud extends Crud
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   "";
+    public $fillable    =   "";
 
     /**
      * Define Constructor
@@ -266,10 +267,10 @@ class DriversCrud extends Crud
             break;
         }
 
-        $names      =   ( $entry->brookr_drivers_details_first_name . ' ' . $entry->brookr_drivers_details_last_name );
-        $entry->brookr_drivers_details_first_name   =   empty( $entry->brookr_drivers_details_first_name ) ? $entry->username : $names;
-
-        $entry->brookr_companies_name   =   empty( $entry->brookr_companies_name ) ? __( 'N/A' ) : $entry->brookr_companies_name;
+        $names      =   ( @$entry->brookr_drivers_details_first_name . ' ' . @$entry->brookr_drivers_details_last_name );
+        // dump( $names );
+        $entry->brookr_drivers_details_first_name   =   empty( trim( $names ) ) ? $entry->username : $names;
+        $entry->brookr_companies_name               =   empty( $entry->brookr_companies_name ) ? __( 'N/A' ) : $entry->brookr_companies_name;
 
         $entry->{'$actions'}    =   [
             [
@@ -301,7 +302,7 @@ class DriversCrud extends Crud
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  'tendoo/crud/brookr.drivers/{id}',
+                'url'       =>  url( 'api/brookr/drivers/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a Driver' )
@@ -341,6 +342,9 @@ class DriversCrud extends Crud
             foreach ( $request->input( 'entries_id' ) as $id ) {
                 $entity     =   $this->model::find( $id );
                 if ( $entity instanceof Tendoo\Core\Models\User ) {
+
+                    event( new BeforeDeleteDriverEvent( $model ) );
+
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {

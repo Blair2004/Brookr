@@ -24,4 +24,9 @@ class CompaniesController extends BaseController
         
         return $this->companiesService->saveCompany( $fields, $id );
     }
+
+    public function deleteCompany( $id )
+    {
+        return $this->companiesService->deleteCompany( $id );
+    }
 }

@@ -16,4 +16,19 @@ class DriversController extends BaseController
     {
         return $this->driversService->setDriver( $request->all(), $index );
     }
+
+    public function getByMedicalCard()
+    {
+        return $this->driversService->getByMedicalCard( 5, 'asc' );
+    }
+
+    public function getByDriverCard()
+    {
+        return $this->driversService->getByDriverCard( 5, 'asc' );
+    }
+
+    public function deleteDriver( $id )
+    {
+        return $this->driversService->deleteDriver( $id );
+    }
 }

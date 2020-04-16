@@ -15,6 +15,9 @@ use Modules\Brookr\Events\BeforeEditLoadEvent;
 use Modules\Brookr\Events\AfterCreateLoadEvent;
 use Modules\Brookr\Events\BeforeCreateLoadEvent;
 use Modules\Brookr\Events\BeforeDeleteLoadEvent;
+use Modules\Brookr\Events\AfterCreateDriverEvent;
+use Modules\Brookr\Events\AfterUpdateDriverEvent;
+use Modules\Brookr\Events\BeforeCreateDriverEvent;
 use Modules\Brookr\Events\BeforeUpdateDriverEvent;
 
 class DriversService 
@@ -22,6 +25,19 @@ class DriversService
     public function setDriver( $fields, $id = null )
     {
         $result             =   [];
+
+        /**
+         * If we're creating the driver dispatch the new event 
+         * otherwiste dispatch the update event
+         */
+        if ( $id !== null ) {
+            $driver = Driver::findOrFail( $id );
+        }
+
+        event( $id === null ? new BeforeCreateDriverEvent( $fields ) : new BeforeUpdateDriverEvent( 
+            $driver,
+            $driver->details
+        ) );
 
         $result[ 'authentication' ]     =   $this->proceedUserRegistration( $fields, 'brookr.driver', $id );
 
@@ -35,6 +51,8 @@ class DriversService
 
         $result[ 'details' ]            =   $this->proceedDetailsRegistration( $fields, $result[ 'authentication' ] );
         $result[ 'address' ]            =   $this->setDriversAddresses( $fields[ 'address' ], $result[ 'authentication' ] );
+
+        event( $id === null ? new AfterCreateDriverEvent( Driver::find( $id ) ) : new AfterUpdateDriverEvent( Driver::find( $id ) ) );
 
         return [
             'status'    =>  'success',
@@ -87,6 +105,7 @@ class DriversService
             $driversDetails->work_hired_date             =   $fields[ 'professional' ][ 'work_hired_date' ];
             $driversDetails->work_terminated_date        =   $fields[ 'professional' ][ 'work_terminated_date' ];
             $driversDetails->escrow_starting_balance     =   $fields[ 'professional' ][ 'escrow_starting_balance' ] ?? 0;
+            $driversDetails->driving_license_expiration  =   $fields[ 'professional' ][ 'driving_license_expiration' ];
             $driversDetails->ipass                       =   $fields[ 'professional' ][ 'ipass' ];
             $driversDetails->comments                    =   $fields[ 'professional' ][ 'comments' ] ?? '';
             $driversDetails->status                      =   $fields[ 'professional' ][ 'status' ] ?? 'unavailable';
@@ -272,5 +291,51 @@ class DriversService
             $event->driver->brookr_driver_status     =   true;
             $event->driver->save();
         }
+    }
+
+    /**
+     * get drivers which medial card expire soon
+     * @param int total to get
+     * @param string order
+     * @return array
+     */
+    public function getByMedicalCard( $total = 10, $order = 'asc' )
+    {
+        return DriversDetail::where( 'status', '!=', 'unavailable' ) 
+            ->orderBy( 'medical_card_expiration', $order )
+            ->limit( $total )
+            ->get()
+            ->map( function( $detail ) {
+            $detail->driver;
+            return $detail;
+        });
+    }
+
+    /**
+     * get drivers which medial card expire soon
+     * @param int total to get
+     * @param string order
+     * @return array
+     */
+    public function getByDriverCard( $total = 10, $order = 'asc' )
+    {
+        return DriversDetail::where( 'status', '!=', 'unavailable' )
+            ->orderBy( 'driving_license_expiration', $order )
+            ->limit( $total )
+            ->get()
+            ->map( function( $detail ) {
+            $detail->driver;
+            return $detail;
+        });
+    }
+
+    public function deleteDriver( $id )
+    {
+        Driver::findOrFail( $id )->delete();
+        
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The driver has been deleted.' )
+        ];
     }
 }

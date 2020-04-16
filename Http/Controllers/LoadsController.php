@@ -36,4 +36,9 @@ class LoadsController extends BaseController
     {
         return $this->loadsService->updateLoadStatus( $load, $request->input( 'load' ) );
     }
+
+    public function getUnassigned()
+    {
+        return $this->loadsService->getUnassigned( 10, 'asc' );
+    }
 }
