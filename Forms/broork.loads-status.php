@@ -10,8 +10,9 @@ $loadService    =   app()->make( LoadsService::class );
 $load           =   $loadService->get( $index );
 $options        =   app()->make( Options::class );
 $loadStatus     =   collect( preg_split( '/[\r\n]+/', $options->get( 'brookr_loads_status' ), NULL, PREG_SPLIT_NO_EMPTY) )->mapWithKeys( function( $name ) {
+    $key        =   explode( '-', $name );
     return [ 
-        Str::slug( $name )  =>  ucfirst( $name )
+        Str::slug( trim( $key[0] ) )  =>  ucfirst( trim( $key[0] ) )
     ];
 });
 

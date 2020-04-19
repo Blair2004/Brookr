@@ -223,7 +223,10 @@ class BrookrLoadsCrud extends Crud
      * @return  array of columns configuration
      */
     public function getColumns() {
-        return [
+        $columns    =   collect([
+            '$id'  =>  [
+                'label'     =>  __( 'Id' ),
+            ],
             'name'  =>  [
                 'label'     =>  __( 'Name' ),
             ],
@@ -239,6 +242,9 @@ class BrookrLoadsCrud extends Crud
             'pickup_reference'  =>  [
                 'label'     =>  __( 'Pickup Reference' ),
             ],
+            'cost'  =>  [
+                'label'     =>  __( 'Rate' ),
+            ],
             'driver_username'  =>  [
                 'label'     =>  __( 'Driver' ),
             ],
@@ -251,7 +257,12 @@ class BrookrLoadsCrud extends Crud
             '$actions'  =>  [
                 'label' =>  __( 'Actions' )
             ]
-        ];
+        ])->mapWithKeys( function( $column, $key ) {
+            $column[ 'direction' ]   =   request()->query( 'active' ) === $key ? request()->query( 'direction' ) : null;
+            return [ $key => $column ]; 
+        })->toArray();
+
+        return $columns;
     }
 
     /**
@@ -262,6 +273,19 @@ class BrookrLoadsCrud extends Crud
         $entry->status              =   $this->statuses[ $entry->status ] ?? $entry->status;
         $entry->brookr_trucks_name  =   $entry->brookr_trucks_name ?? __( 'N/A' );
         $entry->driver_username     =   $entry->driver_username ?? __( 'N/A' );
+        
+        $loadStatus     =   collect( preg_split( '/[\r\n]+/', $this->options->get( 'brookr_loads_status' ), NULL, PREG_SPLIT_NO_EMPTY) )->mapWithKeys( function( $name ) {
+            $key        =   explode( '-', $name );
+            return [ 
+                Str::slug( trim( $key[0] ) )  =>  trim( $key[1] ?? 'white' )
+            ];
+        });
+        
+        $entry->{'$props'}          =   [
+            'className'             =>  [ 'bg-' . $loadStatus[ $entry->status ] . '-200' ],
+            'tdClassName'           =>  [ 'border-' . $loadStatus[ $entry->status ] . '-400' ]
+        ];
+
         $entry->{'$actions'}        =   [
             [
                 'label'         =>      __( 'Edit' ),
@@ -288,6 +312,7 @@ class BrookrLoadsCrud extends Crud
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
+                'id'        =>  $entry->id,
                 'url'       =>  url( '/api/brookr/loads/{id}' ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
