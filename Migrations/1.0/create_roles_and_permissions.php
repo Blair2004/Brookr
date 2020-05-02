@@ -147,6 +147,126 @@ class CreateRolesAndPermissions extends Migration
             $canSeeLoads->save();
         }
 
+        if ( ! ( $canSeeCompanies = Permission::namespace( 'brookr.see.companies' )->first() ) instanceof Permission ) {
+            $canSeeCompanies               =   new Permission;
+            $canSeeCompanies->name         =   __( 'Can see companies' );
+            $canSeeCompanies->namespace    =   'brookr.see.companies';
+            $canSeeCompanies->description   =   '';
+            $canSeeCompanies->save();
+        }
+
+        if ( ! ( $canCreateCompanies = Permission::namespace( 'brookr.create.companies' )->first() ) instanceof Permission ) {
+            $canCreateCompanies               =   new Permission;
+            $canCreateCompanies->name         =   __( 'Can create companies' );
+            $canCreateCompanies->namespace    =   'brookr.create.companies';
+            $canCreateCompanies->description   =   '';
+            $canCreateCompanies->save();
+        }
+
+        if ( ! ( $canEditCompanies = Permission::namespace( 'brookr.edit.companies' )->first() ) instanceof Permission ) {
+            $canEditCompanies               =   new Permission;
+            $canEditCompanies->name         =   __( 'Can edit companies' );
+            $canEditCompanies->namespace    =   'brookr.edit.companies';
+            $canEditCompanies->description   =   '';
+            $canEditCompanies->save();
+        }
+
+        if ( ! ( $canDeleteCompanies = Permission::namespace( 'brookr.delete.companies' )->first() ) instanceof Permission ) {
+            $canDeleteCompanies               =   new Permission;
+            $canDeleteCompanies->name         =   __( 'Can delete companies' );
+            $canDeleteCompanies->namespace    =   'brookr.delete.companies';
+            $canDeleteCompanies->description   =   '';
+            $canDeleteCompanies->save();
+        }
+
+        if ( ! ( $canCreateCustomer = Permission::namespace( 'brookr.create.customers' )->first() ) instanceof Permission ) {
+            $canCreateCustomer               =   new Permission;
+            $canCreateCustomer->name         =   __( 'Can create customers' );
+            $canCreateCustomer->namespace    =   'brookr.create.customers';
+            $canCreateCustomer->description   =   '';
+            $canCreateCustomer->save();
+        }
+
+        if ( ! ( $canSeeCustomers = Permission::namespace( 'brookr.see.customers' )->first() ) instanceof Permission ) {
+            $canSeeCustomers               =   new Permission;
+            $canSeeCustomers->name         =   __( 'Can see customers' );
+            $canSeeCustomers->namespace    =   'brookr.see.customers';
+            $canSeeCustomers->description   =   '';
+            $canSeeCustomers->save();
+        }
+
+        if ( ! ( $canDeleteCustomers = Permission::namespace( 'brookr.delete.customers' )->first() ) instanceof Permission ) {
+            $canDeleteCustomers               =   new Permission;
+            $canDeleteCustomers->name         =   __( 'Can delete customers' );
+            $canDeleteCustomers->namespace    =   'brookr.delete.customers';
+            $canDeleteCustomers->description   =   '';
+            $canDeleteCustomers->save();
+        }
+
+        if ( ! ( $canEditCustomers = Permission::namespace( 'brookr.edit.customers' )->first() ) instanceof Permission ) {
+            $canEditCustomers               =   new Permission;
+            $canEditCustomers->name         =   __( 'Can edit customers' );
+            $canEditCustomers->namespace    =   'brookr.edit.customers';
+            $canEditCustomers->description   =   '';
+            $canEditCustomers->save();
+        }
+
+        if ( ! ( $canCreateDrivers = Permission::namespace( 'brookr.create.drivers' )->first() ) instanceof Permission ) {
+            $canCreateDrivers               =   new Permission;
+            $canCreateDrivers->name         =   __( 'Can create drivers' );
+            $canCreateDrivers->namespace    =   'brookr.create.drivers';
+            $canCreateDrivers->description   =   '';
+            $canCreateDrivers->save();
+        }
+
+        if ( ! ( $canSeeDrivers = Permission::namespace( 'brookr.see.drivers' )->first() ) instanceof Permission ) {
+            $canSeeDrivers               =   new Permission;
+            $canSeeDrivers->name         =   __( 'Can see drivers' );
+            $canSeeDrivers->namespace    =   'brookr.see.drivers';
+            $canSeeDrivers->description   =   '';
+            $canSeeDrivers->save();
+        }
+
+        if ( ! ( $canDeleteDrivers = Permission::namespace( 'brookr.delete.drivers' )->first() ) instanceof Permission ) {
+            $canDeleteDrivers               =   new Permission;
+            $canDeleteDrivers->name         =   __( 'Can delete drivers' );
+            $canDeleteDrivers->namespace    =   'brookr.delete.drivers';
+            $canDeleteDrivers->description   =   '';
+            $canDeleteDrivers->save();
+        }
+
+        if ( ! ( $canEditDrivers = Permission::namespace( 'brookr.edit.drivers' )->first() ) instanceof Permission ) {
+            $canEditDrivers               =   new Permission;
+            $canEditDrivers->name         =   __( 'Can edit drivers' );
+            $canEditDrivers->namespace    =   'brookr.edit.drivers';
+            $canEditDrivers->description   =   '';
+            $canEditDrivers->save();
+        }
+
+        if ( ! ( $editSettings = Permission::namespace( 'brookr.edit.settings' )->first() ) instanceof Permission ) {
+            $editSettings               =   new Permission;
+            $editSettings->name         =   __( 'Can Edit Brookr Settings' );
+            $editSettings->namespace    =   'brookr.edit.settings';
+            $editSettings->description   =   '';
+            $editSettings->save();
+        }
+
+        if ( ! ( $canSeeDashboard = Permission::namespace( 'brookr.see.dashboard' )->first() ) instanceof Permission ) {
+            $canSeeDashboard               =   new Permission;
+            $canSeeDashboard->name         =   __( 'Can See Dashboard' );
+            $canSeeDashboard->namespace    =   'brookr.see.dashboard';
+            $canSeeDashboard->description   =   '';
+            $canSeeDashboard->save();
+        }
+
+        if ( ! ( $canSeeLoadsAdDriver = Permission::namespace( 'brookr.see.drivers-loads' )->first() ) instanceof Permission ) {
+            $canSeeLoadsAdDriver               =   new Permission;
+            $canSeeLoadsAdDriver->name         =   __( 'Can See Loads as Driver' );
+            $canSeeLoadsAdDriver->namespace    =   'brookr.see.drivers-loads';
+            $canSeeLoadsAdDriver->description   =   '';
+            $canSeeLoadsAdDriver->save();
+        }
+
         /**
          * assign permission to the 
          * dispatcher
@@ -166,21 +286,39 @@ class CreateRolesAndPermissions extends Migration
             $canCreateTrucksRelatives,
             $canSeeTrucksRelatives,
             $canEditTruckRelatives,
-            $canDeleteTrucksRelatives
+            $canDeleteTrucksRelatives,
+
+            $canSeeCompanies,
+            $canCreateCompanies,
+            $canEditCompanies,
+            $canDeleteCompanies,
+
+            $canCreateCustomer,
+            $canSeeCustomers,
+            $canDeleteCustomers,
+            $canEditCustomers,
+
+            $canCreateDrivers,
+            $canSeeDrivers,
+            $canDeleteDrivers,
+            $canEditDrivers,
+
+            $editSettings,
+            $canSeeDashboard
         ])->each( function( $permission ) use ( $dispatcher ) {
             Role::addPermission( $dispatcher->namespace, $permission->namespace );
+            Role::addPermission( 'admin', $permission->namespace );
         }); 
 
         /**
          * assign permission to the driver
          */
         collect([
-            $canSeeLoadsAssigned,
-            $canChangeLoadsStatus,
-            
             $canSeeTrucksRelatives,
             $canCreateTrucksRelatives,
             $canEditTruckRelatives,
+
+            $canSeeLoadsAdDriver
         ])->each( function( $permission ) use ( $driver ) {
             Role::addPermission( $driver->namespace, $permission->namespace );
         });
@@ -199,7 +337,7 @@ class CreateRolesAndPermissions extends Migration
 
     public function down()
     {
-        Role::namespace( 'brookr.dispatcher' )->removePermissions([
+        $permissions    =   [
             'brookr.create.trucks',
             'brookr.edit.trucks',
             'brookr.delete.trucks',
@@ -214,14 +352,42 @@ class CreateRolesAndPermissions extends Migration
             'brookr.edit.loads',
             'brookr.delete.loads',
             'brookr.see.loads',
+            'brookr.change.loads-status',
+
+            'brookr.see.companies',
+            'brookr.create.companies',
+            'brookr.edit.companies',
+            'brookr.delete.companies',
+
+            'brookr.create.customers',
+            'brookr.see.customers',
+            'brookr.delete.customers',
+            'brookr.edit.customers',
+
+            'brookr.create.drivers',
+            'brookr.see.drivers',
+            'brookr.delete.drivers',
+            'brookr.edit.drivers',
+
+            'brookr.edit.settings',
+            'brookr.see.dashboard',
+        ];
+
+        $driverPermissions  =   [
             'brookr.change.loads-status'
-        ]);
+        ];
+
+        $role   =   Role::namespace( 'brookr.dispatcher' );
+        if ( $role instanceof Role ) {
+            $role->removePermissions( $permissions );
+            Role::namespace( 'admin' )->removePermissions( $permissions );
+            $role->delete();
+        }
 
         $role   =   Role::namespace( 'brookr.driver' );
         if ( $role instanceof Role ) {
-            $role->removePermissions([
-                'brookr.change.loads-status'
-            ]);
+            $role->removePermissions( $driverPermissions );
+            $role->delete();
         } 
 
         if ( Schema::hasColumn( 'tendoo_users', 'brookr_avatar' ) ) {
@@ -235,5 +401,12 @@ class CreateRolesAndPermissions extends Migration
                 $table->dropColumn([ 'brookr_driver_status' ]);
             });
         }
+
+        collect( $permissions )->merge( $driverPermissions )->each( function( $namespace ) {
+            $permission     =   Permission::where( 'namespace', $namespace )->first();
+            if ( $permission instanceof Permission ) {
+                $permission->delete();
+            }
+        });
     }
 }

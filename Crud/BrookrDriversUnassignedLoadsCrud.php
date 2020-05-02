@@ -1,19 +1,17 @@
 <?php
 namespace Modules\Brookr\Crud;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Tendoo\Core\Models\User;
-use Tendoo\Core\Facades\Hook;
 use Tendoo\Core\Services\Crud;
 use Tendoo\Core\Services\Field;
-use Tendoo\Core\Services\Users;
 use Tendoo\Core\Services\Helper;
+use Tendoo\Core\Models\User;
+use Tendoo\Core\Facades\Hook;
+use Tendoo\Core\Services\Users;
 use Tendoo\Core\Services\Options;
-use Illuminate\Support\Facades\Auth;
-use Modules\Brookr\Models\LoadDelivery;
-use Modules\Brookr\Services\LoadsService;
+use Modules\Brookr\Models\DriversUnassignedLoad;
 
-class BrookrLoadsCrud extends Crud
+class BrookrDriversUnassignedLoadsCrud extends Crud
 {
     /**
      * define the base table
@@ -23,34 +21,24 @@ class BrookrLoadsCrud extends Crud
     /**
      * base route name
      */
-    protected $mainRoute      =   '/dashboard/loads/';
+    protected $mainRoute      =   '/dashboard/drivers/loads';
 
     /**
      * Define namespace
      * @param  string
      */
-    protected $namespace  =   'brookr.loads';
+    protected $namespace  =   'brookr.drivers-loads.unassigned';
 
     /**
      * Model Used
      */
-    protected $model      =   \Modules\Brookr\Models\LoadDelivery::class;
+    protected $model      =   \Modules\Brookr\Models\DriversUnassignedLoad::class;
 
     /**
      * Adding relation
      */
     public $relations   =  [
         [ 'tendoo_users', 'brookr_loads_delivery.user_id', '=', 'tendoo_users.id' ],
-        'leftJoin'  =>  [
-            [ 'tendoo_users as driver', 'brookr_loads_delivery.driver_id', '=', 'driver.id' ],
-            [ 'brookr_trucks', 'brookr_loads_delivery.truck_id', '=', 'brookr_trucks.id' ]
-        ],
-    ];
-
-    public $pick    =   [
-        'tendoo_users'  =>  [ 'username' ],
-        'driver'        =>  [ 'username' ],
-        'brookr_trucks' =>  [ 'brookr_trucks_name' ],
     ];
 
     /**
@@ -68,7 +56,7 @@ class BrookrLoadsCrud extends Crud
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   "";
+    public $fillable    =   "";
 
     /**
      * Define Constructor
@@ -78,15 +66,16 @@ class BrookrLoadsCrud extends Crud
     {
         parent::__construct();
 
-        $this->options      =   app()->make( Options::class );
-        $this->loadsService =   app()->make( LoadsService::class );
-        $this->statuses     =   collect( preg_split( '/[\r\n]+/', $this->options->get( 'brookr_loads_status' ), NULL, PREG_SPLIT_NO_EMPTY) )->mapWithKeys( function( $name ) {
-            return [ 
-                Str::slug( $name )  =>  ucfirst( $name )
-            ];
-        });
-
         Hook::addFilter( 'crud.entry', [ $this, 'setActions' ], 10, 2 );
+
+        $this->options      =   app()->make( Options::class );
+    }
+
+    public function hook( $query ) 
+    {
+        $query->where( 'visible', '=', 1 )
+            ->where( 'status', $this->options->get( 'brookr_system_unassigned_status', 'pending' ) );
+            // ->where( 'driver_id', '=', null );
     }
 
     /**
@@ -97,15 +86,15 @@ class BrookrLoadsCrud extends Crud
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'BrookrLoads List' ),
-            'list_description'      =>  __( 'Display all brookrloads.' ),
-            'no_entry'              =>  __( 'No brookrloads has been registered' ),
-            'create_new'            =>  __( 'Add a new brookrload' ),
-            'create_title'          =>  __( 'Create a new brookrload' ),
-            'create_description'    =>  __( 'Register a new brookrload and save it.' ),
-            'edit_title'            =>  __( 'Edit brookrload' ),
-            'edit_description'      =>  __( 'Modify  Brookrload.' ),
-            'back_to_list'          =>  __( 'Return to BrookrLoads' ),
+            'list_title'            =>  __( 'BrookrDriverUnassignedLoadsCruds List' ),
+            'list_description'      =>  __( 'Display all brookrdriverunassignedloadscruds.' ),
+            'no_entry'              =>  __( 'No brookrdriverunassignedloadscruds has been registered' ),
+            'create_new'            =>  __( 'Add a new brookrdriverunassignedloadscrud' ),
+            'create_title'          =>  __( 'Create a new brookrdriverunassignedloadscrud' ),
+            'create_description'    =>  __( 'Register a new brookrdriverunassignedloadscrud and save it.' ),
+            'edit_title'            =>  __( 'Edit brookrdriverunassignedloadscrud' ),
+            'edit_description'      =>  __( 'Modify  Brookrdriverunassignedloadscrud.' ),
+            'back_to_list'          =>  __( 'Return to BrookrDriverUnassignedLoadsCruds' ),
         ];
     }
 
@@ -145,7 +134,7 @@ class BrookrLoadsCrud extends Crud
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, \Modules\Brookr\Models\LoadDelivery $entry )
+    public function filterPutInputs( $inputs, \Modules\Brookr\Models\DriversUnassignedLoad $entry )
     {
         return $inputs;
     }
@@ -207,7 +196,7 @@ class BrookrLoadsCrud extends Crud
      * @return  void
      */
     public function beforeDelete( $namespace, $id ) {
-        if ( $namespace == 'brookr.loads' ) {
+        if ( $namespace == 'brookr.drivers-loads.unassigned' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -225,46 +214,32 @@ class BrookrLoadsCrud extends Crud
      * @return  array of columns configuration
      */
     public function getColumns() {
-        $columns    =   collect([
-            '$id'  =>  [
-                'label'     =>  __( 'Id' ),
-            ],
+        return [
             'name'  =>  [
                 'label'     =>  __( 'Name' ),
             ],
-            'pickup_date'  =>  [
-                'label'     =>  __( 'Pickup Date' ),
-            ],
-            'delivery_date'  =>  [
-                'label'     =>  __( 'Delivery Date' ),
-            ],
-            'load_reference'  =>  [
+            'load_reference'    =>  [
                 'label'     =>  __( 'Load Reference' ),
             ],
             'pickup_reference'  =>  [
                 'label'     =>  __( 'Pickup Reference' ),
             ],
-            'cost'  =>  [
-                'label'     =>  __( 'Rate' ),
+            'pickup_city'   =>  [
+                'label'     =>  __( 'Pickup City' ),
             ],
-            'driver_username'  =>  [
-                'label'     =>  __( 'Driver' ),
+            'delivery_city' =>  [
+                'label'     =>  __( 'Delivery City' )
             ],
-            'brookr_trucks_name'  =>  [
-                'label'     =>  __( 'Truck' ),
+            'cost'          =>  [
+                'label'     =>  __( 'Price' ),
             ],
-            'status'  =>  [
+            'status'        =>  [
                 'label'     =>  __( 'Status' ),
             ],
-            '$actions'  =>  [
-                'label' =>  __( 'Actions' )
+            '$actions'      =>  [
+                'label'     =>  __( 'Actions' ),
             ]
-        ])->mapWithKeys( function( $column, $key ) {
-            $column[ 'direction' ]   =   request()->query( 'active' ) === $key ? request()->query( 'direction' ) : null;
-            return [ $key => $column ]; 
-        })->toArray();
-
-        return $columns;
+        ];
     }
 
     /**
@@ -272,53 +247,16 @@ class BrookrLoadsCrud extends Crud
      */
     public function setActions( $entry, $namespace )
     {
-        $entry->status              =   $this->statuses[ $entry->status ] ?? $entry->status;
-        $entry->brookr_trucks_name  =   $entry->brookr_trucks_name ?? __( 'N/A' );
-        $entry->driver_username     =   $entry->driver_username ?? __( 'N/A' );
-        
-        $loadStatus     =   collect( preg_split( '/[\r\n]+/', $this->options->get( 'brookr_loads_status' ), NULL, PREG_SPLIT_NO_EMPTY) )->mapWithKeys( function( $name ) {
-            $key        =   explode( '-', $name );
-            return [ 
-                Str::slug( trim( $key[0] ) )  =>  trim( $key[1] ?? 'white' )
-            ];
-        });
-        
-        $entry->{'$props'}          =   [
-            'className'             =>  [ 'bg-' . $loadStatus[ $entry->status ] . '-200' ],
-            'tdClassName'           =>  [ 'border-' . $loadStatus[ $entry->status ] . '-400' ]
-        ];
-
-        $entry->{'$actions'}        =   [
+        $entry->{'$actions'}    =   [
             [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit.loads',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>      '/dashboard/loads/edit/{id}'
-            ], [
-                'label'         =>      __( 'Change Status' ),
-                'namespace'     =>      'open.change_status',
-                'type'          =>      'OPEN',
-                'index'         =>      'id',
-                'id'            =>      $entry->id,
-                'url'           =>      '/dashboard/loads/edit/{id}'
-            ], [
-                'label'         =>      __( 'Assign Driver' ),
-                'namespace'     =>      'open.assign_driver',
-                'type'          =>      'OPEN',
-                'index'         =>      'id',
-                'id'            =>      $entry->id,
-                'url'           =>      '/dashboard/loads/edit/{id}'
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
+                'label'     =>  __( 'Handle' ),
+                'namespace' =>  'handle',
+                'type'      =>  'PUT',
                 'index'     =>  'id',
-                'id'        =>  $entry->id,
-                'url'       =>  url( '/api/brookr/loads/{id}' ),
+                'url'       =>  url( 'api/brookr/drivers/loads/handle/{id}'),
                 'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a Loads Delivery' )
+                    'message'  =>  __( 'Would You like to assign yourself to this delivery ?' ),
+                    'title'     =>  __( 'Handle A Load for Delivery' )
                 ]
             ]
         ];
@@ -346,7 +284,7 @@ class BrookrLoadsCrud extends Crud
             ], 403 );
         }
 
-        if ( $request->input( 'action' ) == 'bulk-delete' ) {
+        if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status     =   [
                 'success'   =>  0,
                 'failed'    =>  0
@@ -354,8 +292,8 @@ class BrookrLoadsCrud extends Crud
 
             foreach ( $request->input( 'entries_id' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof LoadDelivery ) {
-                    $this->loadsService->deleteLoad( $entity );
+                if ( $entity instanceof Modules\Brookr\Models\DriversUnassignedLoad ) {
+                    $entity->delete();
                     $status[ 'success' ]++;
                 } else {
                     $status[ 'failed' ]++;
@@ -373,9 +311,9 @@ class BrookrLoadsCrud extends Crud
     public function getLinks()
     {
         return  [
-            'list'  =>  '/dashboard/loads/',
-            'create'    =>  '/dashboard/loads/create',
-            'edit'      =>  '/dashboard/loads/edit/{id}'
+            'list'  =>  '/dashboard/drivers/loads',
+            'create'    =>  '/dashboard/drivers/loads/create',
+            'edit'      =>  '/dashboard/drivers/loads/edit/#'
         ];
     }
 

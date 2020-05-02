@@ -122,20 +122,5 @@ class BrookrListener
     public function notifyAdministrator( AfterEditLoadEvent $event )
     {
         $this->notificationService  =   new NotificationsService;
-
-        Role::namespace( 'admin' )->users()->each( function( $user ) use ( $event ) {
-            $this->notificationService->notify([
-                'title'         =>  sprintf( __( '%s edited' ), $event->load->name ),
-                'description'   =>  sprintf(
-                    __( 'A new load %s(%s) has been assigned to %s. The delivery location is set to %s and must be delivered on %s' ),
-                    $event->load->name,
-                    $event->load->load_reference,
-                    $event->driver->username,
-                    $event->load->delivery_city,
-                    $event->load->delivery_date
-                ),
-                'actions'       =>  []
-            ], $user->id );
-        });
     }
 }

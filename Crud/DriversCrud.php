@@ -363,9 +363,9 @@ class DriversCrud extends Crud
     public function getLinks()
     {
         return  [
-            'list'  =>  'brookr.drivers',
-            'create'    =>  'brookr.drivers/create',
-            'edit'      =>  'brookr.drivers/edit/#'
+            'list'  =>  '',
+            'create'    =>  'create',
+            'edit'      =>  'edit/#'
         ];
     }
 

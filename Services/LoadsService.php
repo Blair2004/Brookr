@@ -7,11 +7,13 @@ use Tendoo\Core\Models\User;
 use Modules\Brookr\Models\Driver;
 use Tendoo\Core\Services\Options;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Services\TrucksService;
 use Modules\Brookr\Events\AfterEditLoadEvent;
 use Modules\Brookr\Events\BeforeEditLoadEvent;
 use Modules\Brookr\Events\AfterCreateLoadEvent;
+use Modules\Brookr\Events\AfterDeleteLoadEvent;
 use Modules\Brookr\Events\BeforeCreateLoadEvent;
 use Modules\Brookr\Events\BeforeDeleteLoadEvent;
 
@@ -49,15 +51,20 @@ class LoadsService
         $load->trailer_reference    =   $fields[ 'general' ][ 'trailer_reference' ];
         $load->pickup_reference     =   $fields[ 'general' ][ 'pickup_reference' ];
         $load->status               =   $fields[ 'general' ][ 'status' ];
-        $load->pickup_date          =   $fields[ 'general' ][ 'pickup_date' ];
+        $load->pickup_date          =   Carbon::createFromFormat( 'Y-m-d\TH:i:s\.\0\0\0\Z', $fields[ 'general' ][ 'pickup_date' ] )->toDateTimeString();
         $load->pickup_city          =   $fields[ 'general' ][ 'pickup_city' ];
-        $load->delivery_date        =   $fields[ 'general' ][ 'delivery_date' ];
+        $load->delivery_date        =   Carbon::createFromFormat( 'Y-m-d\TH:i:s\.\0\0\0\Z', $fields[ 'general' ][ 'delivery_date' ] )->toDateTimeString();
         $load->delivery_city        =   $fields[ 'general' ][ 'delivery_city' ];
+        $load->empty_trailer        =   $fields[ 'general' ][ 'empty_trailer' ] ?? '';
+        $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
+        $load->visible              =   $fields[ 'general' ][ 'visible' ] ?? '';
         $load->user_id              =   Auth::id();
         $load->driver_id            =   $fields[ 'drivers' ][ 'driver_id' ];
         $load->truck_id             =   $fields[ 'drivers' ][ 'truck_id' ];
-        $load->cost                 =   $fields[ 'drivers' ][ 'cost' ] ?? 0;
+        $load->cost                 =   $fields[ 'general' ][ 'cost' ] ?? 0;
         $load->save();
+
+        $this->handleLoadFileUpload( $fields, $load );
 
         /**
          * let's define a name automatically
@@ -73,6 +80,33 @@ class LoadsService
             'message'   =>  __( 'The load has been created' ),
             'data'      =>  compact( 'load' )
         ];
+    }
+
+    private function handleLoadFileUpload( $fields, LoadDelivery $load )
+    {
+        /**
+         * the upload fields are on general
+         */
+        foreach( $fields[ 'general' ] as $key => $value ) {
+            if ( in_array( $key, [ 'rate_document_url', 'delivery_document_url' ] ) && ! empty( $value ) ) {
+                $this->saveBase64( $value, 'brookr-uploads/' . $load->id . '-' . $key );
+            }
+        }
+    }
+
+    private function saveBase64( $data, $directory )
+    {
+        $imageParts     =   explode( ";base64,", $data );
+        $imageTypeAux   =   explode( "image/", $imageParts[0] );
+        $imageType      =   $imageTypeAux[1];
+        $imageBase64    =   base64_decode( $imageParts[1] );
+        $fileFullPath   =   $directory . '.' . $imageType;
+
+        if ( Storage::disk( 'public' )->exists( $fileFullPath ) ) {
+            Storage::disk( 'public' )->delete( $directory . '.' . $imageType );
+        }
+
+        Storage::disk( 'public' )->put( $directory . '.' . $imageType, $imageBase64 );
     }
 
     private function getLoadGeneratedName( LoadDelivery $load )
@@ -97,17 +131,20 @@ class LoadsService
         $load->status               =   $fields[ 'general' ][ 'status' ] ?? 'pending';
         $load->trailer_reference    =   $fields[ 'general' ][ 'trailer_reference' ];
         $load->pickup_reference     =   $fields[ 'general' ][ 'pickup_reference' ];
-        $load->pickup_date          =   $fields[ 'general' ][ 'pickup_date' ];
+        $load->pickup_date          =   Carbon::createFromFormat( 'Y-m-d\TH:i:s\.\0\0\0\Z', $fields[ 'general' ][ 'pickup_date' ] )->toDateTimeString();
         $load->pickup_city          =   $fields[ 'general' ][ 'pickup_city' ];
-        $load->delivery_date        =   $fields[ 'general' ][ 'delivery_date' ];
+        $load->delivery_date        =   Carbon::createFromFormat( 'Y-m-d\TH:i:s\.\0\0\0\Z', $fields[ 'general' ][ 'delivery_date' ] )->toDateTimeString();
         $load->delivery_city        =   $fields[ 'general' ][ 'delivery_city' ];
         $load->lumper_fees          =   $fields[ 'drivers' ][ 'lumper_fees' ] ?? 0;
         $load->escort_fees          =   $fields[ 'drivers' ][ 'escort_fees' ] ?? 0;
+        $load->empty_trailer        =   $fields[ 'general' ][ 'empty_trailer' ] ?? '';
+        $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
+        $load->visible              =   $fields[ 'general' ][ 'visible' ] ?? '';
         $load->user_id              =   Auth::id();
-
+        
         $load->truck_id             =   $fields[ 'drivers' ][ 'truck_id' ];
         $load->driver_id            =   $fields[ 'drivers' ][ 'driver_id' ];
-        $load->cost                 =   $fields[ 'drivers' ][ 'cost' ] ?? 0;
+        $load->cost                 =   $fields[ 'general' ][ 'cost' ] ?? 0;
         
         $load->save();
 
@@ -129,8 +166,14 @@ class LoadsService
 
     public function deleteLoad( $id )
     {
-        $load       =   $this->get( $id );
-        $load_id    =   $load->id;
+        if ( $id instanceof LoadDelivery ) {
+            $load       =   $id;
+            $load_id    =   $load->id;
+        } else {
+            $load       =   $this->get( $id );
+            $load_id    =   $load->id;
+        }
+
 
         event( new BeforeDeleteLoadEvent( $load, $load->driver, $load->truck ) );
 

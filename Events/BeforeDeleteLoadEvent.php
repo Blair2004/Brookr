@@ -14,7 +14,7 @@ class BeforeDeleteLoadEvent
     public $driver;
     public $truck;
 
-    public function __construct( LoadDelivery $load, Driver $driver, Truck $truck )
+    public function __construct( LoadDelivery $load, Driver $driver = null, Truck $truck = null )
     {
         $this->load     =   $load;
         $this->driver   =   $driver;

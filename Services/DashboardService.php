@@ -10,6 +10,7 @@ use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Events\AfterCreateLoadEvent;
 use Modules\Brookr\Events\AfterCreateTruckEvent;
 use Modules\Brookr\Events\BeforeDeleteLoadEvent;
+use Modules\Brookr\Events\AfterCreateDriverEvent;
 use Modules\Brookr\Events\BeforeDeleteTruckEvent;
 
 class DashboardService {

@@ -3,6 +3,12 @@
 use Tendoo\Core\Services\Options;
 
 $options    =   app()->make( Options::class );
+$loadStatus     =   collect( preg_split( '/[\r\n]+/', $options->get( 'brookr_loads_status' ), NULL, PREG_SPLIT_NO_EMPTY) )->mapWithKeys( function( $name ) {
+    $key        =   explode( '-', $name );
+    return [ 
+        Str::slug( trim( $key[0] ) )  =>  ucfirst( trim( $key[0] ) )
+    ];
+});
 
 return [
     'sections'  =>  [
@@ -61,6 +67,34 @@ return [
                     'description'   =>  __( 'Where should the currency be positioned.' ),
                     'name'          =>  'brookr_system_currency_position',
                     'value' =>  $options->get( 'brookr_system_currency_position' ),
+                ], [
+                    'type'          =>  'select',
+                    'label'         =>  __( 'Unassigned Status' ),
+                    'options'       =>  $loadStatus,
+                    'description'   =>  __( 'Select from the existing statuses which on shoudl be affected to unassigned loads.' ),
+                    'name'          =>  'brookr_system_unassigned_status',
+                    'value' =>  $options->get( 'brookr_system_unassigned_status' ),
+                ], [
+                    'type'          =>  'select',
+                    'label'         =>  __( 'Status Ongoing Delivery' ),
+                    'options'       =>  $loadStatus,
+                    'description'   =>  __( 'Which status should be used when the driver is handling a load for delivery ?' ),
+                    'name'          =>  'brookr_system_handling_status',
+                    'value'         =>  $options->get( 'brookr_system_handling_status' ),
+                ], [
+                    'type'          =>  'select',
+                    'label'         =>  __( 'Status Delivered Loads' ),
+                    'options'       =>  $loadStatus,
+                    'description'   =>  __( 'Which status should be used when the driver has delivered a load ?' ),
+                    'name'          =>  'brookr_system_delivered_status',
+                    'value'         =>  $options->get( 'brookr_system_delivered_status' ),
+                ], [
+                    'type'          =>  'select',
+                    'label'         =>  __( 'Status Canceled Loads' ),
+                    'options'       =>  $loadStatus,
+                    'description'   =>  __( 'Which status should be used when the load delivery is canceled ?' ),
+                    'name'          =>  'brookr_system_canceled_status',
+                    'value'         =>  $options->get( 'brookr_system_canceled_status' ),
                 ],
             ]
         ], [

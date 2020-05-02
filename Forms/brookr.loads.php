@@ -86,6 +86,12 @@ return [
                     'type'          =>  'text',
                     'description'   =>  __( 'The drop trailer reference.' )
                 ], [
+                    'label'         =>  __( 'Rate' ),
+                    'name'          =>  'cost',
+                    'value'         =>  $load->cost ?? '',
+                    'type'          =>  'number',
+                     'description'   =>  __( 'The actual cost of the transport.' )
+                ], [
                     'label'         =>  __( 'Status' ),
                     'name'          =>  'status',
                     'value'         =>  $load->status ?? '',
@@ -96,7 +102,7 @@ return [
                     'label'         =>  __( 'Pickup Date' ),
                     'name'          =>  'pickup_date',
                     'value'         =>  $load->pickup_date ?? '',
-                    'type'          =>  'datetime',
+                    'type'          =>  'ng-datetime',
                     'data'          =>  [
                         'startDate' =>  1990
                     ],
@@ -105,7 +111,7 @@ return [
                     'label'         =>  __( 'Delivery Date' ),
                     'name'          =>  'delivery_date',
                     'value'         =>  $load->delivery_date ?? '',
-                    'type'          =>  'datetime',
+                    'type'          =>  'ng-datetime',
                     'data'          =>  [
                         'startDate' =>  1990
                     ],
@@ -127,11 +133,17 @@ return [
                     'name'          =>  'delivery_document_url',
                     'value'         =>  $load->delivery_document_url ?? '',
                     'type'          =>  'image',
+                    'data'          =>  [
+                        'maintainAspectRatio'   =>  false
+                    ],
                     'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
                 ], [
                     'label'         =>  __( 'Rate Document URL' ),
                     'name'          =>  'rate_document_url',
                     'type'          =>  'image',
+                    'data'          =>  [
+                        'maintainAspectRatio'   =>  false
+                    ]
                 ], [
                     'label'         =>  __( 'Publicly Visible' ),
                     'name'          =>  'visible',
@@ -159,12 +171,6 @@ return [
                     'type'          =>  'select',
                     'options'       =>  $trucks,
                     'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
-                ], [
-                    'label'         =>  __( 'Rate' ),
-                    'name'          =>  'cost',
-                    'value'         =>  $load->cost ?? '',
-                    'type'          =>  'number',
-                     'description'   =>  __( 'The actual cost of the transport.' )
                 ], [
                     'label'         =>  __( 'Escort Fees' ),
                     'name'          =>  'escort_fees',

@@ -1,8 +1,10 @@
 <?php
 Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::get( 'api/brookr/trucks', 'TrucksController@getTrucks' );
+    Route::get( 'api/brookr/profile/avatar', 'SettingsController@getUserAvatar' );
     Route::get( 'api/brookr/drivers/medical-expiration', 'DriversController@getByMedicalCard' );
     Route::get( 'api/brookr/drivers/driver-expiration', 'DriversController@getByDriverCard' );
+    Route::get( 'api/brookr/drivers/handle/{id}', 'DriversController@handleLoad' );
     Route::get( 'api/brookr/permissions', 'SettingsController@getPermissions' );
     Route::get( 'api/brookr/loads/unassigned', 'LoadsController@getUnassigned' );
     Route::post( 'api/brookr/dashboard/refresh', 'DashboardController@refresh' );
@@ -14,6 +16,7 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::post( 'api/brookr/drivers', 'DriversController@setDriver' );
     Route::post( 'api/brookr/customers', 'CustomersController@createCustomer' );
     Route::post( 'api/brookr/settings', 'SettingsController@saveSettings' );
+    Route::post( 'api/brookr/profile/settings', 'SettingsController@saveProfileSettings' );
     Route::post( 'api/brookr/notifications', 'SettingsController@getNotifications' );
     Route::put( 'api/brookr/companies/{id}', 'CompaniesController@saveCompany' );
     Route::put( 'api/brookr/trucks/{id}', 'TrucksController@editTruck' );

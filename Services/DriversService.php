@@ -52,7 +52,7 @@ class DriversService
         $result[ 'details' ]            =   $this->proceedDetailsRegistration( $fields, $result[ 'authentication' ] );
         $result[ 'address' ]            =   $this->setDriversAddresses( $fields[ 'address' ], $result[ 'authentication' ] );
 
-        event( $id === null ? new AfterCreateDriverEvent( Driver::find( $id ) ) : new AfterUpdateDriverEvent( Driver::find( $id ) ) );
+        event( $id === null ? new AfterCreateDriverEvent( $result[ 'authentication' ][ 'data' ][ 'user' ] ) : new AfterUpdateDriverEvent( Driver::find( $id ) ) );
 
         return [
             'status'    =>  'success',
@@ -194,7 +194,7 @@ class DriversService
                     ->first();
 
                 if ( ! $user instanceof User ) {
-                    $user           =   new User;
+                    $user           =   new Driver;
 
                     $this->saveDriverAsUser([
                         'role_id'   =>  $role->id,

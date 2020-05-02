@@ -31,4 +31,9 @@ class DriversController extends BaseController
     {
         return $this->driversService->deleteDriver( $id );
     }
+
+    public function handleLoad()
+    {
+        
+    }
 }
