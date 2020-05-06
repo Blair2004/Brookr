@@ -215,6 +215,9 @@ class BrookrDriversUnassignedLoadsCrud extends Crud
      */
     public function getColumns() {
         return [
+            '$actions'      =>  [
+                'label'     =>  __( 'Actions' ),
+            ],
             'name'  =>  [
                 'label'     =>  __( 'Name' ),
             ],
@@ -236,9 +239,6 @@ class BrookrDriversUnassignedLoadsCrud extends Crud
             'status'        =>  [
                 'label'     =>  __( 'Status' ),
             ],
-            '$actions'      =>  [
-                'label'     =>  __( 'Actions' ),
-            ]
         ];
     }
 

@@ -229,6 +229,9 @@ class BrookrLoadsCrud extends Crud
             '$id'  =>  [
                 'label'     =>  __( 'Id' ),
             ],
+            '$actions'  =>  [
+                'label' =>  __( 'Actions' )
+            ],
             'name'  =>  [
                 'label'     =>  __( 'Name' ),
             ],
@@ -256,9 +259,7 @@ class BrookrLoadsCrud extends Crud
             'status'  =>  [
                 'label'     =>  __( 'Status' ),
             ],
-            '$actions'  =>  [
-                'label' =>  __( 'Actions' )
-            ]
+
         ])->mapWithKeys( function( $column, $key ) {
             $column[ 'direction' ]   =   request()->query( 'active' ) === $key ? request()->query( 'direction' ) : null;
             return [ $key => $column ]; 

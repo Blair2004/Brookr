@@ -207,6 +207,9 @@ class BrookrCustomersCrud extends Crud
      */
     public function getColumns() {
         return [
+            '$actions'   =>  [
+                'label'     =>  __( 'Actions' )
+            ],
             'id'  =>  [
                 'label'  =>  __( 'Id' )
             ],
@@ -216,9 +219,6 @@ class BrookrCustomersCrud extends Crud
             'created_at'  =>  [
                 'label'  =>  __( 'Created_at' )
             ],
-            '$actions'   =>  [
-                'label'     =>  __( 'Actions' )
-            ]
         ];
     }
 

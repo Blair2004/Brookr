@@ -51,4 +51,9 @@ class LoadsController extends BaseController
     {
         return $this->loadsService->startDelivery( $id );
     }
+
+    public function stopDelivery( $id, Request $request )
+    {
+        return $this->loadsService->stopDelivery( $id, $request );
+    }
 }

@@ -32,6 +32,7 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
 
     Route::get( 'api/brookr/loads/unassigned', 'LoadsController@getUnassigned' );
     Route::get( 'api/brookr/loads/start/{id}', 'LoadsController@startDelivery' );
+    Route::post( 'api/brookr/loads/stop/{id}', 'LoadsController@stopDelivery' );
     Route::post( 'api/brookr/loads', 'LoadsController@saveLoad' );
     Route::put( 'api/brookr/loads/self-assign/{id}', 'LoadsController@selfAssignDriver' );
     Route::put( 'api/brookr/loads/{id}', 'LoadsController@editLoad' );

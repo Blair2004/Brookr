@@ -3,6 +3,8 @@ namespace Modules\Brookr\Services;
 
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Tendoo\Core\Models\User;
 use Modules\Brookr\Models\Truck;
 use Modules\Brookr\Models\Driver;
@@ -304,6 +306,46 @@ class LoadsService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The delivery has successfully started.' )
+        ];
+    }
+
+    public function stopDelivery( $id, Request $request )
+    {
+        $load               =   $this->get( $id );
+        $deliveredStatus    =   $this->optionService->get( 'brookr_notify_load_delivered', 'delivered' );
+        $ongoingStatus      =   $this->optionService->get( 'brookr_notify_load_ongoing', 'ongoing' );
+
+        if ( $load->status !== $ongoingStatus ) {
+            throw new Exception( __( 'Cannot change the status of this delivery as it has never been handled.' ) );
+        }
+        
+        $filePath                       =   'brookr-uploads';
+        $extension                      = $request->file('delivery_document_url')->extension();
+        $path                           =   Storage::disk( 'public' )->putFileAs( 
+            $filePath, 
+            $request->file( 'delivery_document_url' ), 
+            $load->id . '_delivery_document_url.' . $extension 
+        );
+
+        $load->delivery_document_url    =   asset( $path );
+        $load->status                   =   $deliveredStatus;
+        $load->save();
+
+        /**
+         * Saving the delivery history
+         */
+        $deliveryHistory                =   new LoadDeliveryHistory;
+        $deliveryHistory->action_type   =   'delivery';
+        $deliveryHistory->load_id       =   $load->id;
+        $deliveryHistory->user_id       =   Auth::id();
+        $deliveryHistory->action_time   =   $this->date->now()->toDateTimeString();
+        $deliveryHistory->save();
+
+        event( new AfterEditLoadEvent( $load, $load->driver, $load->truck ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The delivery document has been successfully recorded.' )
         ];
     }
 }

@@ -23,6 +23,7 @@ class FormsEvent
             'brookr.companies',
             'brookr.profile',
             'broork.drivers-loads-status',
+            'brookr.drivers-loads-delivery',
         ])) {
             return $this->loadForm( $namespace, $index );
         }
