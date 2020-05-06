@@ -9,6 +9,10 @@ class LoadDelivery extends Model
 {
     protected $table = 'brookr_loads_delivery';
 
+    protected $casts    =   [
+        'visible'   =>  'boolean'
+    ];
+
     public function scopeOngoing( $query ) 
     {
         return $query->where( 'status', 'ongoing' );

@@ -75,10 +75,10 @@ class CreateRolesAndPermissions extends Migration
             $canSeeTrucksRelatives->save();
         }
 
-        if ( ! ( $canCreateTrucksRelatives = Permission::namespace( 'brookr.see.trucks-relatives' )->first() ) instanceof Permission ) {
+        if ( ! ( $canCreateTrucksRelatives = Permission::namespace( 'brookr.create.trucks-relatives' )->first() ) instanceof Permission ) {
             $canCreateTrucksRelatives               =   new Permission;
             $canCreateTrucksRelatives->name         =   __( 'Can create trucks relatives' );
-            $canCreateTrucksRelatives->namespace    =   'brookr.see.trucks-relatives';
+            $canCreateTrucksRelatives->namespace    =   'brookr.create.trucks-relatives';
             $canCreateTrucksRelatives->description  =   '';
             $canCreateTrucksRelatives->save();
         }
@@ -259,12 +259,12 @@ class CreateRolesAndPermissions extends Migration
             $canSeeDashboard->save();
         }
 
-        if ( ! ( $canSeeLoadsAdDriver = Permission::namespace( 'brookr.see.drivers-loads' )->first() ) instanceof Permission ) {
-            $canSeeLoadsAdDriver               =   new Permission;
-            $canSeeLoadsAdDriver->name         =   __( 'Can See Loads as Driver' );
-            $canSeeLoadsAdDriver->namespace    =   'brookr.see.drivers-loads';
-            $canSeeLoadsAdDriver->description   =   '';
-            $canSeeLoadsAdDriver->save();
+        if ( ! ( $canSeeLoadsAsDriver = Permission::namespace( 'brookr.see.drivers-loads' )->first() ) instanceof Permission ) {
+            $canSeeLoadsAsDriver               =   new Permission;
+            $canSeeLoadsAsDriver->name         =   __( 'Can See Loads as Driver' );
+            $canSeeLoadsAsDriver->namespace    =   'brookr.see.drivers-loads';
+            $canSeeLoadsAsDriver->description   =   '';
+            $canSeeLoadsAsDriver->save();
         }
 
         /**
@@ -318,7 +318,7 @@ class CreateRolesAndPermissions extends Migration
             $canCreateTrucksRelatives,
             $canEditTruckRelatives,
 
-            $canSeeLoadsAdDriver
+            $canSeeLoadsAsDriver
         ])->each( function( $permission ) use ( $driver ) {
             Role::addPermission( $driver->namespace, $permission->namespace );
         });

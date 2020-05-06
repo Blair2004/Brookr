@@ -17,7 +17,8 @@ class BrookrServiceProvider extends ServiceProvider
             return new LoadsService( 
                 new TrucksService,
                 new DriversService,
-                app()->make( Options::class )
+                app()->make( Options::class ),
+                app()->make( DateService::class )
             );
         });
 

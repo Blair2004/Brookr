@@ -14,9 +14,9 @@ class CreateLoadsDeliveryHistoryTable extends Migration
                 $table->bigIncrements('id');
                 $table->datetime( 'action_time' )->nullable();
                 $table->string( 'action_type' )->nullable(); // delivery, pickup
-                $table->string( 'city' );
-                $table->string( 'street' );
-                $table->string( 'zip' );
+                $table->string( 'city' )->nullable();
+                $table->string( 'street' )->nullable();
+                $table->string( 'zip' )->nullable();
                 $table->integer( 'user_id' ); // must be reference to driver
                 $table->integer( 'load_id' ); // must be unique
                 $table->timestamps();

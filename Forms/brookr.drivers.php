@@ -3,8 +3,13 @@
 use Tendoo\Core\Models\User;
 use Tendoo\Core\Services\Helper;
 use Modules\Brookr\Models\Address;
+use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Models\DriversDetail;
 use Modules\Brookr\Services\CompaniesService;
+
+if ( ! Auth::user()->allowedTo( 'brookr.create.drivers' ) ) {
+    throw new Exception( __( 'You\'re not allowed to see this page.' ) );
+}
 
 $driver     =   new stdClass;
 $details    =   new stdClass;

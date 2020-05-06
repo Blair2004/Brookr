@@ -74,8 +74,8 @@ class BrookrDriversUnassignedLoadsCrud extends Crud
     public function hook( $query ) 
     {
         $query->where( 'visible', '=', 1 )
-            ->where( 'status', $this->options->get( 'brookr_system_unassigned_status', 'pending' ) );
-            // ->where( 'driver_id', '=', null );
+            ->where( 'status', $this->options->get( 'brookr_system_unassigned_status', 'pending' ) )
+            ->where( 'driver_id', '=', null );
     }
 
     /**

@@ -1,13 +1,14 @@
 <?php
 namespace Modules\Brookr\Crud;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Tendoo\Core\Services\Crud;
-use Tendoo\Core\Services\Field;
-use Tendoo\Core\Services\Helper;
 use Tendoo\Core\Models\User;
 use Tendoo\Core\Facades\Hook;
+use Tendoo\Core\Services\Crud;
+use Tendoo\Core\Services\Field;
 use Tendoo\Core\Services\Users;
+use Tendoo\Core\Services\Helper;
+use Tendoo\Core\Services\Options;
+use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Models\DriversAssignedLoad;
 
 class BrookrDriversAssignedLoadsCrud extends Crud
@@ -55,7 +56,7 @@ class BrookrDriversAssignedLoadsCrud extends Crud
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   "";
+    public $fillable    =   "";
 
     /**
      * Define Constructor
@@ -66,10 +67,12 @@ class BrookrDriversAssignedLoadsCrud extends Crud
         parent::__construct();
 
         Hook::addFilter( 'crud.entry', [ $this, 'setActions' ], 10, 2 );
+        $this->options      =   app()->make( Options::class );
+    }
 
-        $this->listWhere        =   [
-            'user_id'   =>  Auth::id()
-        ];
+    public function hook( $query )
+    {
+        $query->where( 'driver_id', Auth::id() );
     }
 
     /**
@@ -209,6 +212,9 @@ class BrookrDriversAssignedLoadsCrud extends Crud
      */
     public function getColumns() {
         return [
+            '$actions'      =>  [
+                'label'     =>  __( 'Actions' )
+            ],
             'name'  =>  [
                 'label'     =>  __( 'Name' ),
             ],
@@ -221,11 +227,17 @@ class BrookrDriversAssignedLoadsCrud extends Crud
             'pickup_city'   =>  [
                 'label'     =>  __( 'Pickup City' ),
             ],
+            'pickup_date'   =>  [
+                'label'     =>  __( 'Pickup Date' ),
+            ],
             'delivery_city' =>  [
                 'label'     =>  __( 'Delivery City' )
             ],
-            'rate'          =>  [
-                'label'     =>  __( 'Label' ),
+            'delivery_date' =>  [
+                'label'     =>  __( 'Delivery Date' )
+            ],
+            'cost'          =>  [
+                'label'     =>  __( 'Price' ),
             ],
             'status'        =>  [
                 'label'     =>  __( 'Status' ),
@@ -238,25 +250,23 @@ class BrookrDriversAssignedLoadsCrud extends Crud
      */
     public function setActions( $entry, $namespace )
     {
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit.licence',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>      '/dashboard/crud/brookr.drivers-loads.assigned/edit/#'
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'index'     =>  'id',
-                'url'       =>  'tendoo/crud/brookr.drivers-loads.assigned' . '/#',
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a licence' )
-                ]
-            ]
-        ];
+        $entry->{'$actions'}    =   [];
+
+        if ( $entry->status === $this->options->get( 'brookr_system_unassigned_status', 'pending' ) ) {
+            $entry->{'$actions'}[]      =   [
+                'label'     =>  __( 'Start Delivery' ),
+                'namespace' =>  'brookr.start-delivery',
+                'url'       =>  url( 'api/brookr/loads/start' )
+            ];
+        }
+
+        if ( $entry->status === $this->options->get( 'brookr_system_handling_status ', 'ongoing' ) ) {
+            $entry->{'$actions'}[]      =   [
+                'label'     =>  __( 'Delivery Document' ),
+                'namespace' =>  'brookr.send-delivery-document',
+                'url'       =>  url( 'api/brookr/loads/end' )
+            ];
+        }
 
         return $entry;
     }

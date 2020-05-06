@@ -4,14 +4,17 @@ namespace Modules\Brookr\Services;
 use Exception;
 use Carbon\Carbon;
 use Tendoo\Core\Models\User;
+use Modules\Brookr\Models\Truck;
 use Modules\Brookr\Models\Driver;
 use Tendoo\Core\Services\Options;
 use Illuminate\Support\Facades\Auth;
+use Tendoo\Core\Services\DateService;
 use Illuminate\Support\Facades\Storage;
 use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Services\TrucksService;
 use Modules\Brookr\Events\AfterEditLoadEvent;
 use Modules\Brookr\Events\BeforeEditLoadEvent;
+use Modules\Brookr\Models\LoadDeliveryHistory;
 use Modules\Brookr\Events\AfterCreateLoadEvent;
 use Modules\Brookr\Events\AfterDeleteLoadEvent;
 use Modules\Brookr\Events\BeforeCreateLoadEvent;
@@ -26,11 +29,13 @@ class LoadsService
     public function __construct(
         TrucksService $trucksService,
         DriversService $driversService,
-        Options $optionService
+        Options $optionService,
+        DateService $dateService
     ) {
         $this->trucksService    =   $trucksService;
         $this->optionService    =   $optionService;
-        $this->driversService    =   $driversService;
+        $this->driversService   =   $driversService;
+        $this->date             =   $dateService;
     }
     
     public function create( $fields )
@@ -232,8 +237,12 @@ class LoadsService
 
     public function updateLoadStatus( $id, $fields )
     {
-        $load   =   $this->get( $id );
-        $load->status   =   $fields[ 'status' ];
+        $load           =   $this->get( $id );
+
+        foreach( $fields as $key => $value ) {
+            $load->$key   =   $fields[ $key ];
+        }
+
         $load->save();
 
         return [
@@ -247,5 +256,54 @@ class LoadsService
         return LoadDelivery::where( 'status', 'pending' )->orderBy( 'created_at', $order )
             ->limit( $total )
             ->get();
+    }
+
+    public function selfAssignDriver( $load_id, $fields )
+    {
+        $driver_id          =   $fields[ 'load' ][ 'driver_id' ];
+        $truck_id           =   $fields[ 'load' ][ 'truck_id' ];
+        $load               =   $this->get( $load_id );
+        $driver             =   Driver::find( $driver_id );
+        $fields             =   [
+            'driver_id'     =>  $driver->id,
+            'truck_id'      =>  $truck_id,
+            'load_id'       =>  $load_id
+        ];
+        $truck              =   Truck::findOrFail( $truck_id );
+
+        event( new BeforeEditLoadEvent( $load, $driver, $truck, $fields ) );
+        
+        $load->driver_id    =   $driver_id;
+        $load->truck_id     =   $truck->id;
+        $load->visible      =   false;
+        $load->save();
+
+        event( new AfterEditLoadEvent( $load, $driver, $truck ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'You have been successfully assigned to this delivery.' )
+        ];
+    }
+
+    public function startDelivery( $id )
+    {
+        $load                   =   $this->get( $id );
+        $load->status           =   $this->optionService->get( 'brookr_system_handling_status', 'ongoing' );
+        $load->save();
+
+        $action                 =   new LoadDeliveryHistory;
+        $action->action_time    =   $this->date->now()->toDateTimeString();
+        $action->action_type    =   'brookr.start-delivery';
+        $action->user_id        =   Auth::id();
+        $action->load_id        =   $load->id;
+        $action->save();
+
+        event( new AfterEditLoadEvent( $load, $load->driver, $load->truck ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The delivery has successfully started.' )
+        ];
     }
 }

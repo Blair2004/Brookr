@@ -1,4 +1,11 @@
 <?php
+
+use Illuminate\Support\Facades\Auth;
+
+if ( ! Auth::user()->allowedTo( 'brookr.create.customers' ) ) {
+    throw new Exception( __( 'You\'re not allowed to see this page.' ) );
+}
+
 return [
     'sections'      =>      [
         [

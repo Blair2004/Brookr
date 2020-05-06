@@ -3,8 +3,13 @@
 use Tendoo\Core\Models\Role;
 use Tendoo\Core\Services\Helper;
 use Tendoo\Core\Services\Options;
+use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Services\LoadsService;
 use Modules\Brookr\Services\TrucksService;
+
+if ( ! Auth::user()->allowedTo( 'brookr.edit.loads' ) ) {
+    throw new Exception( __( 'You\'re not allowed to see this page.' ) );
+}
 
 $loadService    =   app()->make( LoadsService::class );
 $load           =   $loadService->get( $index );

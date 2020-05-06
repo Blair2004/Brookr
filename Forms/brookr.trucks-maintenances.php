@@ -4,6 +4,10 @@ use Tendoo\Core\Facades\Helper;
 use Modules\Brookr\Services\TrucksService;
 use Modules\Brookr\Models\TruckMaintenance;
 
+if ( ! Auth::user()->allowedTo( 'brookr.create.trucks-relatives' ) ) {
+    throw new Exception( __( 'You\'re not allowed to see this page.' ) );
+}
+
 $truckMaintenance          =   new stdClass;
 if ( ! empty( $index ) ) {
     $truckMaintenance      =   TruckMaintenance::find( $index );

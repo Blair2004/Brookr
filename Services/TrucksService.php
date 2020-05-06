@@ -311,6 +311,7 @@ class TrucksService
     public function handleFreedTruckIfDifferent( BeforeEditLoadEvent $event )
     {
         $newTruckID     =   $event->fields[ 'truck_id' ];
+        
         if ( $event->truck instanceof Truck && intval( $newTruckID ) !== intval( $event->truck->id ) ) {
             $event->truck->status   =   'available';
             $event->truck->save();

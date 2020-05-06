@@ -1,6 +1,11 @@
 <?php
 
 use Modules\Brookr\Models\Truck;
+use Illuminate\Support\Facades\Auth;
+
+if ( ! Auth::user()->allowedTo( 'brookr.create.trucks' ) ) {
+    throw new Exception( __( 'You\'re not allowed to see this page.' ) );
+}
 
 $truck          =   new stdClass;
 if ( ! empty( $index ) ) {

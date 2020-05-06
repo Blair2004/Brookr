@@ -41,4 +41,14 @@ class LoadsController extends BaseController
     {
         return $this->loadsService->getUnassigned( 10, 'asc' );
     }
+
+    public function selfAssignDriver( $load_id, Request $request )
+    {
+        return $this->loadsService->selfAssignDriver( $load_id, $request->only( 'load' ) );
+    }
+
+    public function startDelivery( $id )
+    {
+        return $this->loadsService->startDelivery( $id );
+    }
 }

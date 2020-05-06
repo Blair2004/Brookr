@@ -2,6 +2,10 @@
 
 use Modules\Brookr\Services\CompaniesService;
 
+if ( ! Auth::user()->allowedTo( 'brookr.see.companies' ) ) {
+    throw new Exception( __( 'You\'re not allowed to see this page.' ) );
+}
+
 $companies      =   app()->make( CompaniesService::class );
 $company        =   ! empty( $index ) ? $companies->get( $index ) : new stdClass;
 

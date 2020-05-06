@@ -232,7 +232,7 @@ class DriversService
         if ( $event->driver instanceof Driver ) {
             $ongoingLoadDelivery    =   $event->driver->loads()->ongoing()->count();
             if ( $ongoingLoadDelivery > 0 && $event->status === 'available' ) {
-                throw new Exception( __( 'Cannot change the status of the driver, since he\'s assigned to an ongoing delivery.' ) );
+                // throw new Exception( __( 'Cannot change the status of the driver, since he\'s assigned to an ongoing delivery.' ) );
             }
         }
     }
@@ -251,7 +251,7 @@ class DriversService
     public function handleChangeDriverStatus( BeforeCreateLoadEvent $event )
     {
         if ( $event->driver instanceof Driver && $event->driver->brookr_driver_status === 'unavailable' ) {
-            throw new Exception( __( 'This driver cannot be assigned to this load as he\'s currently unavailable.' ) );
+            // throw new Exception( __( 'This driver cannot be assigned to this load as he\'s currently unavailable.' ) );
         }
     }
 
@@ -268,7 +268,7 @@ class DriversService
             $driver     =   Driver::find( $newDriverID );
 
             if ( $driver->brookr_driver_status === 'unavailable' ) {
-                throw new Exception( __( 'Cannot assign this driver as he is not available.' ) );
+                // throw new Exception( __( 'Cannot assign this driver as he is not available.' ) );
             }
 
             $driver->brookr_driver_status    =   'unavailable';
@@ -336,6 +336,21 @@ class DriversService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The driver has been deleted.' )
+        ];
+    }
+
+    public function availability( $driver )
+    {
+        if ( ! $driver instanceof User ) {
+            $driver     =   User::findOrFail( $driver );
+        }
+
+        return $driver->brookr_driver_status === 'available' ? [
+            'status'    =>  'success',
+            'message'   =>  __( 'The driver is available' )
+        ] : [
+            'status'    =>  'failed',
+            'message'   =>  __( 'The driver is not available' )
         ];
     }
 }

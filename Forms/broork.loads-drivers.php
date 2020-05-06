@@ -2,8 +2,13 @@
 
 use Tendoo\Core\Models\Role;
 use Tendoo\Core\Services\Helper;
+use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Services\LoadsService;
 use Modules\Brookr\Services\TrucksService;
+
+if ( ! Auth::user()->allowedTo( 'brookr.see.drivers-loads' ) ) {
+    throw new Exception( __( 'You\'re not allowed to see this page.' ) );
+}
 
 $rawDrivers     =   Role::namespace( 'brookr.driver' )->users;
 $drivers        =   Helper::toJsOptions( $rawDrivers, [ 'id', 'username' ]);

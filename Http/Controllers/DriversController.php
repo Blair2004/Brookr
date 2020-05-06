@@ -2,6 +2,8 @@
 namespace Modules\Brookr\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Modules\Brookr\Services\LoadsService;
 use Modules\Brookr\Services\DriversService;
 use Tendoo\Core\Http\Controllers\BaseController;
 
@@ -32,8 +34,14 @@ class DriversController extends BaseController
         return $this->driversService->deleteDriver( $id );
     }
 
-    public function handleLoad()
+    public function checkDriverAvailability()
     {
+        $result     =   $this->driversService->availability( Auth::id() );
         
+        if ( $result[ 'status' ] ) {
+            return $result;
+        } else {
+            return response()->json( $result, 401 );
+        }
     }
 }

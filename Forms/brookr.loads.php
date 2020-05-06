@@ -4,8 +4,13 @@ use Tendoo\Core\Models\Role;
 use Modules\Brookr\Models\Truck;
 use Tendoo\Core\Services\Helper;
 use Tendoo\Core\Services\Options;
+use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Services\TrucksService;
+
+if ( ! Auth::user()->allowedTo( 'brookr.create.loads' ) ) {
+    throw new Exception( __( 'You\'re not allowed to see this page.' ) );
+}
 
 $load       =   new stdClass;
 if ( ! empty( $index ) ) {
