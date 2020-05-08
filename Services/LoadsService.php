@@ -5,15 +5,21 @@ use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Tendoo\Core\Models\Role;
 use Tendoo\Core\Models\User;
 use Modules\Brookr\Models\Truck;
 use Modules\Brookr\Models\Driver;
 use Tendoo\Core\Services\Options;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Tendoo\Core\Services\DateService;
 use Illuminate\Support\Facades\Storage;
 use Modules\Brookr\Models\LoadDelivery;
+use Modules\Brookr\Mails\OngoingLoadMail;
+use Modules\Brookr\Mails\AssignedLoadMail;
 use Modules\Brookr\Services\TrucksService;
+use Modules\Brookr\Mails\DeliveredLoadMail;
+use Modules\Brookr\Mails\UnassignedLoadMail;
 use Modules\Brookr\Events\AfterEditLoadEvent;
 use Modules\Brookr\Events\BeforeEditLoadEvent;
 use Modules\Brookr\Models\LoadDeliveryHistory;
@@ -327,7 +333,7 @@ class LoadsService
             $load->id . '_delivery_document_url.' . $extension 
         );
 
-        $load->delivery_document_url    =   asset( $path );
+        $load->delivery_document_url    =   asset( 'storage/' . $path );
         $load->status                   =   $deliveredStatus;
         $load->save();
 
@@ -347,5 +353,37 @@ class LoadsService
             'status'    =>  'success',
             'message'   =>  __( 'The delivery document has been successfully recorded.' )
         ];
+    }
+
+    public function reportDrivers( AfterCreateLoadEvent $event )
+    {
+        if ( $event->load->driver_id !== null ) {
+            Mail::to( $event->load->driver()->email )
+                ->send( new AssignedLoadMail( $event->load ) );
+        } else if ( $event->load->driver_id === null && $event->load->visible ) {
+            Role::namespace( 'brookr.driver' )->user->each( function( $user ) use ( $event ) {
+                Mail::to( $user->email )
+                    ->send( new UnassignedLoadMail( $event->load ) );
+            });
+        }
+    }
+
+    public function notifyAdministrator( AfterEditLoadEvent $event )
+    {
+        $options    =   app()->make( Options::class );
+
+        if ( $event->load->status === $options->get( 'brookr_system_handling_status', 'ongoing' ) ) {
+            Role::namespace( 'brookr.dispatcher' )->user->each( function( $user ) use ( $event ) {
+                Mail::to( $user->email )
+                    ->send( new OngoingLoadMail( $event->load ) );
+            });
+        }
+
+        if ( $event->load->status === $options->get( 'brookr_system_delivered_status', 'delivered' ) ) {
+            Role::namespace( 'brookr.dispatcher' )->user->each( function( $user ) use ( $event ) {
+                Mail::to( $user->email )
+                    ->send( new DeliveredLoadMail( $event->load ) );
+            });
+        }
     }
 }

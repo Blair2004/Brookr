@@ -60,21 +60,6 @@ return [
                     'value' =>  $options->get( 'brookr_system_currency' ),
                 ], [
                     'type'          =>  'select',
-                    'label'         =>  __( 'Currency Position' ),
-                    'options'       =>  [
-                        [
-                            'label' =>  __( 'Before the amount' ),
-                            'value' =>  'before'
-                        ], [
-                            'label' =>  __( 'After the amount' ),
-                            'value' =>  'after'
-                        ]
-                    ],
-                    'description'   =>  __( 'Where should the currency be positioned.' ),
-                    'name'          =>  'brookr_system_currency_position',
-                    'value' =>  $options->get( 'brookr_system_currency_position' ),
-                ], [
-                    'type'          =>  'select',
                     'label'         =>  __( 'Unassigned Status' ),
                     'options'       =>  Helper::kvToJsOptions( $loadStatus ),
                     'description'   =>  __( 'Select from the existing statuses which on shoudl be affected to unassigned loads.' ),

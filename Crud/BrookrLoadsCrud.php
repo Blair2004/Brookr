@@ -1,5 +1,7 @@
 <?php
 namespace Modules\Brookr\Crud;
+use Akaunting\Money\Money;
+use Akaunting\Money\Currency;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Tendoo\Core\Models\User;
@@ -283,6 +285,8 @@ class BrookrLoadsCrud extends Crud
                 Str::slug( trim( $key[0] ) )  =>  trim( $key[1] ?? 'white' )
             ];
         });
+
+        $entry->cost        =   new Money( $entry->cost, new Currency( $this->options->get( 'brookr_system_currency', 'USD' ) ) );
         
         $entry->{'$props'}          =   [
             'className'             =>  [ 'bg-' . $loadStatus[ $entry->status ] . '-200' ],

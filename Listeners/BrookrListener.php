@@ -30,14 +30,19 @@ class BrookrListener
     
     public function subscribe( $event )
     {
-        $event->listen(
-            AfterCreateLoadEvent::class,
-            DriversService::class . '@handleMarkDriverUnavailable'
-        );
+        // $event->listen(
+        //     AfterCreateLoadEvent::class,
+        //     DriversService::class . '@handleMarkDriverUnavailable'
+        // );
 
         $event->listen(
             AfterCreateLoadEvent::class,
             TrucksService::class . '@handleMarkTruckUnavailable'
+        );
+
+        $event->listen(
+            AfterCreateLoadEvent::class,
+            LoadsService::class . '@reportDrivers'
         );
 
         $event->listen(
@@ -82,7 +87,7 @@ class BrookrListener
 
         $event->listen(
             AfterEditLoadEvent::class,
-            BrookrListener::class . '@notifyAdministrator'
+            LoadsService::class . '@notifyAdministrator'
         );
 
         /**
@@ -123,4 +128,6 @@ class BrookrListener
     {
         $this->notificationService  =   new NotificationsService;
     }
+
+
 }

@@ -19,7 +19,9 @@ class DeliveredLoadMail extends Mailable
 
     public function build()
     {
-        return $this->from( 'contact@nexopos.com' )
+        return $this
+            ->subject( sprintf( __( 'Load %s delivery is complete.' ), $this->load->load_reference ) )
+            ->from( 'smm-notification@brookr.io' )
             ->markdown( 'Brookr::mails.delivered-load' );
     }
 }

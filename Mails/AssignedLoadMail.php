@@ -6,7 +6,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Modules\Brookr\Models\LoadDelivery;
 
-class OngoingLoadMail extends Mailable
+class AssignedLoadMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -20,8 +20,8 @@ class OngoingLoadMail extends Mailable
     public function build()
     {
         return $this
-            ->subject( sprintf( __( 'Load %s delivery is ongoing.' ), $this->load->load_reference ) )
+            ->subject( sprintf( __( 'Load %s is assigned to your account.' ), $this->load->load_reference ) )
             ->from( 'smm-notification@brookr.io' )
-            ->markdown( 'Brookr::mails.ongoing-load' );
+            ->markdown( 'Brookr::mails.assigned-load' );
     }
 }
