@@ -9,6 +9,6 @@ class DriversDetail extends Model
 
     public function driver()
     {
-        return $this->hasOne( Driver::class, 'id', 'driver_id' );
+        return $this->belongsTo( Driver::class, 'driver_id' );
     }
 }

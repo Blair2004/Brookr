@@ -36,12 +36,28 @@ class CreateCompaniesTable extends Migration
                 $table->timestamps();
             });
         }
+
+        if ( ! Schema::hasTable( 'brookr_companies_payments' ) ) {
+            Schema::create( 'brookr_companies_payments', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->integer( 'company_id' );
+                $table->string( 'type' )->default( 'regular' ); // advance, regular
+                $table->text( 'description' )->nullable();
+                $table->float( 'amount' )->default(0);
+                $table->integer( 'user_id' ); 
+                $table->timestamps();
+            });
+        }
     }
 
     public function down()
     {
         if ( Schema::hasTable( 'brookr_companies' ) ) {
             Schema::drop( 'brookr_companies' );
+        }
+
+        if ( Schema::hasTable( 'brookr_companies_payments' ) ) {
+            Schema::drop( 'brookr_companies_payments' );
         }
     }
 }

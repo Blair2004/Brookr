@@ -235,6 +235,7 @@ class BrookrTrucksMaintenancesCrud extends Crud
      */
     public function setActions( $entry, $namespace )
     {
+        $entry->cost          =   br_currency( $entry->cost );
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),

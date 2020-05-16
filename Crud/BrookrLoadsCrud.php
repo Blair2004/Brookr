@@ -1,15 +1,18 @@
 <?php
 namespace Modules\Brookr\Crud;
+use Carbon\Carbon;
 use Akaunting\Money\Money;
-use Akaunting\Money\Currency;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Tendoo\Core\Models\User;
+use Akaunting\Money\Currency;
 use Tendoo\Core\Facades\Hook;
 use Tendoo\Core\Services\Crud;
 use Tendoo\Core\Services\Field;
 use Tendoo\Core\Services\Users;
+use Modules\Brookr\Models\Truck;
 use Tendoo\Core\Services\Helper;
+use Modules\Brookr\Models\Driver;
 use Tendoo\Core\Services\Options;
 use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Models\LoadDelivery;
@@ -70,7 +73,7 @@ class BrookrLoadsCrud extends Crud
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   "";
+    public $fillable    =   "";
 
     /**
      * Define Constructor
@@ -89,6 +92,35 @@ class BrookrLoadsCrud extends Crud
         });
 
         Hook::addFilter( 'crud.entry', [ $this, 'setActions' ], 10, 2 );
+    }
+
+    public function hook( $query )
+    {
+        if ( request()->query( 'queryFilter' ) === 'true' ) {
+            $queryParams      =   [];
+            $queryParams[ 'brookr_loads_delivery.name' ]    =   request()->query( 'name' );
+            $queryParams[ 'pickup_date' ]                   =   request()->query( 'pickup_date' );
+            $queryParams[ 'delivery_date' ]                 =   request()->query( 'delivery_date' );
+            $queryParams[ 'load_reference' ]                =   request()->query( 'load_reference' );
+            $queryParams[ 'pickup_reference' ]              =   request()->query( 'pickup_reference' );
+            $queryParams[ 'cost' ]                          =   request()->query( 'cost' );
+            $queryParams[ 'tendoo_users.username' ]         =   request()->query( 'driver_username' );
+            $queryParams[ 'brookr_trucks.name' ]            =   request()->query( 'brookr_trucks_name' );
+            $queryParams[ 'brookr_loads_delivery.status' ]  =   request()->query( 'status' );
+
+            foreach( $queryParams as $key => $value ) {
+                if ( ! empty( $value ) && ! in_array( $value, [ 'null', 'Invalid date' ] ) ) {
+                    if ( in_array( $key, [ 'pickup_date', 'delivery_date' ] ) ) {
+                        $startOfDay =   Carbon::parse( $value )->startOfDay()->toDateTimeString();
+                        $endOfDay   =   Carbon::parse( $value )->endOfDay()->toDateTimeString();
+                        $query->where( $key, '>=', $startOfDay );
+                        $query->where( $key, '<=', $endOfDay );
+                    } else {
+                        $query->where( $key, 'like', '%' . $value . '%' );
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -227,39 +259,69 @@ class BrookrLoadsCrud extends Crud
      * @return  array of columns configuration
      */
     public function getColumns() {
+        $loadStatus     =   collect( preg_split( '/[\r\n]+/', $this->options->get( 'brookr_loads_status' ), NULL, PREG_SPLIT_NO_EMPTY) )->mapWithKeys( function( $name ) {
+            $key        =   explode( '-', $name );
+            return [ 
+                Str::slug( trim( $key[0] ) )  =>  ucfirst( trim( $key[0] ) )
+            ];
+        });
+
         $columns    =   collect([
             '$id'  =>  [
                 'label'     =>  __( 'Id' ),
             ],
             '$actions'  =>  [
-                'label' =>  __( 'Actions' )
+                'label' =>  __( 'Actions' ),
             ],
             'name'  =>  [
                 'label'     =>  __( 'Name' ),
+                'type'      =>  'text',
             ],
             'pickup_date'  =>  [
                 'label'     =>  __( 'Pickup Date' ),
+                'type'      =>  'ng-datetime',
             ],
             'delivery_date'  =>  [
                 'label'     =>  __( 'Delivery Date' ),
+                'type'      =>  'ng-datetime',
             ],
             'load_reference'  =>  [
                 'label'     =>  __( 'Load Reference' ),
+                'type'      =>  'text',
             ],
             'pickup_reference'  =>  [
                 'label'     =>  __( 'Pickup Reference' ),
+                'type'      =>  'text',
             ],
             'cost'  =>  [
                 'label'     =>  __( 'Rate' ),
+                'type'      =>  'number',
             ],
             'driver_username'  =>  [
                 'label'     =>  __( 'Driver' ),
+                'type'      =>  'select',
+                'options'   =>  Helper::toJsOptions(
+                    Driver::get()->map( function( $driver ) {
+                        return ( object )[
+                            'id'    =>  $driver->username,
+                            'name'  =>  $driver->details !== null ? ( $driver->details->first_name . ' ' . $driver->details->last_name ) : $driver->username
+                        ];
+                    }),
+                    [ 'id', 'name' ]
+                ),
             ],
             'brookr_trucks_name'  =>  [
                 'label'     =>  __( 'Truck' ),
+                'type'      =>  'select',
+                'options'   =>  Helper::toJsOptions(
+                    Truck::get(),
+                    [ 'id', 'name' ]
+                ),
             ],
             'status'  =>  [
                 'label'     =>  __( 'Status' ),
+                'type'      =>  'select',
+                'options'   =>  Helper::kvToJsOptions( $loadStatus )
             ],
 
         ])->mapWithKeys( function( $column, $key ) {
@@ -286,7 +348,7 @@ class BrookrLoadsCrud extends Crud
             ];
         });
 
-        $entry->cost        =   new Money( $entry->cost, new Currency( $this->options->get( 'brookr_system_currency', 'USD' ) ) );
+        $entry->cost        =   br_currency( $entry->cost );
         
         $entry->{'$props'}          =   [
             'className'             =>  [ 'bg-' . $loadStatus[ $entry->status ] . '-200' ],
@@ -325,7 +387,7 @@ class BrookrLoadsCrud extends Crud
                     'message'  =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a Loads Delivery' )
                 ]
-            ]
+            ], 
         ];
 
         return $entry;

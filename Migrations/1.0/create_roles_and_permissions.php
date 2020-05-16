@@ -267,6 +267,22 @@ class CreateRolesAndPermissions extends Migration
             $canSeeLoadsAsDriver->save();
         }
 
+        if ( ! ( $canSeeAllReports = Permission::namespace( 'brookr.see.reports' )->first() ) instanceof Permission ) {
+            $canSeeAllReports               =   new Permission;
+            $canSeeAllReports->name         =   __( 'Can See All Reports' );
+            $canSeeAllReports->namespace    =   'brookr.see.reports';
+            $canSeeAllReports->description   =   '';
+            $canSeeAllReports->save();
+        }
+
+        if ( ! ( $canSeePersonalReports = Permission::namespace( 'brookr.see.personnal-reports' )->first() ) instanceof Permission ) {
+            $canSeePersonalReports               =   new Permission;
+            $canSeePersonalReports->name         =   __( 'Can See Personal Report' );
+            $canSeePersonalReports->namespace    =   'brookr.see.personal-reports';
+            $canSeePersonalReports->description   =   '';
+            $canSeePersonalReports->save();
+        }
+
         /**
          * assign permission to the 
          * dispatcher
@@ -304,7 +320,8 @@ class CreateRolesAndPermissions extends Migration
             $canEditDrivers,
 
             $editSettings,
-            $canSeeDashboard
+            $canSeeDashboard,
+            $canSeeAllReports,
         ])->each( function( $permission ) use ( $dispatcher ) {
             Role::addPermission( $dispatcher->namespace, $permission->namespace );
             Role::addPermission( 'admin', $permission->namespace );
@@ -318,7 +335,8 @@ class CreateRolesAndPermissions extends Migration
             $canCreateTrucksRelatives,
             $canEditTruckRelatives,
 
-            $canSeeLoadsAsDriver
+            $canSeeLoadsAsDriver,
+            $canSeePersonalReports,
         ])->each( function( $permission ) use ( $driver ) {
             Role::addPermission( $driver->namespace, $permission->namespace );
         });
@@ -371,10 +389,14 @@ class CreateRolesAndPermissions extends Migration
 
             'brookr.edit.settings',
             'brookr.see.dashboard',
+            'brookr.see.reports',
         ];
 
         $driverPermissions  =   [
-            'brookr.change.loads-status'
+            'brookr.change.loads-status',
+            'brookr.see.personal-reports',
+            'brookr.see.drivers-loads',
+            'brookr.create.trucks-relatives'
         ];
 
         $role   =   Role::namespace( 'brookr.dispatcher' );

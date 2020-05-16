@@ -3,6 +3,7 @@ namespace Modules\Brookr\Services;
 
 use Modules\Brookr\Models\Company;
 use Illuminate\Support\Facades\Auth;
+use Modules\Brookr\Models\CompanyPayment;
 
 class CompaniesService
 {
@@ -87,6 +88,24 @@ class CompaniesService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The company has been successfully deleted' )
+        ];
+    }
+
+    public function makeAdvancePayment( $id, $fields )
+    {
+        $driver                 =   $this->get( $id );
+
+        $payment                =   new CompanyPayment;
+        $payment->amount        =   $fields[ 'amount' ] ?? 0;
+        $payment->description   =   $fields[ 'description' ];
+        $payment->type          =   'advance';
+        $payment->company_id    =   $id;
+        $payment->user_id       =   Auth::id();
+        $payment->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The payment has been correctly made.' )   
         ];
     }
 }

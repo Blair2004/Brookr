@@ -94,9 +94,14 @@ return [
             'fields'    =>  [
                 [
                     'type'          =>  'select',
-                    'options'       =>  [],
+                    'options'       =>  [
+                        [
+                            'label'     =>  __( 'Twilio' ),
+                            'value'     =>  'twilio'
+                        ]
+                    ],
                     'name'          =>  'brookr_sms_provider',
-                    'value' =>  $options->get( 'brookr_sms_provider' ),
+                    'value'         =>  $options->get( 'brookr_sms_provider' ),
                     'label'         =>  __( 'SMS Provider' ),
                     'description'    =>  __( 'Choose the SMS provider used on the system.' ),
                 ], [
@@ -107,22 +112,32 @@ return [
                     'description'    =>  __( 'If checked, notification will be enabled.' ),
                 ], [
                     'type'          =>  'text',
-                    'name'          =>  'brookr_sms_provider_url',
-                    'value' =>  $options->get( 'brookr_sms_provider_url' ),
-                    'label'         =>  __( 'Provider URL/Hostname' ),
-                    'description'    =>  __( 'This should be used to mention the SMS provider URL or hostname.' ),
+                    'name'          =>  'brookr_twilio_sid',
+                    'value'         =>  $options->get( 'brookr_twilio_sid' ),
+                    'label'         =>  __( 'Twilio SID' ),
+                    'description'   =>  __( 'Input the Twilio SID.' ),
                 ], [
                     'type'          =>  'text',
-                    'name'          =>  'brookr_sms_client_key',
-                    'value' =>  $options->get( 'brookr_sms_client_key' ),
-                    'label'         =>  __( 'Provider Client Key' ),
-                    'description'    =>  __( 'This should be used to mention the SMS client key.' ),
+                    'name'          =>  'brookr_twilio_token',
+                    'value'         =>  $options->get( 'brookr_twilio_token' ),
+                    'label'         =>  __( 'Twilio Token' ),
+                    'description'   =>  __( 'Input the Twilio Token here.' ),
                 ], [
                     'type'          =>  'text',
-                    'name'          =>  'brookr_sms_secret_key',
-                    'value' =>  $options->get( 'brookr_sms_secret_key' ),
-                    'label'         =>  __( 'Provider Secret Key' ),
-                    'description'    =>  __( 'This should be used to mention the SMS secret key.' ),
+                    'name'          =>  'brookr_twilio_phone',
+                    'value'         =>  $options->get( 'brookr_twilio_phone' ),
+                    'label'         =>  __( 'Twilio Phone Number' ),
+                    'description'   =>  __( 'Input the Twilio phone number.' ),
+                ], [
+                    'type'          =>  'textarea',
+                    'name'          =>  'brookr_assigned_load',
+                    'label'         =>  __( 'Assigned Load Template' ),
+                    'description'   =>  __( 'Available Tags: {driver_name}, {load_id}, {load_reference}, {pickup_reference}, {pickup_city}, {delivery_city}, {pickup_date}, {delivery_date}, {rate}.' ),
+                ], [
+                    'type'          =>  'textarea',
+                    'name'          =>  'brookr_delivered_load',
+                    'label'         =>  __( 'Delivered Load Template' ),
+                    'description'   =>  __( 'Available tags : {driver_name}, {load_id}, {load_reference}, {delivery_city}.' ),
                 ]
             ]
         ], [

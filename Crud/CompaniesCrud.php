@@ -237,6 +237,12 @@ class CompaniesCrud extends Crud
                 'index'         =>      'id',
                 'url'           =>      '/dashboard/companies/edit/#'
             ], [
+                'label'         =>      __( 'Make Payment' ),
+                'namespace'     =>      'make.payment',
+                'type'          =>      'POPUP',
+                'index'         =>      'id',
+                'url'           =>      '',
+            ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',

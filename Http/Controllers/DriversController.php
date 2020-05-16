@@ -44,4 +44,9 @@ class DriversController extends BaseController
             return response()->json( $result, 401 );
         }
     }
+
+    public function makeAdvancePayment( Request $request, $driver_id )
+    {
+        return $this->driversService->makePayment( $driver_id, $request->input( 'driver-payments' ) );
+    }
 }

@@ -282,19 +282,7 @@ class DriversCrud extends Crud
             ], [
                 'label'         =>      __( 'Make Payment' ),
                 'namespace'     =>      'open.payment',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>      '/dashboard/drivers/edit/{id}'
-            ], [
-                'label'         =>      __( 'See Settlement' ),
-                'namespace'     =>      'open.settlement',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>      '/dashboard/drivers/edit/{id}'
-            ], [
-                'label'         =>      __( 'See Loads' ),
-                'namespace'     =>      'open.loads',
-                'type'          =>      'GOTO',
+                'type'          =>      'POPUP',
                 'index'         =>      'id',
                 'url'           =>      '/dashboard/drivers/edit/{id}'
             ], [

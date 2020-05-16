@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Models\DriversDetail;
+use Modules\Brookr\Models\DriversPayment;
 use Tendoo\Core\Exceptions\NotFoundException;
 use Modules\Brookr\Events\BeforeEditLoadEvent;
 use Modules\Brookr\Events\AfterCreateLoadEvent;
@@ -351,6 +352,24 @@ class DriversService
         ] : [
             'status'    =>  'failed',
             'message'   =>  __( 'The driver is not available' )
+        ];
+    }
+
+    public function makePayment( $driver_id, $fields )
+    {
+        $driver     =   $this->get( $driver_id );
+
+        $payment                =   new DriversPayment;
+        $payment->amount        =   $fields[ 'amount' ] ?? 0;
+        $payment->description   =   $fields[ 'description' ];
+        $payment->type          =   'advance';
+        $payment->driver_id     =   $driver_id;
+        $payment->user_id       =   Auth::id();
+        $payment->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The payment has been correctly made.' )   
         ];
     }
 }

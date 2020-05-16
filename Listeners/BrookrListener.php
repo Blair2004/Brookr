@@ -90,6 +90,16 @@ class BrookrListener
             LoadsService::class . '@notifyAdministrator'
         );
 
+        $event->listen(
+            AfterCreateLoadEvent::class,
+            LoadsService::class . '@handleSmsDriverIfNecessary'
+        );
+
+        $event->listen(
+            AfterEditLoadEvent::class,
+            LoadsService::class . '@handleSmsDriverIfNecessary'
+        );
+
         /**
          * related to the dashboard
          */

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Services\LoadsService;
 use Modules\Brookr\Services\TrucksService;
 
-if ( ! Auth::user()->allowedTo( 'brookr.see.drivers-loads' ) ) {
+if ( ! Auth::user()->allowedTo( 'brookr.see.drivers' ) ) {
     throw new Exception( __( 'You\'re not allowed to see this page.' ) );
 }
 

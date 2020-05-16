@@ -29,4 +29,9 @@ class CompaniesController extends BaseController
     {
         return $this->companiesService->deleteCompany( $id );
     }
+
+    public function advancePayment( $id, Request $request )
+    {
+        return $this->companiesService->makeAdvancePayment( $id, $request->input( 'driver-payments' ) );
+    }
 }

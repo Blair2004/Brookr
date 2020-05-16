@@ -1,5 +1,6 @@
 {
     "require": {
-        "pelmered/fake-car": "^1.4"
+        "pelmered/fake-car": "^1.4",
+        "twilio/sdk": "^6.4"
     }
 }

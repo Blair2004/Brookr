@@ -4,6 +4,7 @@ namespace Modules\Brookr\Models;
 use Tendoo\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Brookr\Models\LoadDelivery;
+use Modules\Brookr\Models\DriversDetail;
 use Modules\Brookr\Models\Scopes\DriversScope;
 
 class Driver extends User

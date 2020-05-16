@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInite59e117dda6ada0005193a5f62d7b074
 {
     public static $prefixLengthsPsr4 = array (
+        'T' => 
+        array (
+            'Twilio\\' => 7,
+        ),
         'F' => 
         array (
             'Faker\\Provider\\' => 15,
@@ -15,6 +19,10 @@ class ComposerStaticInite59e117dda6ada0005193a5f62d7b074
     );
 
     public static $prefixDirsPsr4 = array (
+        'Twilio\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/twilio/sdk/src/Twilio',
+        ),
         'Faker\\Provider\\' => 
         array (
             0 => __DIR__ . '/..' . '/pelmered/fake-car/src',
