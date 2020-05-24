@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <module>
     <namespace>Brookr</namespace>
-    <version>1.0.11</version>
+    <version>1.0.14</version>
     <author>Blair Jersyer</author>
     <name>Brookr</name>
     <description>An standalone application for managing loads.</description>

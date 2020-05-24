@@ -6,6 +6,7 @@ use Tendoo\Core\Services\Helper;
 use Tendoo\Core\Services\Options;
 use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Models\LoadDelivery;
+use Modules\Brookr\Models\Customer;
 use Modules\Brookr\Services\TrucksService;
 
 if ( ! Auth::user()->allowedTo( 'brookr.create.loads' ) ) {
@@ -17,8 +18,14 @@ if ( ! empty( $index ) ) {
     $load   =   LoadDelivery::find( $index );
 }
 
-$rawCustomers   =   Role::namespace( 'brookr.customer' )->users;
-$customers      =   Helper::toJsOptions( $rawCustomers, [ 'id', 'username' ]);
+$rawCustomers   =   Customer::get()->filter( function( $customer ) {
+        return $customer->details !== null;
+    })->map( function( $customer ) {
+        $customer->fullname     =   $customer->details ? $customer->details->first_name . ' ' . $customer->details->last_name : $customer->username;
+        return $customer;
+});
+// var_dump( $rawCustomers );
+$customers      =   Helper::toJsOptions( $rawCustomers, [ 'id', 'fullname' ]);
 $rawDrivers     =   Role::namespace( 'brookr.driver' )->users;
 $drivers        =   Helper::toJsOptions( $rawDrivers, [ 'id', 'username' ]);
 $trucksService  =   new TrucksService;
@@ -85,6 +92,12 @@ return [
                     'type'          =>  'text',
                     'description'   =>  __( 'The empty trailer reference.' )
                 ], [
+                    'label'         =>  __( 'Load Trailer' ),
+                    'name'          =>  'load_trailer',
+                    'value'         =>  $load->load_trailer ?? '',
+                    'type'          =>  'text',
+                    'description'   =>  __( 'The load trailer reference.' )
+                ], [
                     'label'         =>  __( 'Drop Trailer' ),
                     'name'          =>  'drop_trailer',
                     'value'         =>  $load->drop_trailer ?? '',
@@ -96,6 +109,12 @@ return [
                     'value'         =>  $load->cost ?? '',
                     'type'          =>  'number',
                      'description'   =>  __( 'The actual cost of the transport.' )
+                ], [
+                    'label'         =>  __( 'Note' ),
+                    'name'          =>  'note',
+                    'value'         =>  $load->cost ?? '',
+                    'type'          =>  'textarea',
+                     'description'   =>  __( 'The note of the load delivery.' )
                 ], [
                     'label'         =>  __( 'Status' ),
                     'name'          =>  'status',

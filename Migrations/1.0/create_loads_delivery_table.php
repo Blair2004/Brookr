@@ -20,6 +20,8 @@ class CreateLoadsDeliveryTable extends Migration
                 $table->string( 'pickup_reference' )->nullable();
                 $table->string( 'empty_trailer' )->nullable();
                 $table->string( 'drop_trailer' )->nullable();
+                $table->string( 'load_trailer' )->nullable();
+                $table->text( 'note' )->nullable();
                 $table->integer( 'truck_id' )->nullable();
                 $table->string( 'pickup_city' )->nullable();
                 $table->string( 'delivery_city' )->nullable();

@@ -39,11 +39,11 @@ class Customer extends User
 
     public function loads()
     {
-        return $this->hasMany( LoadDelivery::class, 'driver_id' );
+        return $this->hasMany( LoadDelivery::class, 'customers_id' );
     }
 
     public function details()
     {
-        return $this->hasOne( DriversDetail::class, 'driver_id' );
+        return $this->hasOne( CustomerDetail::class, 'customers_id' );
     }
 }

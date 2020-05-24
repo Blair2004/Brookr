@@ -20,7 +20,7 @@ class CustomersController extends BaseController
 
     public function editCustomer( Request $request, $index = null )
     {
-        return $this->customersService->registerCustomer( $request->all(), $index );
+        return $this->customersService->defineCustomer( $request->all(), $index );
     }
 
     public function deleteCustomer( $id )

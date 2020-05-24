@@ -214,7 +214,6 @@ return [
                     'name'          =>  'email',
                     'value'         =>  $driver->email ?? '',
                     'type'          =>  'text',
-                    'readonly'      =>  $index !== null,
                     'description'   =>  __( 'Might be used during the authentication.' ),
                     'validation'    =>  'email',
                     'validation'    =>  'required',
@@ -222,14 +221,14 @@ return [
                     'label'         =>  __( 'Password' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'password',
-                    'type'          =>  'password',
+                    'type'          =>  'text',
                     'description'   =>  __( 'This will use used for authentication.' ),
                     'validation'    =>  'min:6'
                 ], [
                     'label'         =>  __( 'Confirmation' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'password_confirm',
-                    'type'          =>  'password',
+                    'type'          =>  'text',
                     'description'   =>  __( 'Should match the password.' ),
                     'validation'    =>  'same:password'
                 ]

@@ -4,6 +4,7 @@ namespace Modules\Brookr\Services;
 use Exception;
 use Carbon\Carbon;
 use Twilio\Rest\Client;
+use App\Jobs\SMSDriverJob;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Tendoo\Core\Models\Role;
@@ -64,13 +65,15 @@ class LoadsService
         $load->load_reference       =   $fields[ 'general' ][ 'load_reference' ];
         $load->trailer_reference    =   $fields[ 'general' ][ 'trailer_reference' ];
         $load->pickup_reference     =   $fields[ 'general' ][ 'pickup_reference' ];
-        $load->status               =   $fields[ 'general' ][ 'status' ];
-        $load->pickup_date          =   Carbon::createFromFormat( 'Y-m-d\TH:i:s\.\0\0\0\Z', $fields[ 'general' ][ 'pickup_date' ] )->toDateTimeString();
+        $load->status               =   $fields[ 'general' ][ 'status' ] ?? $this->optionService->get( 'brookr_system_unassigned_status', 'pending' );
+        $load->pickup_date          =   Carbon::parse( $fields[ 'general' ][ 'pickup_date' ] )->toDateTimeString();
         $load->pickup_city          =   $fields[ 'general' ][ 'pickup_city' ];
-        $load->delivery_date        =   Carbon::createFromFormat( 'Y-m-d\TH:i:s\.\0\0\0\Z', $fields[ 'general' ][ 'delivery_date' ] )->toDateTimeString();
+        $load->delivery_date        =   Carbon::parse( $fields[ 'general' ][ 'delivery_date' ] )->toDateTimeString();
         $load->delivery_city        =   $fields[ 'general' ][ 'delivery_city' ];
         $load->empty_trailer        =   $fields[ 'general' ][ 'empty_trailer' ] ?? '';
         $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
+        $load->load_trailer         =   $fields[ 'general' ][ 'load_trailer' ] ?? '';
+        $load->note                 =   $fields[ 'general' ][ 'note' ] ?? '';
         $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) ? false : true;
         $load->user_id              =   Auth::id();
         $load->driver_id            =   $fields[ 'drivers' ][ 'driver_id' ];
@@ -145,14 +148,16 @@ class LoadsService
         $load->status               =   $fields[ 'general' ][ 'status' ] ?? 'pending';
         $load->trailer_reference    =   $fields[ 'general' ][ 'trailer_reference' ];
         $load->pickup_reference     =   $fields[ 'general' ][ 'pickup_reference' ];
-        $load->pickup_date          =   Carbon::createFromFormat( 'Y-m-d\TH:i:s\.\0\0\0\Z', $fields[ 'general' ][ 'pickup_date' ] )->toDateTimeString();
+        $load->pickup_date          =   Carbon::parse( $fields[ 'general' ][ 'pickup_date' ] )->toDateTimeString();
         $load->pickup_city          =   $fields[ 'general' ][ 'pickup_city' ];
-        $load->delivery_date        =   Carbon::createFromFormat( 'Y-m-d\TH:i:s\.\0\0\0\Z', $fields[ 'general' ][ 'delivery_date' ] )->toDateTimeString();
+        $load->delivery_date        =   Carbon::parse( $fields[ 'general' ][ 'delivery_date' ] )->toDateTimeString();
         $load->delivery_city        =   $fields[ 'general' ][ 'delivery_city' ];
         $load->lumper_fees          =   $fields[ 'drivers' ][ 'lumper_fees' ] ?? 0;
         $load->escort_fees          =   $fields[ 'drivers' ][ 'escort_fees' ] ?? 0;
         $load->empty_trailer        =   $fields[ 'general' ][ 'empty_trailer' ] ?? '';
         $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
+        $load->load_trailer         =   $fields[ 'general' ][ 'load_trailer' ] ?? '';
+        $load->note                 =   $fields[ 'general' ][ 'note' ] ?? '';
         $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) ? false : true;
         $load->user_id              =   Auth::id();
         
@@ -388,56 +393,11 @@ class LoadsService
         }
     }
 
-    public function handleSmsDriverIfNecessary( AfterEditLoadEvent /*AfterCreateLoadEvent*/ $event )
+    public function handleSmsDriverIfNecessary( $event )
     {
-        $options    =   app()->make( Options::class );
-
         if ( $event->load->driver_id !== null ) {
-            $sid                =   $options->get( 'brookr_twilio_sid' );
-            $token              =   $options->get( 'brookr_twilio_token' );
-            $phone              =   $options->get( 'brookr_twilio_phone' );
-            $assigned_message   =   $options->get( 'brookr_assigned_load' );
-            $assigned_message   =   ! empty( $assigned_message ) ? $assigned_message : __( 'Hi {driver_name}, a new load ({load_reference}) has been assigned to you for delivery. From {pickup_city} at {pickup_date} to {delivery_city} at {delivery_date}.' );
             $load               =   $event->load;
-
-            $client     =   new Client( $sid, $token );
-            
-            if ( ! empty( $event->load->driver->details->phone_cell ) ) {
-                $client->messages->create(
-                    $event->load->driver->details->phone_cell,
-                    [
-                        'from'  =>  $phone,
-                        'body'  =>  collect([ $assigned_message ])
-                            ->map( function( $string ) use ( $load ) {
-                                return Str::replaceFirst( '{driver_name}', $load->driver->details->first_name, $string );
-                            })
-                            ->map( function( $string ) use ( $load ) {
-                                return Str::replaceFirst( '{load_id}', $load->id, $string );
-                            })
-                            ->map( function( $string ) use ( $load ) {
-                                return Str::replaceFirst( '{load_reference}', $load->load_reference, $string );
-                            })
-                            ->map( function( $string ) use ( $load ) {
-                                return Str::replaceFirst( '{pickup_reference}', $load->pickup_reference, $string );
-                            })
-                            ->map( function( $string ) use ( $load ) {
-                                return Str::replaceFirst( '{pickup_city}', $load->pickup_city, $string );
-                            })
-                            ->map( function( $string ) use ( $load ) {
-                                return Str::replaceFirst( '{delivery_city}', $load->delivery_city, $string );
-                            })
-                            ->map( function( $string ) use ( $load ) {
-                                return Str::replaceFirst( '{pickup_date}', $load->pickup_date, $string );
-                            })
-                            ->map( function( $string ) use ( $load ) {
-                                return Str::replaceFirst( '{delivery_date}', $load->delivery_date, $string );
-                            })
-                            ->map( function( $string ) use ( $load ) {
-                                return Str::replaceFirst( '{rate}', br_currency( $load->cost ), $string );
-                            })->first()
-                    ]
-                );
-            }
+            SMSDriverJob::dispatch( $event )->delay( now()->addSeconds(10) );
         }
     }
 }

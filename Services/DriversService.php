@@ -177,10 +177,18 @@ class DriversService
              * If not we'll attempt to create.
              */
             if ( ( $user = User::find( $id ) ) instanceof User ) {
+                $previousUser     =   User::where( 'email', $authentication[ 'email' ] )
+                    ->where( 'id', '<>', $id )
+                    ->first();
+
+                if ( $previousUser instanceof User ) {
+                    throw new Exception( __( 'Unable to proceed this email is already used.' ) );
+                }
                 
                 $this->saveDriverAsUser([
                     'role_id'   =>  $role->id,
                     'password'  =>  Hash::make( $authentication[ 'password' ]),
+                    'email'     =>  $authentication[ 'email' ],
                     'active'    =>  $fields[ 'professional' ][ 'status' ] === 'available',
                 ], $user );
 

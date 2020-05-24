@@ -10,6 +10,7 @@ use Tendoo\Core\Services\TendooModule;
 
 include( dirname( __FILE__ ) . '/vendor/autoload.php' );
 include( dirname( __FILE__ ) . '/helper.php' );
+include( dirname( __FILE__ ) . '/Jobs/SMSDriverJob.php' );
 
 class BrookrModule extends TendooModule
 {

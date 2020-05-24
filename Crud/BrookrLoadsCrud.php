@@ -273,18 +273,23 @@ class BrookrLoadsCrud extends Crud
             '$actions'  =>  [
                 'label' =>  __( 'Actions' ),
             ],
-            'name'  =>  [
-                'label'     =>  __( 'Name' ),
-                'type'      =>  'text',
+            'status'  =>  [
+                'label'     =>  __( 'Status' ),
+                'type'      =>  'select',
+                'options'   =>  Helper::kvToJsOptions( $loadStatus )
             ],
             'pickup_date'  =>  [
                 'label'     =>  __( 'Pickup Date' ),
                 'type'      =>  'ng-datetime',
             ],
-            'delivery_date'  =>  [
-                'label'     =>  __( 'Delivery Date' ),
-                'type'      =>  'ng-datetime',
+            'name'  =>  [
+                'label'     =>  __( 'Name' ),
+                'type'      =>  'text',
             ],
+            // 'created_at'  =>  [
+            //     'label'     =>  __( 'Date' ),
+            //     'type'      =>  'ng-datetime',
+            // ],
             'load_reference'  =>  [
                 'label'     =>  __( 'Load Reference' ),
                 'type'      =>  'text',
@@ -293,9 +298,37 @@ class BrookrLoadsCrud extends Crud
                 'label'     =>  __( 'Pickup Reference' ),
                 'type'      =>  'text',
             ],
+            'delivery_date'  =>  [
+                'label'     =>  __( 'Delivery Date' ),
+                'type'      =>  'ng-datetime',
+            ],
+            'pickup_city'  =>  [
+                'label'     =>  __( 'Pickup Location' ),
+                'type'      =>  'text',
+            ],
+            'delivery_city'  =>  [
+                'label'     =>  __( 'Delivery Location' ),
+                'type'      =>  'text',
+            ],
+            'load_trailer'  =>  [
+                'label'     =>  __( 'Load Trailer' ),
+                'type'      =>  'text',
+            ], 
+            'empty_trailer'  =>  [
+                'label'     =>  __( 'Empty Trailer' ),
+                'type'      =>  'text',
+            ],
+            'drop_trailer'  =>  [
+                'label'     =>  __( 'Dropped Trailer' ),
+                'type'      =>  'text',
+            ], 
             'cost'  =>  [
                 'label'     =>  __( 'Rate' ),
                 'type'      =>  'number',
+            ],
+            'note'  =>  [
+                'label'     =>  __( 'Note' ),
+                'type'      =>  'text',
             ],
             'driver_username'  =>  [
                 'label'     =>  __( 'Driver' ),
@@ -317,11 +350,6 @@ class BrookrLoadsCrud extends Crud
                     Truck::get(),
                     [ 'id', 'name' ]
                 ),
-            ],
-            'status'  =>  [
-                'label'     =>  __( 'Status' ),
-                'type'      =>  'select',
-                'options'   =>  Helper::kvToJsOptions( $loadStatus )
             ],
 
         ])->mapWithKeys( function( $column, $key ) {

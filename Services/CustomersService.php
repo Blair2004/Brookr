@@ -7,6 +7,7 @@ use Tendoo\Core\Models\Role;
 use Tendoo\Core\Models\User;
 use Modules\Brookr\Models\Address;
 use Modules\Brookr\Models\Customer;
+use Modules\Brookr\Models\CustomerDetail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,13 +16,38 @@ class CustomersService
     public function defineCustomer( $fields, $id = null )
     {
         $result                         =   [];
-        $result[ 'authentication' ]     =   $this->saveCustomer( $fields );
+        $result[ 'authentication' ]     =   $this->saveCustomer( $fields, $id );
+        $result[ 'general' ]            =   $this->saveGeneral( $fields, $result[ 'authentication' ][ 'data' ][ 'user' ]->id );
         $user                           =   $result[ 'authentication' ][ 'data' ][ 'user' ];
         $result[ 'address' ]            =   $this->registerCustomerAddress( $fields, $user->id );
 
         return [
             'status'    =>  'success',
             'message'   =>  $id === null ? __( 'The customer has been created.' ) : __( 'The customer has been updated.' )
+        ];
+    }
+
+    public function saveGeneral( $fields, $id )
+    {
+        $details    =   CustomerDetail::where( 'customers_id', $id )->first();
+
+        if ( ! $details instanceof CustomerDetail ) {
+            $details    =   new CustomerDetail;
+        }
+
+        $details->first_name    =   $fields[ 'general' ][ 'first_name' ];
+        $details->last_name     =   $fields[ 'general' ][ 'last_name' ];
+        $details->display_name  =   $fields[ 'general' ][ 'display_name' ];
+        $details->short_name    =   $fields[ 'general' ][ 'short_name' ];
+        $details->description   =   $fields[ 'general' ][ 'description' ];
+        $details->customers_id  =   $id;
+        $details->user_id       =   Auth::id();
+        $details->save();
+
+        return [
+            'status'    =>  'sucess',
+            'message'   =>  __( 'The driver details has been created.' ),
+            'data'      =>  compact( 'details' )
         ];
     }
 
@@ -39,8 +65,8 @@ class CustomersService
 
         $rand                                           =   Str::random(5);
         $fields[ 'authentication' ][ 'email' ]          =   $fields[ 'authentication' ][ 'email' ] ?? 'customer-' . $rand . '@brookr.com';
-        $fields[ 'authentication' ][ 'username' ]       =   $fields[ 'authentication' ][ 'username' ] ?? 'customer-' . $rand . '@brookr.com';
-        $fields[ 'authentication' ][ 'username' ]       =   $fields[ 'authentication' ][ 'username' ] ?? Str::random(20);
+        $fields[ 'authentication' ][ 'username' ]       =   $fields[ 'authentication' ][ 'username' ] ?? $fields[ 'authentication' ][ 'email' ];
+        $fields[ 'authentication' ][ 'password' ]       =   $fields[ 'authentication' ][ 'password' ] ?? Str::random(20);
         $authentication                                 =   $fields[ 'authentication' ];
 
         $userUsingEmail         =   User::where( 'email', $authentication[ 'email' ] )->first();

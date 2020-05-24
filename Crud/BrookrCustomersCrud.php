@@ -9,6 +9,7 @@ use Tendoo\Core\Services\Field;
 use Tendoo\Core\Services\Users;
 use Tendoo\Core\Services\Helper;
 use Illuminate\Support\Facades\Auth;
+use Modules\Brookr\Models\CustomerDetail;
 
 class BrookrCustomersCrud extends Crud
 {
@@ -37,7 +38,8 @@ class BrookrCustomersCrud extends Crud
      * Adding relation
      */
     public $relations   =  [
-            ];
+        [ 'brookr_customers_details', 'brookr_customers_details.customers_id', '=', 'tendoo_users.id' ]
+    ];
 
     /**
      * Define where statement
@@ -198,6 +200,7 @@ class BrookrCustomersCrud extends Crud
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
             **/
+            CustomerDetail::where( 'customers_id', $id )->delete();
         }
     }
 
@@ -209,6 +212,12 @@ class BrookrCustomersCrud extends Crud
         return [
             'id'  =>  [
                 'label'  =>  __( 'Id' )
+            ],
+            'brookr_customers_details_first_name'  =>  [
+                'label'  =>  __( 'First Name' )
+            ],
+            'brookr_customers_details_last_name'  =>  [
+                'label'  =>  __( 'Last Name' )
             ],
             'username'  =>  [
                 'label'  =>  __( 'Username' )
