@@ -4,6 +4,7 @@ namespace Modules\Brookr\Http\Controllers;
 use Illuminate\Http\Request;
 use Modules\Brookr\Services\LoadsService;
 use Tendoo\Core\Http\Controllers\BaseController;
+use Illuminate\Support\Arr;;
 
 class LoadsController extends BaseController
 {
@@ -14,12 +15,54 @@ class LoadsController extends BaseController
 
     public function saveLoad( Request $request )
     {
-        return $this->loadsService->create( $request->all() );
+        $loads      =   $request->all();
+        $data       =   [];
+
+        foreach( $loads as $key => $value ) {
+            Arr::set( $data, str_replace( '--', '.', $key ), $value === 'null' ? null : $value );
+        }
+
+        return $this->loadsService->create( $data );
     }
 
     public function editLoad( Request $request, $id )
     {
-        return $this->loadsService->edit( $id, $request->all() );
+        $loads      =   $request->all();
+        $data       =   [];
+
+        foreach( $loads as $key => $value ) {
+            Arr::set( $data, str_replace( '--', '.', $key ), in_array( $value, [ 'null', null ], true ) ? null : $value );
+        }
+
+        return $this->loadsService->edit( $id, $data );
+    }
+
+    public function getDocumentLink( $id, $document )
+    {
+        if ( in_array( $document, [ 'rate_document_url', 'delivery_document_url' ] ) ) {
+            $load       =   $this->loadsService->get( $id );
+
+            if ( ! empty( $load->$document ) ) {
+                return [
+                    'status'    =>  'success',
+                    'message'   =>  __( 'The link is available' ),
+                    'data'      =>  [
+                        'url'   =>  url( $load->$document )
+                    ]
+                ];
+            }
+
+            return response()->json([
+                'status'    =>  'failed',
+                'message'   =>  __( 'Unable to retreive the document you\'re looking for as it doesn\'t exists.' ),
+                'data'      =>  $load
+            ], 401 );
+        }
+        
+        return response()->json([
+            'status'    =>  'failed',
+            'message'   =>  __( 'Unable to retreive the type of document you\'re looking for.' ),
+        ], 401 );
     }
 
     public function deleteLoad( $id )
@@ -50,6 +93,11 @@ class LoadsController extends BaseController
     public function startDelivery( $id )
     {
         return $this->loadsService->startDelivery( $id );
+    }
+
+    public function awaitingLoadDelivery( $id )
+    {
+        return $this->loadsService->awaitingLoadDelivery( $id );
     }
 
     public function stopDelivery( $id, Request $request )

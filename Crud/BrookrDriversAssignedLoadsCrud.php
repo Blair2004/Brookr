@@ -254,6 +254,14 @@ class BrookrDriversAssignedLoadsCrud extends Crud
 
         if ( $entry->status === $this->options->get( 'brookr_system_unassigned_status', 'pending' ) ) {
             $entry->{'$actions'}[]      =   [
+                'label'     =>  __( 'Awaiting Load' ),
+                'namespace' =>  'brookr.await-load',
+                'url'       =>  url( 'api/brookr/loads/start' )
+            ];
+        }
+
+        if ( $entry->status === $this->options->get( 'brookr_system_awaiting_status', 'awaiting' ) ) {
+            $entry->{'$actions'}[]      =   [
                 'label'     =>  __( 'Start Delivery' ),
                 'namespace' =>  'brookr.start-delivery',
                 'url'       =>  url( 'api/brookr/loads/start' )

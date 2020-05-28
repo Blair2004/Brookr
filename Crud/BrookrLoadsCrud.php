@@ -398,6 +398,20 @@ class BrookrLoadsCrud extends Crud
                 'id'            =>      $entry->id,
                 'url'           =>      '/dashboard/loads/edit/{id}'
             ], [
+                'label'         =>      __( 'Delivery Document' ),
+                'namespace'     =>      'delivery_document_url',
+                'type'          =>      'OPEN',
+                'index'         =>      'id',
+                'id'            =>      $entry->id,
+                'url'           =>      '/dashboard/loads/edit/{id}'
+            ], [
+                'label'         =>      __( 'Rate Document' ),
+                'namespace'     =>      'rate_document_url',
+                'type'          =>      'OPEN',
+                'index'         =>      'id',
+                'id'            =>      $entry->id,
+                'url'           =>      '/dashboard/loads/edit/{id}'
+            ], [
                 'label'         =>      __( 'Assign Driver' ),
                 'namespace'     =>      'open.assign_driver',
                 'type'          =>      'OPEN',
@@ -417,6 +431,17 @@ class BrookrLoadsCrud extends Crud
                 ]
             ], 
         ];
+
+        if ( $entry->status === $this->options->get( 'brookr_system_delivered_status', 'delivered' ) ) {
+            $entry->{'$actions'}[]  =   [
+                'label'     =>  __( 'Notify Delivery' ),
+                'namespace' =>  'notify_delivery',
+                'type'      =>  'DELETE',
+                'index'     =>  'id',
+                'id'        =>  $entry->id,
+                'url'       =>  url( '/api/brookr/loads/email/delivery/{id}' ),
+            ];
+        }
 
         return $entry;
     }

@@ -1,4 +1,6 @@
 <?php
+
+use Illuminate\Support\Facades\Auth;
 Route::get( 'brookr/{chunk}', function( $chunk ) {
     if ( in_array( substr( $chunk, -2 ), [ 'js' ] ) ) {
         header("Content-type: text/javascript");

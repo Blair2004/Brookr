@@ -156,7 +156,7 @@ return [
                     'label'         =>  __( 'delivery Document' ),
                     'name'          =>  'delivery_document_url',
                     'value'         =>  $load->delivery_document_url ?? '',
-                    'type'          =>  'image',
+                    'type'          =>  'file-upload',
                     'data'          =>  [
                         'maintainAspectRatio'   =>  false
                     ],
@@ -164,7 +164,7 @@ return [
                 ], [
                     'label'         =>  __( 'Rate Document URL' ),
                     'name'          =>  'rate_document_url',
-                    'type'          =>  'image',
+                    'type'          =>  'file-upload',
                     'data'          =>  [
                         'maintainAspectRatio'   =>  false
                     ]

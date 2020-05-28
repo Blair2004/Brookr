@@ -3,6 +3,7 @@
 use Tendoo\Core\Models\Role;
 use Tendoo\Core\Services\Helper;
 use Tendoo\Core\Services\Options;
+use Modules\Brookr\Models\Company;
 
 $options    =   app()->make( Options::class );
 $loadStatus     =   collect( preg_split( '/[\r\n]+/', $options->get( 'brookr_loads_status' ), NULL, PREG_SPLIT_NO_EMPTY) )->mapWithKeys( function( $name ) {
@@ -11,6 +12,10 @@ $loadStatus     =   collect( preg_split( '/[\r\n]+/', $options->get( 'brookr_loa
         Str::slug( trim( $key[0] ) )  =>  ucfirst( trim( $key[0] ) )
     ];
 })->toArray();
+
+$companies  =   Company::get()->mapWithKeys( function( $company ) {
+    return [ $company->id => $company->name ];
+});
 
 if ( ! Auth::user()->allowedTo( 'brookr.edit.settings' ) ) {
     throw new Exception( __( 'You\'re not allowed to see this page.' ) );
@@ -67,6 +72,13 @@ return [
                     'value' =>  $options->get( 'brookr_system_unassigned_status' ),
                 ], [
                     'type'          =>  'select',
+                    'label'         =>  __( 'Status Awaiting Loads' ),
+                    'options'       =>  Helper::kvToJsOptions( $loadStatus ),
+                    'description'   =>  __( 'This status means the driver has reached the pickup location and is awaiting load.' ),
+                    'name'          =>  'brookr_system_awaiting_status',
+                    'value'         =>  $options->get( 'brookr_system_awaiting_status' ),
+                ], [
+                    'type'          =>  'select',
                     'label'         =>  __( 'Status Ongoing Delivery' ),
                     'options'       =>  Helper::kvToJsOptions( $loadStatus ),
                     'description'   =>  __( 'Which status should be used when the driver is handling a load for delivery ?' ),
@@ -86,6 +98,13 @@ return [
                     'description'   =>  __( 'Which status should be used when the load delivery is canceled ?' ),
                     'name'          =>  'brookr_system_canceled_status',
                     'value'         =>  $options->get( 'brookr_system_canceled_status' ),
+                ], [
+                    'type'          =>  'select',
+                    'label'         =>  __( 'Notified Company For Complete Delivery' ),
+                    'options'       =>  Helper::kvToJsOptions( $companies ),
+                    'description'   =>  __( 'Select the company which will be notified once the delivery is complete.' ),
+                    'name'          =>  'brookr_system_notified_company_id',
+                    'value'         =>  $options->get( 'brookr_system_notified_company_id' ),
                 ], 
             ]
         ], [
@@ -165,7 +184,7 @@ return [
                     'value'         =>  $options->get( 'brookr_mail_mailgun_secret' ),
                     'label'         =>  __( 'Mailgun Secret' ),
                     'description'    =>  __( 'Save your mailgun secret.' ),
-                ],
+                ], 
             ]
         ], [
             'title'     =>  __( 'Notifications' ),

@@ -76,12 +76,13 @@ class LoadsService
         $load->note                 =   $fields[ 'general' ][ 'note' ] ?? '';
         $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) ? false : true;
         $load->user_id              =   Auth::id();
-        $load->driver_id            =   $fields[ 'drivers' ][ 'driver_id' ];
-        $load->truck_id             =   $fields[ 'drivers' ][ 'truck_id' ];
+        $load->driver_id            =   ! empty( $fields[ 'drivers' ][ 'driver_id' ] ) && $fields[ 'drivers' ][ 'driver_id' ] !== 'null' ? $fields[ 'drivers' ][ 'driver_id' ] : null;
+        $load->truck_id             =   ! empty( $fields[ 'drivers' ][ 'truck_id' ] ) && $fields[ 'drivers' ][ 'truck_id' ] !== 'null' ? $fields[ 'drivers' ][ 'truck_id' ] : null;
         $load->cost                 =   $fields[ 'general' ][ 'cost' ] ?? 0;
         $load->save();
-
+        
         $this->handleLoadFileUpload( $fields, $load );
+        
 
         /**
          * let's define a name automatically
@@ -105,8 +106,15 @@ class LoadsService
          * the upload fields are on general
          */
         foreach( $fields[ 'general' ] as $key => $value ) {
-            if ( in_array( $key, [ 'rate_document_url', 'delivery_document_url' ] ) && ! empty( $value ) ) {
-                $this->saveBase64( $value, 'brookr-uploads/' . $load->id . '-' . $key );
+            if ( in_array( $key, [ 'rate_document_url', 'delivery_document_url' ] ) && ! empty( $value ) && $value !== 'null' ) {
+                $relativeFilePath   =   'brookr-uploads/' . $load->id . '-' . $key . '.' . request()->file( 'general--' . $key )->extension();
+                $url                =   request()->file( 'general--' . $key )->storeAs(
+                    'public', $relativeFilePath
+                );
+
+                $load->$key     =   Storage::disk( 'local' )->url( $relativeFilePath );
+                $load->save();
+                // $this->saveBase64( $value, 'brookr-uploads/' . $load->id . '-' . $key );
             }
         }
     }
@@ -140,7 +148,7 @@ class LoadsService
         $truck      =   $load->truck;
         $driver     =   $load->driver;
         
-        event( new BeforeEditLoadEvent( $load, $driver, $truck, $fields[ 'drivers' ] ) );
+        event( new BeforeEditLoadEvent( $load, $driver, $truck, ( array ) @$fields[ 'drivers' ] ) );
 
         $load->name                 =   $fields[ 'main' ][ 'name' ] ?? $this->getLoadGeneratedName( $load );
         $load->brooker_id           =   $fields[ 'general' ][ 'brooker_id' ];
@@ -161,11 +169,13 @@ class LoadsService
         $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) ? false : true;
         $load->user_id              =   Auth::id();
         
-        $load->truck_id             =   $fields[ 'drivers' ][ 'truck_id' ];
-        $load->driver_id            =   $fields[ 'drivers' ][ 'driver_id' ];
+        $load->truck_id             =   @$fields[ 'drivers' ][ 'truck_id' ] ?? null;
+        $load->driver_id            =   @$fields[ 'drivers' ][ 'driver_id' ] ?? null;
         $load->cost                 =   $fields[ 'general' ][ 'cost' ] ?? 0;
         
         $load->save();
+
+        $this->handleLoadFileUpload( $fields, $load );
 
         event( new AfterEditLoadEvent( $load, $driver, $truck ) );
 
@@ -297,6 +307,27 @@ class LoadsService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'You have been successfully assigned to this delivery.' )
+        ];
+    }
+
+    public function awaitingLoadDelivery( $id )
+    {
+        $load                   =   $this->get( $id );
+        $load->status           =   $this->optionService->get( 'brookr_system_awaiting_status', 'awaiting' );
+        $load->save();
+
+        $action                 =   new LoadDeliveryHistory;
+        $action->action_time    =   $this->date->now()->toDateTimeString();
+        $action->action_type    =   'brookr.awaiting-load';
+        $action->user_id        =   Auth::id();
+        $action->load_id        =   $load->id;
+        $action->save();
+
+        event( new AfterEditLoadEvent( $load, $load->driver, $load->truck ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The delivery status has changed to awaiting load.' )
         ];
     }
 

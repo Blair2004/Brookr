@@ -33,13 +33,15 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
 
     Route::get( 'api/brookr/loads/unassigned', 'LoadsController@getUnassigned' );
     Route::get( 'api/brookr/loads/start/{id}', 'LoadsController@startDelivery' );
+    Route::get( 'api/brookr/loads/awaiting/{id}', 'LoadsController@awaitingLoadDelivery' );
     Route::post( 'api/brookr/loads/stop/{id}', 'LoadsController@stopDelivery' );
     Route::post( 'api/brookr/loads', 'LoadsController@saveLoad' );
     Route::put( 'api/brookr/loads/self-assign/{id}', 'LoadsController@selfAssignDriver' );
-    Route::put( 'api/brookr/loads/{id}', 'LoadsController@editLoad' );
+    Route::post( 'api/brookr/loads/edit/{id}', 'LoadsController@editLoad' );
     Route::put( 'api/brookr/loads/update-driver/{id}', 'LoadsController@updateLoadAssignation' );
     Route::put( 'api/brookr/loads/update-status/{id}', 'LoadsController@updateLoadStatus' );
     Route::delete( 'api/brookr/loads/{id}', 'LoadsController@deleteLoad' );
+    Route::get( 'api/brookr/loads/doc/{id}/{namespace}', 'LoadsController@getDocumentLink' );
 
     Route::delete( 'api/brookr/notifications/{id}', 'SettingsController@deleteNotification' );
 
