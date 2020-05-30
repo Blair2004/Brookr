@@ -15,12 +15,20 @@ return [
             'description'   =>  __( 'Upload Delivery Document' ),
             'fields'        =>  [
                 [
+                    'label'         =>  __( 'Empty Trailer' ),
+                    'name'          =>  'empty_trailer',
+                    'type'          =>  'text',
+                    'appearance'    =>  'outline',
+                    'validation'    =>  'required',
+                    'description'   =>  __( 'Provide the empty trailer reference.' )
+                ], 
+                [
                     'label'         =>  __( 'Delivery Document' ),
                     'name'          =>  'delivery_document_url',
-                    'type'          =>  'file',
+                    'type'          =>  'file-upload',
                     'validation'    =>  'required',
                     'description'   =>  __( 'select and attach delivery document to the delivery.' )
-                ], 
+                ],                 
             ]
         ]
     ]

@@ -379,8 +379,8 @@ class BrookrLoadsCrud extends Crud
         $entry->cost        =   br_currency( $entry->cost );
         
         $entry->{'$props'}          =   [
-            'className'             =>  [ 'bg-' . $loadStatus[ $entry->status ] . '-200' ],
-            'tdClassName'           =>  [ 'border-' . $loadStatus[ $entry->status ] . '-400' ]
+            'className'             =>  [ 'bg-' . ($loadStatus[ $entry->status ] ?? 'gray' ) . '-200' ],
+            'tdClassName'           =>  [ 'border-' . ($loadStatus[ $entry->status ] ?? 'gray' ) . '-400' ]
         ];
 
         $entry->{'$actions'}        =   [

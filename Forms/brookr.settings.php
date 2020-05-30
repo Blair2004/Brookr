@@ -98,13 +98,6 @@ return [
                     'description'   =>  __( 'Which status should be used when the load delivery is canceled ?' ),
                     'name'          =>  'brookr_system_canceled_status',
                     'value'         =>  $options->get( 'brookr_system_canceled_status' ),
-                ], [
-                    'type'          =>  'select',
-                    'label'         =>  __( 'Notified Company For Complete Delivery' ),
-                    'options'       =>  Helper::kvToJsOptions( $companies ),
-                    'description'   =>  __( 'Select the company which will be notified once the delivery is complete.' ),
-                    'name'          =>  'brookr_system_notified_company_id',
-                    'value'         =>  $options->get( 'brookr_system_notified_company_id' ),
                 ], 
             ]
         ], [
@@ -184,6 +177,19 @@ return [
                     'value'         =>  $options->get( 'brookr_mail_mailgun_secret' ),
                     'label'         =>  __( 'Mailgun Secret' ),
                     'description'    =>  __( 'Save your mailgun secret.' ),
+                ], [
+                    'type'          =>  'textarea',
+                    'name'          =>  'brookr_mail_company_template',
+                    'value'         =>  $options->get( 'brookr_mail_company_template' ),
+                    'label'         =>  __( 'Company Notification Template' ),
+                    'description'    =>  __( 'This template is sent to the companies as the delivery email.' ),
+                ], [
+                    'type'          =>  'select',
+                    'label'         =>  __( 'Notified Company For Complete Delivery' ),
+                    'options'       =>  Helper::kvToJsOptions( $companies ),
+                    'description'   =>  __( 'Select the company which will be notified once the delivery is complete. the template tags are supported.' ),
+                    'name'          =>  'brookr_system_notified_company_id',
+                    'value'         =>  $options->get( 'brookr_system_notified_company_id' ),
                 ], 
             ]
         ], [

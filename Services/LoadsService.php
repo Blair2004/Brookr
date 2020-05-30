@@ -331,9 +331,18 @@ class LoadsService
         ];
     }
 
-    public function startDelivery( $id )
+    public function startDelivery( $id, $fields )
     {
         $load                   =   $this->get( $id );
+
+        foreach( $fields as $field => $value ) {
+            $load->$field   =   $value;
+        }
+
+        if ( $load->status === $this->optionService->get( 'brookr_system_handling_status', 'ongoing' ) ) {
+            throw new Exception( __( 'Unable to change the status of the load is has already started' ) );
+        }
+
         $load->status           =   $this->optionService->get( 'brookr_system_handling_status', 'ongoing' );
         $load->save();
 
@@ -371,6 +380,7 @@ class LoadsService
         );
 
         $load->delivery_document_url    =   asset( 'storage/' . $path );
+        $load->empty_trailer            =   $request->input( 'empty_trailer' );
         $load->status                   =   $deliveredStatus;
         $load->save();
 

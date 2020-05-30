@@ -72,7 +72,8 @@ class BrookrDriversAssignedLoadsCrud extends Crud
 
     public function hook( $query )
     {
-        $query->where( 'driver_id', Auth::id() );
+        $query->where( 'driver_id', Auth::id() )
+            ->where( 'status', $this->options->get( 'brookr_notify_load_delivered', 'delivered' ) );
     }
 
     /**
@@ -270,7 +271,7 @@ class BrookrDriversAssignedLoadsCrud extends Crud
 
         if ( $entry->status === $this->options->get( 'brookr_system_handling_status ', 'ongoing' ) ) {
             $entry->{'$actions'}[]      =   [
-                'label'     =>  __( 'Delivery Document' ),
+                'label'     =>  __( 'Upload POD' ),
                 'namespace' =>  'brookr.send-delivery-document',
                 'url'       =>  url( 'api/brookr/loads/end' )
             ];

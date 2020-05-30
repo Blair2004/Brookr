@@ -25,6 +25,7 @@ class FormsEvent
             'broork.drivers-loads-status',
             'brookr.advance-payment.drivers',
             'brookr.drivers-loads-delivery',
+            'brookr.drivers-delivery-start',
         ])) {
             return $this->loadForm( $namespace, $index );
         }

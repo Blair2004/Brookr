@@ -90,9 +90,9 @@ class LoadsController extends BaseController
         return $this->loadsService->selfAssignDriver( $load_id, $request->only( 'load' ) );
     }
 
-    public function startDelivery( $id )
+    public function startDelivery( $id, Request $request )
     {
-        return $this->loadsService->startDelivery( $id );
+        return $this->loadsService->startDelivery( $id, $request->only([ 'drop_trailer', 'load_trailer' ]) );
     }
 
     public function awaitingLoadDelivery( $id )
