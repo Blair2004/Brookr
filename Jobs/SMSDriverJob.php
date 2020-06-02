@@ -50,40 +50,45 @@ class SMSDriverJob implements ShouldQueue
         $load       =   $this->event->load;
             
         if ( ! empty( $this->event->load->driver->details->phone_cell ) ) {
-            $client->messages->create(
-                $this->event->load->driver->details->phone_cell,
-                [
-                    'from'  =>  $phone,
-                    'body'  =>  collect([ $assigned_message ])
-                        ->map( function( $string ) use ( $load ) {
-                            return Str::replaceFirst( '{driver_name}', $load->driver->details->first_name, $string );
-                        })
-                        ->map( function( $string ) use ( $load ) {
-                            return Str::replaceFirst( '{load_id}', $load->id, $string );
-                        })
-                        ->map( function( $string ) use ( $load ) {
-                            return Str::replaceFirst( '{load_reference}', $load->load_reference, $string );
-                        })
-                        ->map( function( $string ) use ( $load ) {
-                            return Str::replaceFirst( '{pickup_reference}', $load->pickup_reference, $string );
-                        })
-                        ->map( function( $string ) use ( $load ) {
-                            return Str::replaceFirst( '{pickup_city}', $load->pickup_city, $string );
-                        })
-                        ->map( function( $string ) use ( $load ) {
-                            return Str::replaceFirst( '{delivery_city}', $load->delivery_city, $string );
-                        })
-                        ->map( function( $string ) use ( $load ) {
-                            return Str::replaceFirst( '{pickup_date}', $load->pickup_date, $string );
-                        })
-                        ->map( function( $string ) use ( $load ) {
-                            return Str::replaceFirst( '{delivery_date}', $load->delivery_date, $string );
-                        })
-                        ->map( function( $string ) use ( $load ) {
-                            return Str::replaceFirst( '{rate}', br_currency( $load->cost ), $string );
-                        })->first()
-                ]
-            );
+            $sms     =  [
+                'from'  =>  $phone,
+                'body'  =>  collect([ $assigned_message ])
+                    ->map( function( $string ) use ( $load ) {
+                        return Str::replaceFirst( '{driver_name}', $load->driver->details->first_name, $string );
+                    })
+                    ->map( function( $string ) use ( $load ) {
+                        return Str::replaceFirst( '{load_id}', $load->id, $string );
+                    })
+                    ->map( function( $string ) use ( $load ) {
+                        return Str::replaceFirst( '{load_reference}', $load->load_reference, $string );
+                    })
+                    ->map( function( $string ) use ( $load ) {
+                        return Str::replaceFirst( '{pickup_reference}', $load->pickup_reference, $string );
+                    })
+                    ->map( function( $string ) use ( $load ) {
+                        return Str::replaceFirst( '{pickup_city}', $load->pickup_city, $string );
+                    })
+                    ->map( function( $string ) use ( $load ) {
+                        return Str::replaceFirst( '{delivery_city}', $load->delivery_city, $string );
+                    })
+                    ->map( function( $string ) use ( $load ) {
+                        return Str::replaceFirst( '{pickup_date}', $load->pickup_date, $string );
+                    })
+                    ->map( function( $string ) use ( $load ) {
+                        return Str::replaceFirst( '{delivery_date}', $load->delivery_date, $string );
+                    })
+                    ->map( function( $string ) use ( $load ) {
+                        return Str::replaceFirst( '{rate}', br_currency( $load->cost ), $string );
+                    })->first()
+            ];
+
+            $load   =   $load->toArray();
+            Log::info( 'dump', compact( 'sms', 'load' ) );
+            
+            // $client->messages->create(
+            //     $this->event->load->driver->details->phone_cell,
+            //     $sms
+            // );
         }
     }
 }

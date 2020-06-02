@@ -155,7 +155,7 @@ return [
                 ], [
                     'label'         =>  __( 'delivery Document' ),
                     'name'          =>  'delivery_document_url',
-                    'value'         =>  $load->delivery_document_url ?? '',
+                    // 'value'         =>  $load->delivery_document_url ?? '',
                     'type'          =>  'file-upload',
                     'data'          =>  [
                         'maintainAspectRatio'   =>  false

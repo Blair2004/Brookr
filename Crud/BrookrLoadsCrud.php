@@ -368,6 +368,10 @@ class BrookrLoadsCrud extends Crud
         $entry->status              =   $this->statuses[ $entry->status ] ?? $entry->status;
         $entry->brookr_trucks_name  =   $entry->brookr_trucks_name ?? __( 'N/A' );
         $entry->driver_username     =   $entry->driver_username ?? __( 'N/A' );
+        $dateFormat                 =   $this->options->get( 'brookr_system_datetime_format', 'D d, M y H:m' );
+
+        $entry->pickup_date         =   Carbon::parse( $entry->pickup_date )->format( $dateFormat );
+        $entry->delivery_date       =   Carbon::parse( $entry->delivery_date )->format( $dateFormat );
         
         $loadStatus     =   collect( preg_split( '/[\r\n]+/', $this->options->get( 'brookr_loads_status' ), NULL, PREG_SPLIT_NO_EMPTY) )->mapWithKeys( function( $name ) {
             $key        =   explode( '-', $name );
@@ -436,9 +440,12 @@ class BrookrLoadsCrud extends Crud
             $entry->{'$actions'}[]  =   [
                 'label'     =>  __( 'Notify Delivery' ),
                 'namespace' =>  'notify_delivery',
-                'type'      =>  'DELETE',
+                'type'      =>  'GET',
                 'index'     =>  'id',
                 'id'        =>  $entry->id,
+                'confirm'   =>  [
+                    'message'   =>  __( 'Would you like to notify the load is delivered ? This will email the Proof of Delivery (POD) and the Rate document to the company assigned on the settings.' )
+                ],
                 'url'       =>  url( '/api/brookr/loads/email/delivery/{id}' ),
             ];
         }

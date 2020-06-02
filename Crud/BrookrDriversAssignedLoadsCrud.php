@@ -73,7 +73,7 @@ class BrookrDriversAssignedLoadsCrud extends Crud
     public function hook( $query )
     {
         $query->where( 'driver_id', Auth::id() )
-            ->where( 'status', $this->options->get( 'brookr_notify_load_delivered', 'delivered' ) );
+            ->where( 'status', '<>', $this->options->get( 'brookr_notify_load_delivered', 'delivered' ) );
     }
 
     /**

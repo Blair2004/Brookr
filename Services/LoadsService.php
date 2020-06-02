@@ -12,6 +12,7 @@ use Tendoo\Core\Models\User;
 use Modules\Brookr\Models\Truck;
 use Modules\Brookr\Models\Driver;
 use Tendoo\Core\Services\Options;
+use Modules\Brookr\Models\Company;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Tendoo\Core\Services\DateService;
@@ -364,8 +365,8 @@ class LoadsService
     public function stopDelivery( $id, Request $request )
     {
         $load               =   $this->get( $id );
-        $deliveredStatus    =   $this->optionService->get( 'brookr_notify_load_delivered', 'delivered' );
-        $ongoingStatus      =   $this->optionService->get( 'brookr_notify_load_ongoing', 'ongoing' );
+        $deliveredStatus    =   $this->optionService->get( 'brookr_system_delivered_status', 'delivered' );
+        $ongoingStatus      =   $this->optionService->get( 'brookr_system_handling_status', 'ongoing' );
 
         if ( $load->status !== $ongoingStatus ) {
             throw new Exception( __( 'Cannot change the status of this delivery as it has never been handled.' ) );
@@ -406,11 +407,11 @@ class LoadsService
     {
         if ( $event->load->driver_id !== null ) {
             Mail::to( $event->load->driver->email )
-                ->send( new AssignedLoadMail( $event->load ) );
+                ->queue( new AssignedLoadMail( $event->load ) );
         } else if ( $event->load->driver_id === null && $event->load->visible ) {
             Role::namespace( 'brookr.driver' )->user->each( function( $user ) use ( $event ) {
                 Mail::to( $user->email )
-                    ->send( new UnassignedLoadMail( $event->load ) );
+                    ->queue( new UnassignedLoadMail( $event->load ) );
             });
         }
     }
@@ -422,16 +423,51 @@ class LoadsService
         if ( $event->load->status === $options->get( 'brookr_system_handling_status', 'ongoing' ) ) {
             Role::namespace( 'brookr.dispatcher' )->user->each( function( $user ) use ( $event ) {
                 Mail::to( $user->email )
-                    ->send( new OngoingLoadMail( $event->load ) );
+                    ->queue( new OngoingLoadMail( $event->load ) );
             });
         }
 
         if ( $event->load->status === $options->get( 'brookr_system_delivered_status', 'delivered' ) ) {
             Role::namespace( 'brookr.dispatcher' )->user->each( function( $user ) use ( $event ) {
                 Mail::to( $user->email )
-                    ->send( new DeliveredLoadMail( $event->load ) );
+                    ->queue( new DeliveredLoadMail( $event->load ) );
             });
         }
+    }
+
+    public function notifyAction( string $namespace, LoadDelivery $load )
+    {
+        switch( $namespace ) {
+            case 'delivery':
+                $this->notifyDelivery( $load );
+            break;
+        }
+    }
+
+    public function notifyDelivery( LoadDelivery $load )
+    {
+        $company_id     =   $this->optionsService->get( 'brookr_mail_notified_company_id' );
+        
+        if ( ! empty( $company_id ) ) {
+            $company    =   Company::find( $company_id );
+
+            if ( $company instanceof Company ) {
+                $mail   =   Mail::to( $company->email );
+
+                Role::namespace( 'brookr.dispatcher' )->user->each( function( $user ) {
+                    $mail->cc( $user->email );
+                });
+
+                $mail->queue( new DeliveryCompletedMail( $load ) );
+
+                return [
+                    'status'    =>  'success',
+                    'message'   =>  __( 'The delivery notification has been successfully sent.' )
+                ];
+            }
+        }
+
+        throw new Exception( __( 'No company is assigned to receive the notification on the settings.' ) );
     }
 
     public function handleSmsDriverIfNecessary( $event )

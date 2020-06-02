@@ -104,4 +104,10 @@ class LoadsController extends BaseController
     {
         return $this->loadsService->stopDelivery( $id, $request );
     }
+
+    public function notifyEmail( $namespace, LoadDelivery $load )
+    {
+        return $this->loadsService->notifyAction( $namespace, $load );
+    }
+
 }

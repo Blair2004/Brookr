@@ -98,6 +98,12 @@ return [
                     'description'   =>  __( 'Which status should be used when the load delivery is canceled ?' ),
                     'name'          =>  'brookr_system_canceled_status',
                     'value'         =>  $options->get( 'brookr_system_canceled_status' ),
+                ], [
+                    'type'          =>  'text',
+                    'label'         =>  __( 'Date Format' ),
+                    'description'   =>  __( 'Define the date format used accross the system' ),
+                    'name'          =>  'brookr_system_datetime_format',
+                    'value'         =>  $options->get( 'brookr_system_datetime_format' ),
                 ], 
             ]
         ], [
@@ -119,7 +125,7 @@ return [
                 ], [
                     'type'          =>  'switch',
                     'name'          =>  'brookr_enable_sms',
-                    'value' =>  $options->get( 'brookr_enable_sms' ),
+                    'value'         =>  $options->get( 'brookr_enable_sms' ),
                     'label'         =>  __( 'Enable SMS Notifications' ),
                     'description'    =>  __( 'If checked, notification will be enabled.' ),
                 ], [
@@ -144,11 +150,13 @@ return [
                     'type'          =>  'textarea',
                     'name'          =>  'brookr_assigned_load',
                     'label'         =>  __( 'Assigned Load Template' ),
+                    'value'         =>  $options->get( 'brookr_assigned_load' ),
                     'description'   =>  __( 'Available Tags: {driver_name}, {load_id}, {load_reference}, {pickup_reference}, {pickup_city}, {delivery_city}, {pickup_date}, {delivery_date}, {rate}.' ),
                 ], [
                     'type'          =>  'textarea',
                     'name'          =>  'brookr_delivered_load',
                     'label'         =>  __( 'Delivered Load Template' ),
+                    'value'         =>  $options->get( 'brookr_delivered_load' ),
                     'description'   =>  __( 'Available tags : {driver_name}, {load_id}, {load_reference}, {delivery_city}.' ),
                 ]
             ]
@@ -178,6 +186,18 @@ return [
                     'label'         =>  __( 'Mailgun Secret' ),
                     'description'    =>  __( 'Save your mailgun secret.' ),
                 ], [
+                    'type'          =>  'text',
+                    'name'          =>  'brookr_mail_from_address',
+                    'value'         =>  $options->get( 'brookr_mail_from_address' ),
+                    'label'         =>  __( 'Mail From Address' ),
+                    'description'    =>  __( 'Define what is the address used as the "From" address on the emails.' ),
+                ], [
+                    'type'          =>  'text',
+                    'name'          =>  'brookr_mail_company_title',
+                    'value'         =>  $options->get( 'brookr_mail_company_title' ),
+                    'label'         =>  __( 'Completed Load Notification Title' ),
+                    'description'    =>  __( 'This is the title that will be used while sending the email.' ),
+                ], [
                     'type'          =>  'textarea',
                     'name'          =>  'brookr_mail_company_template',
                     'value'         =>  $options->get( 'brookr_mail_company_template' ),
@@ -188,8 +208,8 @@ return [
                     'label'         =>  __( 'Notified Company For Complete Delivery' ),
                     'options'       =>  Helper::kvToJsOptions( $companies ),
                     'description'   =>  __( 'Select the company which will be notified once the delivery is complete. the template tags are supported.' ),
-                    'name'          =>  'brookr_system_notified_company_id',
-                    'value'         =>  $options->get( 'brookr_system_notified_company_id' ),
+                    'name'          =>  'brookr_mail_notified_company_id',
+                    'value'         =>  $options->get( 'brookr_mail_notified_company_id' ),
                 ], 
             ]
         ], [
