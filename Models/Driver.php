@@ -12,6 +12,7 @@ class Driver extends User
     protected $table = 'tendoo_users';
 
     protected $cats     =   [
+        'active'        =>  'boolean'
     ];
 
     public static function boot()

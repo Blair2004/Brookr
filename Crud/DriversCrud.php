@@ -286,6 +286,18 @@ class DriversCrud extends Crud
                 'index'         =>      'id',
                 'url'           =>      '/dashboard/drivers/edit/{id}'
             ], [
+                'label'         =>      __( 'Download Medical Card' ),
+                'namespace'     =>      'personal_card_url',
+                'type'          =>      'POPUP',
+                'index'         =>      'id',
+                'url'           =>      '/dashboard/drivers/{id}/assets/personal_card_url'
+            ], [
+                'label'         =>      __( 'Download Driver Card' ),
+                'namespace'     =>      'medical_card_url',
+                'type'          =>      'POPUP',
+                'index'         =>      'id',
+                'url'           =>      '/dashboard/drivers/{id}/assets/medical_card_url'
+            ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',

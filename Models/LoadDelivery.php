@@ -27,4 +27,9 @@ class LoadDelivery extends Model
     {
         return $this->hasOne( Driver::class, 'id', 'driver_id' );
     }
+
+    public function history()
+    {
+        return $this->hasMany( LoadDeliveryHistory::class, 'id', 'driver_id' );
+    }
 }

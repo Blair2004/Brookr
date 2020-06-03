@@ -4,7 +4,6 @@ namespace Modules\Brookr\Events;
 use Modules\Brookr\Models\Truck;
 use Modules\Brookr\Models\Driver;
 use Illuminate\Queue\SerializesModels;
-use Modules\Brookr\Models\DriverDetail;
 use Modules\Brookr\Models\LoadDelivery;
 
 class BeforeCreateLoadEvent

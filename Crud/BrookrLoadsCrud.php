@@ -423,6 +423,13 @@ class BrookrLoadsCrud extends Crud
                 'id'            =>      $entry->id,
                 'url'           =>      '/dashboard/loads/edit/{id}'
             ], [
+                'label'         =>      __( 'Loads History' ),
+                'namespace'     =>      'open.load_history',
+                'type'          =>      'OPEN',
+                'index'         =>      'id',
+                'id'            =>      $entry->id,
+                'url'           =>      '/dashboard/loads/{id}/history'
+            ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
@@ -500,7 +507,7 @@ class BrookrLoadsCrud extends Crud
     public function getLinks()
     {
         return  [
-            'list'  =>  '/dashboard/loads/',
+            'list'      =>  '/dashboard/loads/',
             'create'    =>  '/dashboard/loads/create',
             'edit'      =>  '/dashboard/loads/edit/{id}'
         ];

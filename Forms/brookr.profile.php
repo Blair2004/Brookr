@@ -8,7 +8,7 @@ $user           =   Auth::user();
 $driversDetails =   DriversDetail::where( 'driver_id', $user->id )->first();
 $detailFields   =   [];
 
-if ( $driversDetails instanceof DriverDetail ) {
+if ( $driversDetails instanceof DriversDetail ) {
     $detailFields   =   [
         [
             'type'  =>  'text',

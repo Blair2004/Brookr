@@ -2,9 +2,10 @@
 namespace Modules\Brookr\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;;
+use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Services\LoadsService;
 use Tendoo\Core\Http\Controllers\BaseController;
-use Illuminate\Support\Arr;;
 
 class LoadsController extends BaseController
 {
@@ -105,9 +106,17 @@ class LoadsController extends BaseController
         return $this->loadsService->stopDelivery( $id, $request );
     }
 
-    public function notifyEmail( $namespace, LoadDelivery $load )
+    public function notifyEmail( $namespace, $id )
     {
+        $load   =   LoadDelivery::findOrFail( $id );
         return $this->loadsService->notifyAction( $namespace, $load );
+    }
+
+    public function getLoadHistory( $id )
+    {
+        $load   =   LoadDelivery::findOrFail( $id );
+        return $load->history;
+        return $this->loadsService->getHistory( $load );
     }
 
 }

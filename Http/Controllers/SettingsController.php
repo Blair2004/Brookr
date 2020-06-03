@@ -130,7 +130,7 @@ class SettingsController extends BaseController
     private function updateDriverDetails( $details )
     {
         $details     =   DriversDetail::where( 'driver_id', Auth::id() );
-        if ( $details instanceof DriverDetail ) {
+        if ( $details instanceof DriversDetail ) {
             foreach( $details as $key => $detail ) {
                 if ( in_array( $key, [ 'first_name','last_name','phone_cell' ] ) ) {
                     $details->$key  =   $detail;
@@ -191,6 +191,20 @@ class SettingsController extends BaseController
         return [
             'status'    =>  'failed',
             'message'   =>  __( 'No avatar has been uploaded' )
+        ];
+    }
+
+    public function uploadMedia( Request $request )
+    {
+        $fieldName  =   $request->input( 'field' );
+        $path       =   Storage::disk( 'public' )->putFileAs(
+            'brookr-uploads/temp',
+            $request->file( $fieldName ),
+            Str::random(20) . '.' . $request->file( $fieldName )->extension()
+        );
+
+        return [
+            'value'     =>  $path
         ];
     }
 

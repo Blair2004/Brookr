@@ -73,7 +73,7 @@ return [
                     'appearance'    =>  'outline',
                     'name'          =>  'birth_date',
                     'value'         =>  $details->birth_date ?? '',
-                    'type'          =>  'datetime',
+                    'type'          =>  'ng-datetime',
                     'data'          =>  [
                         'startDate'     =>  '1900',
                     ],
@@ -82,8 +82,13 @@ return [
                     'label'         =>  __( 'Personal ID Card' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'personal_card_url',
-                    'value'         =>  $details->personal_card_url ?? '',
-                    'type'          =>  'image',
+                    'type'          =>  'file-upload',
+                    'data'          =>  [
+                        'upload'    =>  [
+                            'url'   =>  url( '/api/brookr/medias/upload' ),
+                            'name'  =>  'file'
+                        ]
+                    ],
                     'description'   =>  __( 'The driver personnal id Card.' ),
                 ], 
             ]
@@ -231,6 +236,13 @@ return [
                     'type'          =>  'text',
                     'description'   =>  __( 'Should match the password.' ),
                     'validation'    =>  'same:password'
+                ], [
+                    'label'         =>  __( 'Active' ),
+                    'appearance'    =>  'outline',
+                    'description'   =>  __( 'Determine wether the driver can log in or not' ),
+                    'name'          =>  'active',
+                    'value'         =>  @(( bool ) $driver->active ) ?? false,
+                    'type'          =>  'switch',
                 ]
             ]
         ], [
@@ -261,14 +273,19 @@ return [
                     'label'         =>  __( 'Medical Card' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'medical_card_url',
-                    'value'         =>  $details->medical_card_url ?? '',
-                    'type'          =>  'image',
+                    'type'          =>  'file-upload',
+                    'data'          =>  [
+                        'upload'    =>  [
+                            'url'   =>  url( '/api/brookr/medias/upload' ),
+                            'name'  =>  'file'
+                        ]
+                    ],
                 ], [
                     'label'         =>  __( 'Medial Expiration' ),
                     'appearance'    =>  'outline',
                     'name'          =>  'medical_card_expiration',
                     'value'         =>  $details->medical_card_expiration ?? '',
-                    'type'          =>  'datetime',
+                    'type'          =>  'ng-datetime',
                     'data'          =>  [
                         'startDate'     =>  '1900',
                     ],

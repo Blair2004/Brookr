@@ -8,6 +8,7 @@ use Modules\Brookr\Models\Driver;
 use Modules\Brookr\Models\Address;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Models\DriversDetail;
 use Modules\Brookr\Models\DriversPayment;
@@ -92,11 +93,46 @@ class DriversService
             ) );
 
             $driversDetails->user_id                     =   Auth::id();
+
+            /**
+             * move uploaded files
+             */
+            if ( ! empty( $fields[ 'personnal' ][ 'personal_card_url' ] ) ) {
+                if ( Storage::disk( 'public' )->exists( $fields[ 'personnal' ][ 'personal_card_url' ] ) ) {
+                    $info       =   pathinfo( $fields[ 'personnal' ][ 'personal_card_url' ] );
+                    $filePath   =   '/brookr-uploads/drivers/driving-licences/' . $user->username . '.' . $info[ 'extension' ];
+
+                    Storage::disk( 'public' )->put(
+                        $filePath,
+                        Storage::disk( 'public' )->get( $fields[ 'personnal' ][ 'personal_card_url' ] )
+                    );
+
+                    $fields[ 'personnal' ][ 'personal_card_url' ]   =  $filePath;
+                    $driversDetails->personal_card_url              =   $fields[ 'personnal' ][ 'personal_card_url' ];
+                }
+            }
+
+            if ( ! empty( $fields[ 'medical' ][ 'medical_card_url' ] ) ) {
+                if ( Storage::disk( 'public' )->exists( $fields[ 'medical' ][ 'medical_card_url' ] ) ) {
+                    $info       =   pathinfo( $fields[ 'medical' ][ 'medical_card_url' ] );
+                    $filePath   =   '/brookr-uploads/drivers/medical-cards/' . $user->username . '.' . $info[ 'extension' ];
+                    
+                    Storage::disk( 'public' )->put(
+                        $filePath,
+                        Storage::disk( 'public' )->get( $fields[ 'medical' ][ 'medical_card_url' ] )
+                    );
+                    
+                    $fields[ 'medical' ][ 'medical_card_url' ]      =  $filePath;
+                    $driversDetails->medical_card_url               =   $fields[ 'medical' ][ 'medical_card_url' ];
+                }
+            }            
+
             $driversDetails->driver_id                   =   $user->id;
             $driversDetails->first_name                  =   $fields[ 'personnal' ][ 'first_name' ];
             $driversDetails->last_name                   =   $fields[ 'personnal' ][ 'last_name' ];
             $driversDetails->phone_cell                  =   $fields[ 'personnal' ][ 'phone_cell' ];
             $driversDetails->phone_home                  =   $fields[ 'personnal' ][ 'phone_home' ];
+            $driversDetails->birth_date                  =   $fields[ 'personnal' ][ 'birth_date' ];
             $driversDetails->company_id                  =   $fields[ 'professional' ][ 'company_id' ];
             $driversDetails->fein                        =   $fields[ 'professional' ][ 'fein' ];
             $driversDetails->ssn                         =   $fields[ 'professional' ][ 'ssn' ];
@@ -112,7 +148,6 @@ class DriversService
             $driversDetails->status                      =   $fields[ 'professional' ][ 'status' ] ?? 'unavailable';
             $driversDetails->sms_notifications           =   $fields[ 'notifications' ][ 'sms_notifications' ] === true;
             $driversDetails->email_notifications         =   $fields[ 'notifications' ][ 'email_notifications' ] === true;
-            // $driversDetails->medical_card_url         =   $fields[ 'medical' ][ 'medical_card_url' ];
             $driversDetails->medical_card_expiration     =   $fields[ 'medical' ][ 'medical_card_expiration' ];
             $driversDetails->medical_drug_test           =   $fields[ 'medical' ][ 'medical_drug_test' ];
             $driversDetails->save();
@@ -169,7 +204,7 @@ class DriversService
         $role               =   Role::namespace( $role );
         $authentication     =   $fields[ 'authentication' ];
 
-        if ( $role instanceof Role && empty( $fields[ 'password' ] ) ) {
+        if ( $role instanceof Role ) {
 
             /**
              * if the driver id is provided
@@ -187,10 +222,15 @@ class DriversService
                 
                 $this->saveDriverAsUser([
                     'role_id'   =>  $role->id,
-                    'password'  =>  Hash::make( $authentication[ 'password' ]),
                     'email'     =>  $authentication[ 'email' ],
-                    'active'    =>  $fields[ 'professional' ][ 'status' ] === 'available',
+                    'active'    =>  isset( $authentication[ 'active' ] ) ? true : false,
                 ], $user );
+
+                if ( ! empty( $authentication[ 'password' ] ) ) {
+                    $this->saveDriverAsUser([
+                        'password'  =>  Hash::make( $authentication[ 'password' ])
+                    ], $user );
+                }
 
                 return [
                     'status'    =>  'success',
@@ -209,9 +249,14 @@ class DriversService
                         'role_id'   =>  $role->id,
                         'email'     =>  $authentication[ 'email' ],
                         'username'  =>  $authentication[ 'username' ],
-                        'password'  =>  Hash::make( $authentication[ 'password' ]),
-                        'active'    =>  $fields[ 'professional' ][ 'status' ] === 'available',
+                        'active'    =>  isset( $authentication[ 'active' ] ) ? true : false,
                     ], $user );
+
+                    if ( ! empty( $authentication[ 'password' ] ) ) {
+                        $this->saveDriverAsUser([
+                            'password'  =>  Hash::make( $authentication[ 'password' ])
+                        ], $user );
+                    }
 
                     return [
                         'status'    =>  'success',
@@ -223,6 +268,8 @@ class DriversService
 
             throw new Exception( __( 'The provided email is already in use.' ) );
         }
+
+        
 
         throw new NotFoundException([
             'status'    =>  'failed',

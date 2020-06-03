@@ -6,6 +6,7 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::delete( 'api/brookr/drivers/{id}', 'DriversController@deleteDriver' );
     Route::get( 'api/brookr/drivers/medical-expiration', 'DriversController@getByMedicalCard' );
     Route::put( 'api/brookr/drivers/{id}', 'DriversController@setDriver' )->where(['id' => '[0-9]+']);
+    Route::get( 'api/brookr/drivers/{id}/assets/{namespace}', 'DriversController@downloadAssets' );
     Route::post( 'api/brookr/drivers/payment/{driver_id}', 'DriversController@makeAdvancePayment' );
     Route::get( 'api/brookr/drivers/driver-expiration', 'DriversController@getByDriverCard' );
     Route::get( 'api/brookr/drivers/is-available', 'DriversController@checkDriverAvailability' );
@@ -42,7 +43,10 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::put( 'api/brookr/loads/update-driver/{id}', 'LoadsController@updateLoadAssignation' );
     Route::put( 'api/brookr/loads/update-status/{id}', 'LoadsController@updateLoadStatus' );
     Route::delete( 'api/brookr/loads/{id}', 'LoadsController@deleteLoad' );
-    Route::get( 'api/brookr/loads/doc/{id}/{namespace}', 'LoadsController@getDocumentLink' );
+    Route::get( 'api/brookr/loads/{load}/history', 'LoadsController@getLoadHistory' );
+    Route::get( 'api/brookr/loads/{id}/assets/{namespace}', 'LoadsController@getDocumentLink' );
+
+    Route::post( 'api/brookr/medias/upload', 'SettingsController@uploadMedia' );
 
     Route::delete( 'api/brookr/notifications/{id}', 'SettingsController@deleteNotification' );
 

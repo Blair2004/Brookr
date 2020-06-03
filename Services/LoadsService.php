@@ -108,12 +108,12 @@ class LoadsService
          */
         foreach( $fields[ 'general' ] as $key => $value ) {
             if ( in_array( $key, [ 'rate_document_url', 'delivery_document_url' ] ) && ! empty( $value ) && $value !== 'null' ) {
-                $relativeFilePath   =   'brookr-uploads/' . $load->id . '-' . $key . '.' . request()->file( 'general--' . $key )->extension();
+                $relativeFilePath   =   'brookr-uploads/loads/' . $load->id . '-' . $key . '.' . request()->file( 'general--' . $key )->extension();
                 $url                =   request()->file( 'general--' . $key )->storeAs(
                     'public', $relativeFilePath
                 );
 
-                $load->$key     =   Storage::disk( 'local' )->url( $relativeFilePath );
+                $load->$key     =   Storage::disk( 'public' )->url( $relativeFilePath );
                 $load->save();
                 // $this->saveBase64( $value, 'brookr-uploads/' . $load->id . '-' . $key );
             }
@@ -377,7 +377,7 @@ class LoadsService
         $path                           =   Storage::disk( 'public' )->putFileAs( 
             $filePath, 
             $request->file( 'delivery_document_url' ), 
-            $load->id . '_delivery_document_url.' . $extension 
+            'loads/' . $load->id . '-delivery_document_url.' . $extension 
         );
 
         $load->delivery_document_url    =   asset( 'storage/' . $path );
@@ -474,7 +474,14 @@ class LoadsService
     {
         if ( $event->load->driver_id !== null ) {
             $load               =   $event->load;
-            SMSDriverJob::dispatch( $event )->delay( now()->addSeconds(10) );
+            if ( $event->driver->details->sms_notifications ) {
+                SMSDriverJob::dispatch( $event )->delay( now()->addSeconds(2) );
+            }
         }
+    }
+
+    public function getHistory( LoadDelivery $load )
+    {
+        return $load->history;
     }
 }
