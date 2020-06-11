@@ -30,6 +30,6 @@ class LoadDelivery extends Model
 
     public function history()
     {
-        return $this->hasMany( LoadDeliveryHistory::class, 'id', 'driver_id' );
+        return $this->hasMany( LoadDeliveryHistory::class, 'load_id' );
     }
 }

@@ -93,7 +93,7 @@ class LoadsController extends BaseController
 
     public function startDelivery( $id, Request $request )
     {
-        return $this->loadsService->startDelivery( $id, $request->only([ 'drop_trailer', 'load_trailer' ]) );
+        return $this->loadsService->startDelivery( $id, $request->only([ 'load' ]) );
     }
 
     public function awaitingLoadDelivery( $id )
@@ -115,8 +115,12 @@ class LoadsController extends BaseController
     public function getLoadHistory( $id )
     {
         $load   =   LoadDelivery::findOrFail( $id );
-        return $load->history;
         return $this->loadsService->getHistory( $load );
     }
 
+    public function unassignDriverToLoad( $id )
+    {
+        $load   =   LoadDelivery::findOrFail( $id );
+        return $this->loadsService->unassignDriver( $load );
+    }
 }

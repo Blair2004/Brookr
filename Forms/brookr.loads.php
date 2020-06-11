@@ -112,7 +112,7 @@ return [
                 ], [
                     'label'         =>  __( 'Note' ),
                     'name'          =>  'note',
-                    'value'         =>  $load->cost ?? '',
+                    'value'         =>  $load->note ?? '',
                     'type'          =>  'textarea',
                      'description'   =>  __( 'The note of the load delivery.' )
                 ], [

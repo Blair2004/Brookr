@@ -33,6 +33,7 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::post( 'api/brookr/notifications', 'SettingsController@getNotifications' );
 
     Route::get( 'api/brookr/loads/unassigned', 'LoadsController@getUnassigned' );
+    Route::get( 'api/brookr/loads/unassign/{id}', 'LoadsController@unassignDriverToLoad' );
     Route::post( 'api/brookr/loads/start/{id}', 'LoadsController@startDelivery' );
     Route::get( 'api/brookr/loads/awaiting/{id}', 'LoadsController@awaitingLoadDelivery' );
     Route::post( 'api/brookr/loads/stop/{id}', 'LoadsController@stopDelivery' );

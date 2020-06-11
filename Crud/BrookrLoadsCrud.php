@@ -104,7 +104,7 @@ class BrookrLoadsCrud extends Crud
             $queryParams[ 'load_reference' ]                =   request()->query( 'load_reference' );
             $queryParams[ 'pickup_reference' ]              =   request()->query( 'pickup_reference' );
             $queryParams[ 'cost' ]                          =   request()->query( 'cost' );
-            $queryParams[ 'tendoo_users.username' ]         =   request()->query( 'driver_username' );
+            $queryParams[ 'driver.username' ]               =   request()->query( 'driver_username' );
             $queryParams[ 'brookr_trucks.name' ]            =   request()->query( 'brookr_trucks_name' );
             $queryParams[ 'brookr_loads_delivery.status' ]  =   request()->query( 'status' );
 
@@ -423,7 +423,7 @@ class BrookrLoadsCrud extends Crud
                 'id'            =>      $entry->id,
                 'url'           =>      '/dashboard/loads/edit/{id}'
             ], [
-                'label'         =>      __( 'Loads History' ),
+                'label'         =>      __( 'Load History' ),
                 'namespace'     =>      'open.load_history',
                 'type'          =>      'OPEN',
                 'index'         =>      'id',

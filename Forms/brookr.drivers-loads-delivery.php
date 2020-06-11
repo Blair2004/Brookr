@@ -21,6 +21,27 @@ return [
                     'appearance'    =>  'outline',
                     'validation'    =>  'required',
                     'description'   =>  __( 'Provide the empty trailer reference.' )
+                ], [
+                    'label'         =>  __( 'Shipper Arrival Time' ),
+                    'name'          =>  'shipper_arrival_time',
+                    'type'          =>  'text',
+                    'appearance'    =>  'outline',
+                    'validation'    =>  'required',
+                    'description'   =>  __( 'Define the shipper arrival time.' )
+                ], [
+                    'label'         =>  __( 'Depart Time' ),
+                    'name'          =>  'depart_time',
+                    'type'          =>  'text',
+                    'appearance'    =>  'outline',
+                    'validation'    =>  'required',
+                    'description'   =>  __( 'Define your depart time.' )
+                ], [
+                    'label'         =>  __( 'Receiver Arrival Time' ),
+                    'name'          =>  'receiver_arrival_time',
+                    'type'          =>  'text',
+                    'appearance'    =>  'outline',
+                    'validation'    =>  'required',
+                    'description'   =>  __( 'Define the receive arrival time.' )
                 ], 
                 [
                     'label'         =>  __( 'Delivery Document' ),

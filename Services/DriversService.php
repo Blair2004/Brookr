@@ -248,15 +248,10 @@ class DriversService
                     $this->saveDriverAsUser([
                         'role_id'   =>  $role->id,
                         'email'     =>  $authentication[ 'email' ],
+                        'password'  =>  Hash::make( $authentication[ 'password' ]),
                         'username'  =>  $authentication[ 'username' ],
                         'active'    =>  isset( $authentication[ 'active' ] ) ? true : false,
                     ], $user );
-
-                    if ( ! empty( $authentication[ 'password' ] ) ) {
-                        $this->saveDriverAsUser([
-                            'password'  =>  Hash::make( $authentication[ 'password' ])
-                        ], $user );
-                    }
 
                     return [
                         'status'    =>  'success',

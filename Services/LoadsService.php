@@ -75,7 +75,7 @@ class LoadsService
         $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
         $load->load_trailer         =   $fields[ 'general' ][ 'load_trailer' ] ?? '';
         $load->note                 =   $fields[ 'general' ][ 'note' ] ?? '';
-        $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) ? false : true;
+        $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) || $fields[ 'general' ][ 'visible' ] === 'false' ? false : true;
         $load->user_id              =   Auth::id();
         $load->driver_id            =   ! empty( $fields[ 'drivers' ][ 'driver_id' ] ) && $fields[ 'drivers' ][ 'driver_id' ] !== 'null' ? $fields[ 'drivers' ][ 'driver_id' ] : null;
         $load->truck_id             =   ! empty( $fields[ 'drivers' ][ 'truck_id' ] ) && $fields[ 'drivers' ][ 'truck_id' ] !== 'null' ? $fields[ 'drivers' ][ 'truck_id' ] : null;
@@ -167,7 +167,7 @@ class LoadsService
         $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
         $load->load_trailer         =   $fields[ 'general' ][ 'load_trailer' ] ?? '';
         $load->note                 =   $fields[ 'general' ][ 'note' ] ?? '';
-        $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) ? false : true;
+        $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) || $fields[ 'general' ][ 'visible' ] === 'false' ? false : true;
         $load->user_id              =   Auth::id();
         
         $load->truck_id             =   @$fields[ 'drivers' ][ 'truck_id' ] ?? null;
@@ -336,7 +336,7 @@ class LoadsService
     {
         $load                   =   $this->get( $id );
 
-        foreach( $fields as $field => $value ) {
+        foreach( $fields[ 'load' ] as $field => $value ) {
             $load->$field   =   $value;
         }
 
@@ -389,11 +389,35 @@ class LoadsService
          * Saving the delivery history
          */
         $deliveryHistory                =   new LoadDeliveryHistory;
-        $deliveryHistory->action_type   =   'delivery';
+        $deliveryHistory->action_type   =   'brookr.shipper_arrival_time';
+        $deliveryHistory->action_value  =   $request->input( 'shipper_arrival_time' );
         $deliveryHistory->load_id       =   $load->id;
         $deliveryHistory->user_id       =   Auth::id();
         $deliveryHistory->action_time   =   $this->date->now()->toDateTimeString();
         $deliveryHistory->save();
+        
+        /**
+         * Saving the delivery history
+         */
+        $deliveryHistory                =   new LoadDeliveryHistory;
+        $deliveryHistory->action_type   =   'brookr.receiver_arrival_time';
+        $deliveryHistory->action_value  =   $request->input( 'receiver_arrival_time' );
+        $deliveryHistory->load_id       =   $load->id;
+        $deliveryHistory->user_id       =   Auth::id();
+        $deliveryHistory->action_time   =   $this->date->now()->toDateTimeString();
+        $deliveryHistory->save();
+
+        /**
+         * Saving the delivery history
+         */
+        $deliveryHistory                =   new LoadDeliveryHistory;
+        $deliveryHistory->action_type   =   'brookr.depart_time';
+        $deliveryHistory->action_value  =   $request->input( 'depart_time' );
+        $deliveryHistory->load_id       =   $load->id;
+        $deliveryHistory->user_id       =   Auth::id();
+        $deliveryHistory->action_time   =   $this->date->now()->toDateTimeString();
+        $deliveryHistory->save();
+
 
         event( new AfterEditLoadEvent( $load, $load->driver, $load->truck ) );
 
@@ -482,6 +506,31 @@ class LoadsService
 
     public function getHistory( LoadDelivery $load )
     {
-        return $load->history;
+        return $load->history->map( function( $history ) {
+            $dateFormat                 =   $this->optionService->get( 'brookr_system_datetime_format', 'D d, M y H:m' );
+            $history->action_time       =   Carbon::parse( $history->action_time )->format( $dateFormat );
+            return $history;
+        });
+    }
+
+    public function unassignDriver( LoadDelivery $load )
+    {
+        $deliveredStatus    =   $this->optionService->get( 'brookr_system_delivered_status', 'delivered' );
+
+        if ( $load->status === $deliveredStatus ) {
+            throw new Exception( __( 'Cannot unassign driver on delivered load.' ) );
+        }
+        
+        if ( empty( $load->driver_id ) ) {
+            throw new Exception( __( 'No driver is assigned to this load.' ) );
+        }
+
+        $load->driver_id    =   0;
+        $load->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The driver has been unassigned from this load.' )
+        ];
     }
 }
