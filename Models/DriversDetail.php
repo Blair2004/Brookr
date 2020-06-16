@@ -19,4 +19,9 @@ class DriversDetail extends Model
     {
         return $this->belongsTo( Driver::class, 'driver_id' );
     }
+
+    public function company()
+    {
+        return $this->belongsTo( Company::class, 'company_id' );
+    }
 }

@@ -1,8 +1,11 @@
 <?php
 namespace Modules\Brookr\Services;
 
+use Carbon\Carbon;
+use Tendoo\Core\Services\Options;
 use Modules\Brookr\Models\Company;
 use Illuminate\Support\Facades\Auth;
+use Modules\Brookr\Models\CompanyReport;
 use Modules\Brookr\Models\CompanyPayment;
 
 class CompaniesService
@@ -107,5 +110,37 @@ class CompaniesService
             'status'    =>  'success',
             'message'   =>  __( 'The payment has been correctly made.' )   
         ];
+    }
+
+    public function getReport( $fields )
+    {
+        $options    =   app()->make( Options::class );
+
+        $report     =   CompanyReport::forRange(
+            $fields[ 'company_id' ],
+            $fields[ 'range_start' ],
+            $fields[ 'range_end' ]
+        );
+
+        if ( ! $report instanceof CompanyReport ) {
+            $report                 =   new CompanyReport;
+            $report->user_id        =   Auth::id();
+            $report->company_id     =   $fields[ 'company_id' ];
+            $report->range_start    =   $fields[ 'range_start' ];
+            $report->range_end      =   $fields[ 'range_end' ];
+            $report->save();
+        }
+
+        $company    =   Company::find( $fields[ 'company_id' ] )
+            ->loads()
+            ->where( 'brookr_loads_delivery.created_at', '>=', Carbon::parse( $fields[ 'range_start' ] )->startOfDay()->toDateTimeString() )
+            ->where( 'brookr_loads_delivery.created_at', '<=', Carbon::parse( $fields[ 'range_end' ] )->endOfDay()->toDateTimeString() )
+            ->where( 'brookr_loads_delivery.status', $options->get( 'brookr_system_delivered_status', 'delivered' ) )
+            // ->with( 'driver' )
+            ->get();
+
+        return $company;
+
+        // $grossSales     =   $company->loads->
     }
 }

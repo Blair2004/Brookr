@@ -34,4 +34,14 @@ class CompaniesController extends BaseController
     {
         return $this->companiesService->makeAdvancePayment( $id, $request->input( 'driver-payments' ) );
     }
+
+    public function getCompanies()
+    {
+        return $this->companiesService->getAll();
+    }
+
+    public function getCompanyReport( Request $request )
+    {
+        return $this->companiesService->getReport( $request->all() );
+    }
 }
