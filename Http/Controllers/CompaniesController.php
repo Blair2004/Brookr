@@ -44,4 +44,9 @@ class CompaniesController extends BaseController
     {
         return $this->companiesService->getReport( $request->all() );
     }
+
+    public function getFuelExpenses( Request $request )
+    {
+        return $this->companiesService->getFuelExpense( $request->only([ 'company_id', 'range_start', 'range_end']) );
+    }
 }

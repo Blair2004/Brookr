@@ -115,8 +115,8 @@ return [
                     'type'  =>  'number',
                     'name'  =>  'paid_rate',
                     'value' =>  $company->paid_rate ?? 0,
-                    'label' =>  __( 'Paid Rate' ),
-                    'description'   =>  __( 'How many from a rate should the company get in percentage.' ),
+                    'label' =>  __( 'Dispatch Fees' ),
+                    'description'   =>  __( 'Determine what are the dispatch fees that applies to the company.' ),
                     'validation'    =>  'required',
                     'appearance'    =>  'outline'
                 ], [

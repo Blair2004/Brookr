@@ -19,4 +19,9 @@ class Company extends Model
     {
         return $this->hasManyThrough( LoadDelivery::class, DriversDetail::class, 'company_id', 'driver_id', 'id', 'driver_id' );
     }
+
+    public function fuels()
+    {
+        return $this->hasMany( CompanyFuelCharge::class, 'company_id' );
+    }
 }

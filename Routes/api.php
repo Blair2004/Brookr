@@ -55,6 +55,7 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::post( 'api/brookr/companies/report', 'CompaniesController@getCompanyReport' );
     Route::get( 'api/brookr/companies', 'CompaniesController@getCompanies' );
     Route::put( 'api/brookr/companies/{id}', 'CompaniesController@saveCompany' );
+    Route::post( 'api/brookr/companies/get-fuels', 'CompaniesController@getFuelExpenses' );
     Route::post( 'api/brookr/companies/payment/{id}', 'CompaniesController@advancePayment' );
     Route::delete( 'api/brookr/companies/{id}', 'CompaniesController@deleteCompany' );
 });

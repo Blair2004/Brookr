@@ -131,7 +131,8 @@ class CompaniesService
             $report->save();
         }
 
-        $company    =   Company::find( $fields[ 'company_id' ] )
+        $company    =   Company::find( $fields[ 'company_id' ]);
+        $loads      =   Company::find( $fields[ 'company_id' ] )
             ->loads()
             ->where( 'brookr_loads_delivery.created_at', '>=', Carbon::parse( $fields[ 'range_start' ] )->startOfDay()->toDateTimeString() )
             ->where( 'brookr_loads_delivery.created_at', '<=', Carbon::parse( $fields[ 'range_end' ] )->endOfDay()->toDateTimeString() )
@@ -139,8 +140,21 @@ class CompaniesService
             // ->with( 'driver' )
             ->get();
 
+        $data   =   [];
+        $data[ 'total_loads' ]      =   $loads->count();
+        $data[ 'gross_earning' ]    =   $loads->map( function( $loads ) {
+            return floatval( $load->cost );
+        })->sum();
+        $data[ 'dispatch_fees' ]    =   ( floatval( $company->paid_rate ) * $data[ 'gross_earning' ] ) / 100;
+        // $data[ 'fuel_charge' ]      =   
+
         return $company;
 
         // $grossSales     =   $company->loads->
+    }
+
+    public function getFuelExpense( $id, $range_start, $range_end )
+    {
+
     }
 }
