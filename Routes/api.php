@@ -7,7 +7,7 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::get( 'api/brookr/drivers/medical-expiration', 'DriversController@getByMedicalCard' );
     Route::put( 'api/brookr/drivers/{id}', 'DriversController@setDriver' )->where(['id' => '[0-9]+']);
     Route::get( 'api/brookr/drivers/{id}/assets/{namespace}', 'DriversController@downloadAssets' );
-    Route::post( 'api/brookr/drivers/payment/{driver_id}', 'DriversController@makeAdvancePayment' );
+    Route::post( 'api/brookr/drivers/payments/{driver_id}', 'DriversController@makeAdvancePayment' );
     Route::get( 'api/brookr/drivers/driver-expiration', 'DriversController@getByDriverCard' );
     Route::get( 'api/brookr/drivers/is-available', 'DriversController@checkDriverAvailability' );
     Route::post( 'api/brookr/drivers', 'DriversController@setDriver' );
@@ -55,6 +55,9 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::post( 'api/brookr/companies/report', 'CompaniesController@getCompanyReport' );
     Route::get( 'api/brookr/companies', 'CompaniesController@getCompanies' );
     Route::put( 'api/brookr/companies/{id}', 'CompaniesController@saveCompany' );
+    Route::get( 'api/brookr/companies/{id}/drivers', 'CompaniesController@getCompanyDrivers' );
+    Route::post( 'api/brookr/companies/{id}/fuel', 'CompaniesController@recordFuelExpense' );
+    Route::delete( 'api/brookr/companies/fuel/{id}', 'CompaniesController@deleteFuelRecord' );
     Route::post( 'api/brookr/companies/get-fuels', 'CompaniesController@getFuelExpenses' );
     Route::post( 'api/brookr/companies/payment/{id}', 'CompaniesController@advancePayment' );
     Route::delete( 'api/brookr/companies/{id}', 'CompaniesController@deleteCompany' );

@@ -259,6 +259,11 @@ class BrookrDriversAssignedLoadsCrud extends Crud
                 'namespace' =>  'brookr.await-load',
                 'url'       =>  url( 'api/brookr/loads/start' )
             ];
+            $entry->{'$actions'}[]      =   [
+                'label'     =>  __( 'Unassign Yourself' ),
+                'namespace' =>  'brookr.unassign-load',
+                'url'       =>  url( 'api/brookr/loads/unassign' )
+            ];
         }
 
         if ( $entry->status === $this->options->get( 'brookr_system_awaiting_status', 'awaiting' ) ) {

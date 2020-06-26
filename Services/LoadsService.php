@@ -163,6 +163,7 @@ class LoadsService
         $load->delivery_city        =   $fields[ 'general' ][ 'delivery_city' ];
         $load->lumper_fees          =   $fields[ 'drivers' ][ 'lumper_fees' ] ?? 0;
         $load->escort_fees          =   $fields[ 'drivers' ][ 'escort_fees' ] ?? 0;
+        $load->detention_fees        =   $fields[ 'drivers' ][ 'detention_fees' ] ?? 0;
         $load->empty_trailer        =   $fields[ 'general' ][ 'empty_trailer' ] ?? '';
         $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
         $load->load_trailer         =   $fields[ 'general' ][ 'load_trailer' ] ?? '';
@@ -241,10 +242,9 @@ class LoadsService
             'cost',
             'escort_fees',
             'lumper_fees',
+            'detention_fees'
         ] as $field ) {
-            if ( ! empty( $fields[ $field ] ) ) {
-                $load->$field   =   $fields[ $field ];
-            }
+            $load->$field   =   $fields[ $field ] ?: '';
         }
 
         $load->save();
@@ -525,7 +525,8 @@ class LoadsService
             throw new Exception( __( 'No driver is assigned to this load.' ) );
         }
 
-        $load->driver_id    =   0;
+        $load->driver_id    =   null;
+        $load->visible      =   1;
         $load->save();
 
         return [

@@ -3,6 +3,7 @@ namespace Modules\Brookr\Http\Controllers;
 
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Modules\Brookr\Models\Company;
 use Illuminate\Support\Facades\View;
 use Modules\Brookr\Services\CompaniesService;
 use Modules\Brookr\Services\CustomersService;
@@ -47,6 +48,21 @@ class CompaniesController extends BaseController
 
     public function getFuelExpenses( Request $request )
     {
-        return $this->companiesService->getFuelExpense( $request->only([ 'company_id', 'range_start', 'range_end']) );
+        return $this->companiesService->getFuelExpense( $request->only([ 'report_id', 'company_id', 'range_start', 'range_end']) );
+    }
+
+    public function getCompanyDrivers( $id )
+    {
+        return Company::where( 'id', $id )->with( 'drivers.details' )->first();;
+    }
+
+    public function recordFuelExpense( Request $request )
+    {
+        return $this->companiesService->saveFuelExpense( $request->only([ 'company_id', 'driver_id', 'amount', 'report_id' ]) );
+    }
+
+    public function deleteFuelRecord( $id )
+    {
+        return $this->companiesService->deleteFuelRecord( $id );
     }
 }

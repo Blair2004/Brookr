@@ -12,10 +12,12 @@ class CompanyReport extends Model
 {
     protected $table = 'brookr_reports';
 
-    public function scopeForRange( $query, $id, $start, $end )
+    public function scopeForRange( $query, $id, $driver_id, $start, $end )
     {
-        return $query->where( 'id', $id )
-            ->where( 'range_start', '>=', Carbon::parse( $start )->startOfDay()->toDateTimeString() )
-            ->where( 'range_end', '<=', Carbon::parse( $end )->endOfDay()->toDateTimeString() );
+        return $query
+            ->where( 'company_id', $id )
+            ->where( 'driver_id', $driver_id )
+            ->where( 'range_start', Carbon::parse( $start )->startOfDay()->toDateTimeString() )
+            ->where( 'range_end', Carbon::parse( $end )->endOfDay()->toDateTimeString() );
     }
 }

@@ -3,6 +3,7 @@ namespace Modules\Brookr\Models;
 
 use Modules\Brookr\Models\Truck;
 use Modules\Brookr\Models\Driver;
+use Modules\Brookr\Models\Customer;
 use Illuminate\Database\Eloquent\Model;
 
 class LoadDelivery extends Model
@@ -26,6 +27,11 @@ class LoadDelivery extends Model
     public function driver()
     {
         return $this->hasOne( Driver::class, 'id', 'driver_id' );
+    }
+
+    public function customer()
+    {
+        return $this->hasOne( Customer::class, 'id', 'brooker_id' );
     }
 
     public function history()

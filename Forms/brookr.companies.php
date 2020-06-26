@@ -113,6 +113,46 @@ return [
             'fields'        =>  [
                 [
                     'type'  =>  'number',
+                    'name'  =>  'insurance_fees',
+                    'value' =>  $company->insurance_fees ?? 0,
+                    'label' =>  __( 'Insurance Fees' ),
+                    'description'   =>  __( 'The insurance flat rate which apply to the company\'s drivers.' ),
+                    'validation'    =>  '',
+                    'appearance'    =>  'outline'
+                ], [
+                    'type'  =>  'number',
+                    'name'  =>  'compliance_fees',
+                    'value' =>  $company->compliance_fees ?? 0,
+                    'label' =>  __( 'Compliances Fees' ),
+                    'description'   =>  __( 'The compliances fees which apply to the company\'s drivers.' ),
+                    'validation'    =>  '',
+                    'appearance'    =>  'outline'
+                ], [
+                    'type'  =>  'number',
+                    'name'  =>  'elog_fees',
+                    'value' =>  $company->elog_fees ?? 0,
+                    'label' =>  __( 'Elog Fees' ),
+                    'description'   =>  __( 'The ELOG fee which applies to the company\'s drivers' ),
+                    'validation'    =>  '',
+                    'appearance'    =>  'outline'
+                ], [
+                    'type'  =>  'number',
+                    'name'  =>  'comdata_fees',
+                    'value' =>  $company->comdata_fees ?? 0,
+                    'label' =>  __( 'Comdata Fees' ),
+                    'description'   =>  __( 'How much is deducted (flat rate).' ),
+                    'validation'    =>  '',
+                    'appearance'    =>  'outline'
+                ], [
+                    'type'  =>  'number',
+                    'name'  =>  'ach_fees',
+                    'value' =>  $company->ach_fees ?? 0,
+                    'label' =>  __( 'ACH Fees' ),
+                    'description'   =>  __( 'How much is deducted as ACH fees (lat rate).' ),
+                    'validation'    =>  '',
+                    'appearance'    =>  'outline'
+                ], [
+                    'type'  =>  'number',
                     'name'  =>  'paid_rate',
                     'value' =>  $company->paid_rate ?? 0,
                     'label' =>  __( 'Dispatch Fees' ),
@@ -126,30 +166,6 @@ return [
                     'label' =>  __( 'Driver Rate' ),
                     'description'   =>  __( 'How many from the Paid Rate the driver get in percentage.' ),
                     'validation'    =>  'required',
-                    'appearance'    =>  'outline'
-                ], [
-                    'type'  =>  'number',
-                    'name'  =>  'insurance_fees',
-                    'value' =>  $company->insurance_fee ?? 0,
-                    'label' =>  __( 'Insurance Fees' ),
-                    'description'   =>  __( 'The insurance flat rate which apply to the company\'s drivers.' ),
-                    'validation'    =>  '',
-                    'appearance'    =>  'outline'
-                ], [
-                    'type'  =>  'number',
-                    'name'  =>  'elog_fees',
-                    'value' =>  $company->elog_fees ?? 0,
-                    'label' =>  __( 'Elog Fees' ),
-                    'description'   =>  __( 'The ELOG fee which applies to the company\'s drivers' ),
-                    'validation'    =>  '',
-                    'appearance'    =>  'outline'
-                ], [
-                    'type'  =>  'number',
-                    'name'  =>  'compliance_fees',
-                    'value' =>  $company->compliance_fe ?? 0,
-                    'label' =>  __( 'Compliances Fees' ),
-                    'description'   =>  __( 'The compliances fees which apply to the company\'s drivers.' ),
-                    'validation'    =>  '',
                     'appearance'    =>  'outline'
                 ], [
                     'type'  =>  'number',
@@ -170,7 +186,7 @@ return [
                 ], [
                     'type'  =>  'number',
                     'name'  =>  'detention_fees',
-                    'value' =>  $company->detention_fee ?? 0,
+                    'value' =>  $company->detention_fees ?? 0,
                     'label' =>  __( 'Detention Fees' ),
                     'description'   =>  __( 'How much is deducted as fee from the detention cost (in percentage).' ),
                     'validation'    =>  '',
@@ -183,7 +199,7 @@ return [
                     'description'   =>  __( 'How much is deducted as fee from the TONU cost (in percentage).' ),
                     'validation'    =>  '',
                     'appearance'    =>  'outline'
-                ],
+                ], 
             ]
         ]
     ]

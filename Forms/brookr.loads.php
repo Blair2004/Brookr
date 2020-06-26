@@ -207,6 +207,12 @@ return [
                     'value'         =>  $load->lumper_fees ?? '',
                     'type'          =>  'number',
                     'description'   =>  __( 'The actual lumper fees if provided.' )
+                ], [
+                    'label'         =>  __( 'Detention Fees' ),
+                    'name'          =>  'detention_fees',
+                    'value'         =>  $load->detention_fees ?? '',
+                    'type'          =>  'number',
+                    'description'   =>  __( 'The actual detention fees if provided.' )
                 ],
             ]
         ], 
