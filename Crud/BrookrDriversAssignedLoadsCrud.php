@@ -282,6 +282,15 @@ class BrookrDriversAssignedLoadsCrud extends Crud
             ];
         }
 
+        $entry->{'$actions'}[]      =   [
+            'label'         =>      __( 'Rate Document' ),
+            'namespace'     =>      'rate_document_url',
+            'type'          =>      'OPEN',
+            'index'         =>      'id',
+            'id'            =>      $entry->id,
+            'url'           =>      '/dashboard/loads/edit/{id}'
+        ];
+
         return $entry;
     }
 

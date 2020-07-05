@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Modules\Brookr\Models\DriversDetail;
+use Modules\Brookr\Models\DriversPayment;
+use Modules\Brookr\Models\Driver;
 use Modules\Brookr\Services\LoadsService;
 use Modules\Brookr\Services\DriversService;
 use Tendoo\Core\Http\Controllers\BaseController;
@@ -53,6 +55,11 @@ class DriversController extends BaseController
         return $this->driversService->makePayment( $driver_id, $request->input( 'driver-payments' ) );
     }
 
+    public function updatePayment( Request $request, $payment_id )
+    {
+        return $this->driversService->updatePayment( $payment_id, $request->input( 'driver-payments' ) );
+    }
+
     public function downloadAssets( $driver_id, $namespace )
     {
         $driver     =   $this->driversService->get( $driver_id );
@@ -72,5 +79,26 @@ class DriversController extends BaseController
         }
 
         throw new Exception( __( 'Unable to find the document requested at ' . base_path() . '/public' . $driver->details->$namespace ) );
+    }
+
+    public function getDriverPayment( $id )
+    {
+        $driver     =   Driver::where( 'id', $id )->with( 'payments' )->first();
+        $driver->payments->each( function( &$payment ) {
+            $payment->amount    =   br_currency( $payment->amount );
+            $payment->date      =   br_date( $payment->created_at );
+        });
+
+        return $driver;
+    }
+
+    public function deleteDriverPayment( $id ) 
+    {
+        DriversPayment::findOrFail( $id )->delete();
+        
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The payment has been deleted' )
+        ];
     }
 }

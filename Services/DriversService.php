@@ -316,7 +316,7 @@ class DriversService
 
         if ( $event->driver instanceof Driver && $newDriverID !== $event->driver->id ) {
             
-            $driver     =   Driver::find( $newDriverID );
+            $driver     =   Driver::findOrFail( $newDriverID );
 
             if ( $driver->brookr_driver_status === 'unavailable' ) {
                 // throw new Exception( __( 'Cannot assign this driver as he is not available.' ) );
@@ -402,6 +402,21 @@ class DriversService
         ] : [
             'status'    =>  'failed',
             'message'   =>  __( 'The driver is not available' )
+        ];
+    }
+
+    public function updatePayment( $payment_id, $fields )
+    {
+        $payment                =   DriversPayment::findOrFail( $payment_id );
+        $payment->amount        =   $fields[ 'amount' ] ?? 0;
+        $payment->created_at    =   $fields[ 'created_at' ] ?? 0;
+        $payment->description   =   $fields[ 'description' ];
+        $payment->user_id       =   Auth::id();
+        $payment->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The payment has been correctly made.' )   
         ];
     }
 

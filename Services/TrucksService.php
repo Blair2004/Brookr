@@ -297,8 +297,8 @@ class TrucksService
             $truck      =   $this->getTruck( $event->load->truck_id );
             
             if ( $truck instanceof Truck ) {
-                $truck->status  =   'unavailable';
-                $truck->save();
+                // $truck->status  =   'unavailable';
+                // $truck->save();
             }
         } catch( Exception $exception ){}
     }

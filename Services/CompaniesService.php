@@ -275,6 +275,7 @@ class CompaniesService
         });
 
         $report->additional_payment     =   $gross[ 'escort_fees' ] + $gross[ 'lumper_fees' ] + $gross[ 'detention_fees' ];
+        $report->driver_payment         =   ( ( $report->net_after_dispatch * floatval( $company->driver_rate ) ) / 100 ) - $report->driver_advance_payment ;
         $report->net_earning            =   $report->net_after_dispatch - ( $report->total_expenses + $report->driver_advance_payment + $report->fuel_charge ) + $report->additional_payment;
         $report->save();
 
@@ -300,6 +301,9 @@ class CompaniesService
         ] as $amount ) {
             $report->$amount  =   br_currency( $report->$amount ?? 0 );
         }
+
+        $report->range_start        =   br_date( $fields[ 'range_start' ] );
+        $report->range_end          =   br_date( $fields[ 'range_end' ] );
 
         $loads->each( function( $load ) {
             $load->cost     =   br_currency( $load->cost );

@@ -273,6 +273,14 @@ class BrookrLoadsCrud extends Crud
             '$actions'  =>  [
                 'label' =>  __( 'Actions' ),
             ],
+            'visible'  =>  [
+                'label'     =>  __( 'Status' ),
+                'type'      =>  'select',
+                'options'   =>  Helper::kvToJsOptions([
+                    '0'     =>  __( 'Not Publicly Visible' ),
+                    '1'     =>  __( 'Publicly Visible' ),
+                ])
+            ],
             'status'  =>  [
                 'label'     =>  __( 'Status' ),
                 'type'      =>  'select',
@@ -379,6 +387,8 @@ class BrookrLoadsCrud extends Crud
                 Str::slug( trim( $key[0] ) )  =>  trim( $key[1] ?? 'white' )
             ];
         });
+
+        $entry->visible     =   ( bool ) $entry->visible ? __( 'Visible' ) : __( 'Hidden' );
 
         $entry->cost        =   br_currency( $entry->cost );
         

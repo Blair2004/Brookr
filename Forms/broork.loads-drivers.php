@@ -3,6 +3,7 @@
 use Tendoo\Core\Models\Role;
 use Tendoo\Core\Services\Helper;
 use Illuminate\Support\Facades\Auth;
+use Modules\Brookr\Models\Driver;
 use Modules\Brookr\Services\LoadsService;
 use Modules\Brookr\Services\TrucksService;
 
@@ -10,8 +11,13 @@ if ( ! Auth::user()->allowedTo( 'brookr.see.drivers' ) ) {
     throw new Exception( __( 'You\'re not allowed to see this page.' ) );
 }
 
-$rawDrivers     =   Role::namespace( 'brookr.driver' )->users;
-$drivers        =   Helper::toJsOptions( $rawDrivers, [ 'id', 'username' ]);
+$rawDrivers     =   Driver::with( 'details' )->get();
+
+$drivers        =   Helper::toJsOptions( $rawDrivers->map( function( $driver ) {
+    $driver->human_name     =   isset( $driver->details->first_name, $driver->details->last_name ) ? trim( $driver->details->first_name . ' ' . $driver->details->last_name ) : $driver->username;
+    return $driver;
+}), [ 'id', 'human_name' ]);
+
 $loadService    =   app()->make( LoadsService::class );
 $load           =   $loadService->get( $index );
 $trucksService  =   new TrucksService;
@@ -41,26 +47,26 @@ return [
                 ], [
                     'label'         =>  __( 'Rate' ),
                     'name'          =>  'cost',
-                    'value'         =>  $load->cost ?? '',
-                    'type'          =>  'number',
+                    'value'         =>  $load->cost ?? 0,
+                    'type'          =>  'text',
                     'description'   =>  __( 'The actual cost of the transport.' )
                 ], [
                     'label'         =>  __( 'Escort Fees' ),
                     'name'          =>  'escort_fees',
-                    'value'         =>  $load->escort_fees ?? '',
-                    'type'          =>  'number',
+                    'value'         =>  $load->escort_fees ?? 0,
+                    'type'          =>  'text',
                     'description'   =>  __( 'The actual escort fees if provided.' )
                 ], [
                     'label'         =>  __( 'Lumper Fees' ),
                     'name'          =>  'lumper_fees',
-                    'value'         =>  $load->lumper_fees ?? '',
-                    'type'          =>  'number',
+                    'value'         =>  $load->lumper_fees ?? 0,
+                    'type'          =>  'text',
                     'description'   =>  __( 'The actual lumper fees if provided.' )
                 ], [
                     'label'         =>  __( 'Detention Fees' ),
                     'name'          =>  'detention_fees',
-                    'value'         =>  $load->detention_fees ?? '',
-                    'type'          =>  'number',
+                    'value'         =>  $load->detention_fees ?? 0,
+                    'type'          =>  'text',
                     'description'   =>  __( 'The actual detention fees if provided.' )
                 ],
             ]

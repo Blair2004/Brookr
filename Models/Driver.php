@@ -48,4 +48,9 @@ class Driver extends User
     {
         return $this->hasOne( DriversDetail::class, 'driver_id' );
     }
+
+    public function payments()
+    {
+        return $this->hasMany( DriversPayment::class, 'driver_id' );
+    }
 }

@@ -8,6 +8,9 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::put( 'api/brookr/drivers/{id}', 'DriversController@setDriver' )->where(['id' => '[0-9]+']);
     Route::get( 'api/brookr/drivers/{id}/assets/{namespace}', 'DriversController@downloadAssets' );
     Route::post( 'api/brookr/drivers/payments/{driver_id}', 'DriversController@makeAdvancePayment' );
+    Route::put( 'api/brookr/drivers/payments/{driver_id}', 'DriversController@updatePayment' );
+    Route::delete( 'api/brookr/drivers/payments/{payment_id}', 'DriversController@deleteDriverPayment' );
+    Route::get( 'api/brookr/drivers/payments/{driver_id}', 'DriversController@getDriverPayment' );
     Route::get( 'api/brookr/drivers/driver-expiration', 'DriversController@getByDriverCard' );
     Route::get( 'api/brookr/drivers/is-available', 'DriversController@checkDriverAvailability' );
     Route::post( 'api/brookr/drivers', 'DriversController@setDriver' );

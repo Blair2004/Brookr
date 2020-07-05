@@ -108,12 +108,20 @@ class LoadsService
          */
         foreach( $fields[ 'general' ] as $key => $value ) {
             if ( in_array( $key, [ 'rate_document_url', 'delivery_document_url' ] ) && ! empty( $value ) && $value !== 'null' ) {
-                $relativeFilePath   =   'brookr-uploads/loads/' . $load->id . '-' . $key . '.' . request()->file( 'general--' . $key )->extension();
+                $relativeFilePath   =   'brookr-uploads/loads/' . $load->id . '-' . $key . '-' . Str::slug( $load->updated_at ) . '.' . request()->file( 'general--' . $key )->extension();
+                
+                Storage::disk( 'public' )->delete( $relativeFilePath );
+
+                $load->$key     =   '';
+                $load->save();
+                $load->fresh();
+
+                $newRelativePath    =   'brookr-uploads/loads/' . $load->id . '-' . $key . '-' . Str::slug( $load->updated_at ) . '.' . request()->file( 'general--' . $key )->extension();
                 $url                =   request()->file( 'general--' . $key )->storeAs(
                     'public', $relativeFilePath
                 );
-
-                $load->$key     =   Storage::disk( 'public' )->url( $relativeFilePath );
+                
+                $load->$key         =   Storage::disk( 'public' )->url( $newRelativePath );
                 $load->save();
                 // $this->saveBase64( $value, 'brookr-uploads/' . $load->id . '-' . $key );
             }
@@ -163,7 +171,7 @@ class LoadsService
         $load->delivery_city        =   $fields[ 'general' ][ 'delivery_city' ];
         $load->lumper_fees          =   $fields[ 'drivers' ][ 'lumper_fees' ] ?? 0;
         $load->escort_fees          =   $fields[ 'drivers' ][ 'escort_fees' ] ?? 0;
-        $load->detention_fees        =   $fields[ 'drivers' ][ 'detention_fees' ] ?? 0;
+        $load->detention_fees       =   $fields[ 'drivers' ][ 'detention_fees' ] ?? 0;
         $load->empty_trailer        =   $fields[ 'general' ][ 'empty_trailer' ] ?? '';
         $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
         $load->load_trailer         =   $fields[ 'general' ][ 'load_trailer' ] ?? '';
@@ -239,12 +247,17 @@ class LoadsService
         foreach([
             'truck_id',
             'driver_id',
+        ] as $field ) {
+            $load->$field   =   $fields[ $field ] ?: '';
+        }
+
+        foreach([
             'cost',
             'escort_fees',
             'lumper_fees',
             'detention_fees'
         ] as $field ) {
-            $load->$field   =   $fields[ $field ] ?: '';
+            $load->$field   =   $fields[ $field ] ?: 0;
         }
 
         $load->save();

@@ -230,8 +230,14 @@ class BrookrDriversUnassignedLoadsCrud extends Crud
             'pickup_city'   =>  [
                 'label'     =>  __( 'Pickup City' ),
             ],
+            'pickup_date'   =>  [
+                'label'     =>  __( 'Pickup Date' ),
+            ],
             'delivery_city' =>  [
                 'label'     =>  __( 'Delivery City' )
+            ],
+            'delivery_date' =>  [
+                'label'     =>  __( 'Delivery Date' )
             ],
             'cost'          =>  [
                 'label'     =>  __( 'Price' ),
@@ -258,7 +264,14 @@ class BrookrDriversUnassignedLoadsCrud extends Crud
                     'message'  =>  __( 'Would You like to assign yourself to this delivery ?' ),
                     'title'     =>  __( 'Handle A Load for Delivery' )
                 ]
-            ]
+            ], [
+                'label'         =>      __( 'Rate Document' ),
+                'namespace'     =>      'rate_document_url',
+                'type'          =>      'OPEN',
+                'index'         =>      'id',
+                'id'            =>      $entry->id,
+                'url'           =>      '/dashboard/loads/edit/{id}'
+            ],
         ];
 
         return $entry;
