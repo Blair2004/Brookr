@@ -196,13 +196,23 @@ class DashboardService {
 
     public function getReportForRange( $from, $to )
     {
-        $prevWeek   =   Carbon::parse( $from )->subDay();
+        $prevWeek   =   Carbon::parse( $from )->subWeek();
         $prevFrom   =   $prevWeek->copy()->startOfWeek()->toDateTimeString();
         $prevTo     =   $prevWeek->copy()->endOfWeek()->toDateTimeString();
 
         return [
-            'current'   =>  Dashboard::range( $from, $to )->first(),
-            'previous'  =>  Dashboard::range( $prevFrom, $prevTo )->first()      
+            'current'   =>  collect( Dashboard::range( $from, $to )->first() )->map( function( $value, $key ) {
+                if ( in_array( $key, [ 'total_incomes' ]) ) {
+                    return br_currency( $value );
+                }
+                return $value;
+            }),
+            'previous'  =>  collect( Dashboard::range( $prevFrom, $prevTo )->first() )->map( function( $value, $key ) {
+                if ( in_array( $key, [ 'total_incomes' ]) ) {
+                    return br_currency( $value );
+                }
+                return $value;
+            })
         ];
     }
 

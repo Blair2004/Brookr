@@ -112,10 +112,6 @@ class LoadsService
                 
                 Storage::disk( 'public' )->delete( $relativeFilePath );
 
-                $load->$key     =   '';
-                $load->save();
-                $load->fresh();
-
                 $newRelativePath    =   'brookr-uploads/loads/' . $load->id . '-' . $key . '-' . Str::slug( $load->updated_at ) . '.' . request()->file( 'general--' . $key )->extension();
                 $url                =   request()->file( 'general--' . $key )->storeAs(
                     'public', $relativeFilePath
@@ -123,7 +119,6 @@ class LoadsService
                 
                 $load->$key         =   Storage::disk( 'public' )->url( $newRelativePath );
                 $load->save();
-                // $this->saveBase64( $value, 'brookr-uploads/' . $load->id . '-' . $key );
             }
         }
     }

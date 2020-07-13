@@ -11,25 +11,25 @@ class AddAchComdataToReportTable extends Migration
     {
         if ( ! Schema::hasColumn( 'brookr_reports', 'total_ach_fees' ) ) {
             Schema::table( 'brookr_reports', function (Blueprint $table) {
-                $table->integer( 'total_ach_fees' )->default(0);
+                $table->float( 'total_ach_fees' )->default(0);
             });
         }
 
         if ( ! Schema::hasColumn( 'brookr_reports', 'total_comdata_fees' ) ) {
             Schema::table( 'brookr_reports', function (Blueprint $table) {
-                $table->integer( 'total_comdata_fees' )->default(0);
+                $table->float( 'total_comdata_fees' )->default(0);
             });
         }
 
         if ( ! Schema::hasColumn( 'brookr_companies', 'comdata_fees' ) ) {
             Schema::table( 'brookr_companies', function (Blueprint $table) {
-                $table->integer( 'comdata_fees' )->default(0);
+                $table->float( 'comdata_fees' )->default(0);
             });
         }
 
         if ( ! Schema::hasColumn( 'brookr_companies', 'ach_fees' ) ) {
             Schema::table( 'brookr_companies', function (Blueprint $table) {
-                $table->integer( 'ach_fees' )->default(0);
+                $table->float( 'ach_fees' )->default(0);
             });
         }
     }

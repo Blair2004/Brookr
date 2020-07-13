@@ -36,6 +36,12 @@ return [
                     'validation'    =>  'required',
                     'options'       =>  Helper::kvToJsOptions( $loadStatus ),
                     'description'   =>  __( 'Change the load status.' )
+                ], [
+                    'label'         =>  __( 'Creation Date' ),
+                    'name'          =>  'created_at',
+                    'value'         =>  $load->created_at ?? '',
+                    'type'          =>  'ng-datetime',
+                    'description'   =>  __( 'Adjust when the load has been created.' )
                 ], 
             ]
         ]

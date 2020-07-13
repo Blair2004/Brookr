@@ -80,23 +80,17 @@ return [
                     'type'          =>  'text',
                     'description'   =>  __( 'The load reference.' )
                 ], [
-                    'label'         =>  __( 'Pickup Reference' ),
-                    'name'          =>  'pickup_reference',
-                    'value'         =>  $load->pickup_reference ?? '',
-                    'type'          =>  'text',
-                    'description'   =>  __( 'The pickup reference.' )
-                ], [
-                    'label'         =>  __( 'Empty Trailer' ),
-                    'name'          =>  'empty_trailer',
-                    'value'         =>  $load->empty_trailer ?? '',
-                    'type'          =>  'text',
-                    'description'   =>  __( 'The empty trailer reference.' )
-                ], [
                     'label'         =>  __( 'Load Trailer' ),
                     'name'          =>  'load_trailer',
                     'value'         =>  $load->load_trailer ?? '',
                     'type'          =>  'text',
                     'description'   =>  __( 'The load trailer reference.' )
+                ], [
+                    'label'         =>  __( 'Pickup Reference' ),
+                    'name'          =>  'pickup_reference',
+                    'value'         =>  $load->pickup_reference ?? '',
+                    'type'          =>  'text',
+                    'description'   =>  __( 'The pickup reference.' )
                 ], [
                     'label'         =>  __( 'Drop Trailer' ),
                     'name'          =>  'drop_trailer',
@@ -110,11 +104,11 @@ return [
                     'type'          =>  'number',
                      'description'   =>  __( 'The actual cost of the transport.' )
                 ], [
-                    'label'         =>  __( 'Note' ),
-                    'name'          =>  'note',
-                    'value'         =>  $load->note ?? '',
-                    'type'          =>  'textarea',
-                     'description'   =>  __( 'The note of the load delivery.' )
+                    'label'         =>  __( 'Empty Trailer' ),
+                    'name'          =>  'empty_trailer',
+                    'value'         =>  $load->empty_trailer ?? '',
+                    'type'          =>  'text',
+                    'description'   =>  __( 'The empty trailer reference.' )
                 ], [
                     'label'         =>  __( 'Status' ),
                     'name'          =>  'status',
@@ -122,6 +116,12 @@ return [
                     'type'          =>  'select',
                     'options'       =>  Helper::kvToJsOptions( $loadStatus ),
                     'description'   =>  __( 'The delivery load status.' )
+                ], [
+                    'label'         =>  __( 'Notes' ),
+                    'name'          =>  'note',
+                    'value'         =>  $load->note ?? '',
+                    'type'          =>  'textarea',
+                     'description'   =>  __( 'The note of the load delivery.' )
                 ], [
                     'label'         =>  __( 'Pickup Date' ),
                     'name'          =>  'pickup_date',

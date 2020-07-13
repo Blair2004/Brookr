@@ -24,7 +24,6 @@ class Dashboard extends Model
     public function scopeRange( $query, $from, $to )
     {
         return $query->where( 'from_date', $from )
-            ->where( 'to_date', $to )
-            ->first();
+            ->where( 'to_date', $to );
     }
 }
