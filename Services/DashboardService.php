@@ -54,7 +54,7 @@ class DashboardService {
      */
     public function currentWeek() 
     {
-        $range  =   new stdClass;
+        $range              =   new stdClass;
         $range->from_date    =   $this->date->copy()->startOfWeek()->toDateTimeString();
         $range->to_date      =   $this->date->copy()->endOfWeek()->toDateTimeString();
         return $range;
@@ -144,7 +144,7 @@ class DashboardService {
         $dashboard  =   Dashboard::range(
             $this->getStartOfWeek( $event->load->created_at ),
             $this->getEndOfWeek( $event->load->created_at )
-        );
+        )->first();
 
         if ( $dashboard instanceof Dashboard ) {
             $dashboard  =   new Dashboard;
