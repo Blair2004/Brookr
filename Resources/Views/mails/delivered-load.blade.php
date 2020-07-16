@@ -8,7 +8,7 @@
     $load->delivery_city
 ) }}
 
-@component('mail::button', ['url' => url( '/dashboard/loads' ) ])
+@component('mail::button', ['url' => url( '/brookr/dashboard/loads' ) ])
 {{ __( 'Loads' ) }}
 @endcomponent
 

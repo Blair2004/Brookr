@@ -100,6 +100,7 @@ class BrookrLoadsCrud extends Crud
             $queryParams      =   [];
             $queryParams[ 'brookr_loads_delivery.name' ]    =   request()->query( 'name' );
             $queryParams[ 'pickup_date' ]                   =   request()->query( 'pickup_date' );
+            $queryParams[ 'visible' ]                       =   request()->query( 'visible' );
             $queryParams[ 'delivery_date' ]                 =   request()->query( 'delivery_date' );
             $queryParams[ 'load_reference' ]                =   request()->query( 'load_reference' );
             $queryParams[ 'pickup_reference' ]              =   request()->query( 'pickup_reference' );
@@ -109,7 +110,7 @@ class BrookrLoadsCrud extends Crud
             $queryParams[ 'brookr_loads_delivery.status' ]  =   request()->query( 'status' );
 
             foreach( $queryParams as $key => $value ) {
-                if ( ! empty( $value ) && ! in_array( $value, [ 'null', 'Invalid date' ] ) ) {
+                if ( ! empty( $value ) && ! in_array( $value, [ 'null', 'Invalid date' ] ) || $value === '0' ) {
                     if ( in_array( $key, [ 'pickup_date', 'delivery_date' ] ) ) {
                         $startOfDay =   Carbon::parse( $value )->startOfDay()->toDateTimeString();
                         $endOfDay   =   Carbon::parse( $value )->endOfDay()->toDateTimeString();
@@ -389,9 +390,7 @@ class BrookrLoadsCrud extends Crud
         });
 
         $entry->visible     =   ( bool ) $entry->visible ? __( 'Visible' ) : __( 'Hidden' );
-
         $entry->cost        =   br_currency( $entry->cost );
-        
         $entry->{'$props'}          =   [
             'className'             =>  [ 'bg-' . ($loadStatus[ $entry->status ] ?? 'gray' ) . '-200' ],
             'tdClassName'           =>  [ 'border-' . ($loadStatus[ $entry->status ] ?? 'gray' ) . '-400' ]
