@@ -42,7 +42,7 @@ class SettingsController extends BaseController
          * Only brookr options
          * should be saved
          */
-        collect([ 'sms', 'general', 'notifications' ])->each( function( $group ) use( $fields ){
+        collect([ 'sms', 'general', 'notifications', 'email_notifications', 'dev' ])->each( function( $group ) use( $fields ){
             foreach( ( array ) @$fields[ $group ] as $name => $value ) {
                 if ( substr( $name, 0, 7 ) === 'brookr_' ) {
                     $this->optionsService->set( $name, $value );
