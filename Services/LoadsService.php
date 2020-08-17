@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Mails\OngoingLoadMail;
 use Modules\Brookr\Mails\AssignedLoadMail;
+use Modules\Brookr\Mails\DeliveryCompletedMail;
 use Modules\Brookr\Services\TrucksService;
 use Modules\Brookr\Mails\DeliveredLoadMail;
 use Modules\Brookr\Mails\UnassignedLoadMail;
@@ -478,7 +479,7 @@ class LoadsService
 
     public function notifyDelivery( LoadDelivery $load )
     {
-        $company_id     =   $this->optionsService->get( 'brookr_mail_notified_company_id' );
+        $company_id     =   $this->optionService->get( 'brookr_mail_notified_company_id' );
         
         if ( ! empty( $company_id ) ) {
             $company    =   Company::find( $company_id );
@@ -486,7 +487,7 @@ class LoadsService
             if ( $company instanceof Company ) {
                 $mail   =   Mail::to( $company->email );
 
-                Role::namespace( 'brookr.dispatcher' )->user->each( function( $user ) {
+                Role::namespace( 'brookr.dispatcher' )->user->each( function( $user ) use ( $mail ) {
                     $mail->cc( $user->email );
                 });
 
