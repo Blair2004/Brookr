@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Support\Facades\Route;
+
 Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::get( 'api/brookr/profile/avatar', 'SettingsController@getUserAvatar' );
     Route::get( 'api/brookr/permissions', 'SettingsController@getPermissions' );

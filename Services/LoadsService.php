@@ -382,7 +382,7 @@ class LoadsService
         }
         
         $filePath                       =   'brookr-uploads';
-        $extension                      = $request->file('delivery_document_url')->extension();
+        $extension                      =   $request->file('delivery_document_url')->extension();
         $path                           =   Storage::disk( 'public' )->putFileAs( 
             $filePath, 
             $request->file( 'delivery_document_url' ), 
@@ -472,7 +472,7 @@ class LoadsService
     {
         switch( $namespace ) {
             case 'delivery':
-                $this->notifyDelivery( $load );
+                return $this->notifyDelivery( $load );
             break;
         }
     }

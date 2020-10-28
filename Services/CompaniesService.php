@@ -261,7 +261,7 @@ class CompaniesService
             'tonu_fees',
             'ach_fees',
             'comdata_fees',
-        ])->map( function( $expense ) use ( $report, $company, $gross ) {
+        ])->map( function( $expense ) use ( $report, $company, &$gross ) {
             if ( in_array( $expense, [ 'escort_fees', 'lumper_fees', 'detention_fees' ] ) ) {
                 $gross[ $expense ]                  =   ( floatval( $company->$expense ) * $gross[ $expense ] ) / 100;
                 $report->{ 'total_' . $expense }    =   $gross[ $expense ];

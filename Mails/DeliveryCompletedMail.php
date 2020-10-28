@@ -26,13 +26,15 @@ class DeliveryCompletedMail extends Mailable
         $template       =   $options->get( 'brookr_mail_company_template', $default );
         $deliveryInfo   =   pathinfo( $this->load->delivery_document_url );
         $rateInfo       =   pathinfo( $this->load->rate_document_url );
-        $template       =   HelperService::swapModelValuesOnTemplate( $template, $this->load );
+        $template       =   HelperService::swapModelValuesOnTemplate( $template, $this->load, [], [
+            'pickup_date', 'delivery_date'
+        ]);
 
         return $this
             ->subject( $options->get( 'brookr_mail_company_title', 'Load Completed Notification' ) )
             ->from( $options->get( 'brookr_mail_from_address', 'smm-notification@brookr.io' ) )
-            ->attach( public_path( 'storage/brookr-uploads/loads/' . $this->load->id . '-delivery_document_url.' . $deliveryInfo[ 'extension' ] ) )
-            ->attach( public_path( 'storage/brookr-uploads/loads/' . $this->load->id . '-rate_document_url.' . $rateInfo[ 'extension' ]) )
+            ->attach( $this->load->delivery_document_url )
+            ->attach( $this->load->rate_document_url )
             ->markdown( 'Brookr::mails.completed-load', compact( 'template' ) );
     }
 }
