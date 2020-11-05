@@ -275,16 +275,26 @@ class BrookrLoadsCrud extends Crud
                 'label' =>  __( 'Actions' ),
             ],
             'visible'  =>  [
-                'label'     =>  __( 'Status' ),
+                'label'     =>  __( 'Visibility' ),
                 'type'      =>  'select',
+                'props' =>  [
+                    'style'     =>  [
+                        'minWidth'      =>  '80px'
+                    ]
+                ],
                 'options'   =>  Helper::kvToJsOptions([
-                    '0'     =>  __( 'Not Publicly Visible' ),
-                    '1'     =>  __( 'Publicly Visible' ),
+                    '0'     =>  __( 'Not Visible' ),
+                    '1'     =>  __( 'Visible' ),
                 ])
             ],
             'status'  =>  [
                 'label'     =>  __( 'Status' ),
                 'type'      =>  'select',
+                'props' =>  [
+                    'style'     =>  [
+                        'minWidth'      =>  '80px'
+                    ]
+                ],
                 'options'   =>  Helper::kvToJsOptions( $loadStatus )
             ],
             'pickup_date'  =>  [
