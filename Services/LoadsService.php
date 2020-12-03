@@ -31,6 +31,7 @@ use Modules\Brookr\Events\AfterCreateLoadEvent;
 use Modules\Brookr\Events\AfterDeleteLoadEvent;
 use Modules\Brookr\Events\BeforeCreateLoadEvent;
 use Modules\Brookr\Events\BeforeDeleteLoadEvent;
+use Modules\Brookr\Models\DriversDetail;
 
 class LoadsService
 {
@@ -108,7 +109,7 @@ class LoadsService
          * the upload fields are on general
          */
         foreach( $fields[ 'general' ] as $key => $value ) {
-            if ( in_array( $key, [ 'rate_document_url', 'delivery_document_url' ] ) && ! empty( $value ) && $value !== 'null' ) {
+            if ( in_array( $key, [ 'rate_document_url', 'delivery_document_url' ] ) && ! empty( $value ) && $value !== 'null' && ! is_string( $value ) ) {
                 $relativeFilePath   =   'brookr-uploads/loads/' . $load->id . '-' . $key . '-' . Str::slug( $load->updated_at ) . '.' . request()->file( 'general--' . $key )->extension();
                 
                 Storage::disk( 'public' )->delete( $relativeFilePath );
@@ -278,6 +279,8 @@ class LoadsService
         }
 
         $load->save();
+
+        event( new AfterEditLoadEvent( $load, $load->driver ?? null, $load->truck ?? null ) );
 
         return [
             'status'    =>  'success',
@@ -458,6 +461,9 @@ class LoadsService
                 Mail::to( $user->email )
                     ->queue( new OngoingLoadMail( $event->load ) );
             });
+
+            Mail::to( $event->load->customer->email )
+                ->queue( new OngoingLoadMail( $event->load ) );
         }
 
         if ( $event->load->status === $options->get( 'brookr_system_delivered_status', 'delivered' ) ) {
@@ -465,6 +471,9 @@ class LoadsService
                 Mail::to( $user->email )
                     ->queue( new DeliveredLoadMail( $event->load ) );
             });
+
+            Mail::to( $event->load->customer->email )
+                ->queue( new DeliveredLoadMail( $event->load ) );
         }
     }
 
@@ -507,7 +516,11 @@ class LoadsService
     {
         if ( $event->load->driver_id !== null ) {
             $load               =   $event->load;
-            if ( $event->driver->details->sms_notifications ) {
+            if ( 
+                $event->driver instanceof Driver && 
+                $event->driver->details instanceof DriversDetail && 
+                $event->driver->details->sms_notifications ?? false 
+            ) {
                 SMSDriverJob::dispatch( $event )->delay( now()->addSeconds(2) );
             }
         }

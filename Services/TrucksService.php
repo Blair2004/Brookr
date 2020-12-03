@@ -158,9 +158,9 @@ class TrucksService
     public function getTrucks( $status = 'all' ) 
     {
         switch( $status ) {
-            case 'all' : return Truck::get();
-            case 'available' : return Truck::where([ 'status' => 'available' ])->get();
-            case 'unavailable' : return Truck::where([ 'status' => 'unavailable' ])->get();
+            case 'all' : return Truck::orderBy( 'name', 'asc' )->get();
+            case 'available' : return Truck::where([ 'status' => 'available' ])->orderBy( 'name', 'asc' )->get();
+            case 'unavailable' : return Truck::where([ 'status' => 'unavailable' ])->orderBy( 'name', 'asc' )->get();
         }
 
         return [];
@@ -310,15 +310,17 @@ class TrucksService
      */
     public function handleFreedTruckIfDifferent( BeforeEditLoadEvent $event )
     {
-        $newTruckID     =   $event->fields[ 'truck_id' ];
-        
-        if ( $event->truck instanceof Truck && intval( $newTruckID ) !== intval( $event->truck->id ) ) {
-            $event->truck->status   =   'available';
-            $event->truck->save();
-
-            $truck      =   Truck::find( $newTruckID );
-            $truck->status  =   'unavailable';
-            $truck->save();
+        if ( isset( $event->fields[ 'truck_id' ] ) ) {
+            $newTruckID     =   $event->fields[ 'truck_id' ];
+            
+            if ( $event->truck instanceof Truck && intval( $newTruckID ) !== intval( $event->truck->id ) ) {
+                $event->truck->status   =   'available';
+                $event->truck->save();
+    
+                $truck      =   Truck::find( $newTruckID );
+                $truck->status  =   'unavailable';
+                $truck->save();
+            }
         }
     }
 

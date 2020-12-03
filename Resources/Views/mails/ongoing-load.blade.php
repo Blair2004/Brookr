@@ -1,10 +1,11 @@
+*
 @component('mail::message')
 # {{ __( 'Load Delivery Started' ) }}
 
 {{ sprintf( 
     __( 'The load with the reference %s is being handled by the driver %s to the location %s' ), 
     $load->load_reference,
-    $load->driver->details->first_name . ' ' . $load->driver->details->last_name . '(' . $load->driver->username . ')',
+    ( $load->driver->details->first_name ?? __( 'N/A' ) ) . ' ' . ( $load->driver->details->last_name ?? __( 'N/A' ) ) . '(' . $load->driver->username . ')',
     $load->delivery_city
 ) }}
 

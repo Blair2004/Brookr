@@ -23,10 +23,10 @@ $rawCustomers   =   Customer::get()->filter( function( $customer ) {
     })->map( function( $customer ) {
         $customer->fullname     =   $customer->details ? $customer->details->first_name . ' ' . $customer->details->last_name : $customer->username;
         return $customer;
-});
-// var_dump( $rawCustomers );
+})->sortBy( 'fullname' );
+
 $customers      =   Helper::toJsOptions( $rawCustomers, [ 'id', 'fullname' ]);
-$rawDrivers     =   Role::namespace( 'brookr.driver' )->users;
+$rawDrivers     =   Role::namespace( 'brookr.driver' )->users->sortBy( 'username' );
 $drivers        =   Helper::toJsOptions( $rawDrivers, [ 'id', 'username' ]);
 $trucksService  =   new TrucksService;
 $trucks         =   Helper::toJsOptions( ! empty( $index ) ? $trucksService->getTrucks( 'all' ) : $trucksService->getTrucks( 'available' ), [ 'id', [ 'name', 'model' ], ' - ' ] );
@@ -60,12 +60,12 @@ return [
             'description'   =>  __( 'Loads general details.' ),
             'fields'        =>  [
                 [
-                    'label'         =>  __( 'Brooker' ),
+                    'label'         =>  __( 'Broker' ),
                     'name'          =>  'brooker_id',
                     'value'         =>  $load->brooker_id ?? '',
                     'type'          =>  'select',
                     'options'       =>  $customers,
-                    'description'   =>  __( 'The brooker providing the load.' ),
+                    'description'   =>  __( 'The Broker providing the load.' ),
                     'validation'    =>  'required'
                 ], [
                     'label'         =>  __( 'Trailer Reference' ),
@@ -155,18 +155,21 @@ return [
                 ], [
                     'label'         =>  __( 'delivery Document' ),
                     'name'          =>  'delivery_document_url',
-                    // 'value'         =>  $load->delivery_document_url ?? '',
+                    'value'         =>  $load->delivery_document_url ?? '',
                     'type'          =>  'file-upload',
                     'data'          =>  [
-                        'maintainAspectRatio'   =>  false
+                        'maintainAspectRatio'   =>  false,
+                        'file'                  =>  $load->delivery_document_url ?? false,
                     ],
                     'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
                 ], [
                     'label'         =>  __( 'Rate Document URL' ),
                     'name'          =>  'rate_document_url',
                     'type'          =>  'file-upload',
+                    'value'         =>  $load->rate_document_url ?? '',
                     'data'          =>  [
-                        'maintainAspectRatio'   =>  false
+                        'maintainAspectRatio'   =>  false,
+                        'file'                  =>  $load->rate_document_url ?? false,
                     ]
                 ], [
                     'label'         =>  __( 'Publicly Visible' ),

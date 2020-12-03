@@ -35,10 +35,10 @@ class BrookrListener
         //     DriversService::class . '@handleMarkDriverUnavailable'
         // );
 
-        $event->listen(
-            AfterCreateLoadEvent::class,
-            TrucksService::class . '@handleMarkTruckUnavailable'
-        );
+        // $event->listen(
+        //     AfterCreateLoadEvent::class,
+        //     TrucksService::class . '@handleMarkTruckUnavailable'
+        // );
 
         // $event->listen(
         //     AfterCreateLoadEvent::class,

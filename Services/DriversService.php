@@ -312,21 +312,23 @@ class DriversService
      */
     public function handleFreedDriverIfDifferent( BeforeEditLoadEvent $event )
     {
-        $newDriverID    =   ( int ) $event->fields[ 'driver_id' ];
-
-        if ( $event->driver instanceof Driver && $newDriverID !== $event->driver->id ) {
-            
-            $driver     =   Driver::findOrFail( $newDriverID );
-
-            if ( $driver->brookr_driver_status === 'unavailable' ) {
-                // throw new Exception( __( 'Cannot assign this driver as he is not available.' ) );
+        if ( isset( $event->fields[ 'driver_id' ] ) ) {
+            $newDriverID    =   ( int ) $event->fields[ 'driver_id' ];
+    
+            if ( $event->driver instanceof Driver && $newDriverID !== $event->driver->id ) {
+                
+                $driver     =   Driver::findOrFail( $newDriverID );
+    
+                if ( $driver->brookr_driver_status === 'unavailable' ) {
+                    // throw new Exception( __( 'Cannot assign this driver as he is not available.' ) );
+                }
+    
+                $driver->brookr_driver_status    =   'unavailable';
+                $driver->save();
+    
+                $event->driver->brookr_driver_status     =   'available';
+                $event->driver->save();
             }
-
-            $driver->brookr_driver_status    =   'unavailable';
-            $driver->save();
-
-            $event->driver->brookr_driver_status     =   'available';
-            $event->driver->save();
         }
     }
 

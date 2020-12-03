@@ -17,6 +17,7 @@ use Tendoo\Core\Services\Options;
 use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Services\LoadsService;
+use Tendoo\Core\Exceptions\AccessDeniedException;
 
 class BrookrLoadsCrud extends Crud
 {
