@@ -5,6 +5,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Modules\Brookr\Http\Requests\SaveFuelRequest;
 use Modules\Brookr\Models\DriversDetail;
 use Modules\Brookr\Models\DriversPayment;
 use Modules\Brookr\Models\Driver;
@@ -32,6 +33,16 @@ class DriversController extends BaseController
     public function getByDriverCard()
     {
         return $this->driversService->getByDriverCard( 5, 'asc' );
+    }
+
+    public function getDrivers()
+    {
+        return $this->driversService->getByName();
+    }
+
+    public function saveFuelExpense( SaveFuelRequest $request )
+    {
+        return $this->driversService->saveFuelExpense( $request->all() );
     }
 
     public function deleteDriver( $id )

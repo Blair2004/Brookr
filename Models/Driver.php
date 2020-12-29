@@ -43,7 +43,6 @@ class Driver extends User
     {
         return $this->hasMany( LoadDelivery::class, 'driver_id' );
     }
-
     public function details()
     {
         return $this->hasOne( DriversDetail::class, 'driver_id' );

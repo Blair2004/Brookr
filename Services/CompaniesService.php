@@ -129,12 +129,12 @@ class CompaniesService
         $rangeEnd       =   Carbon::parse( $fields[ 'range_end' ] )->endOfDay();
 
         if ( intval( $rangeStart->diffInDays( $rangeEnd ) ) !== 6 ) {
-            throw new Exception( __( 'The report you\'re trying to generate doesn\'t cover 7 days as it should for a weekly report.' ) );
+            // throw new Exception( __( 'The report you\'re trying to generate doesn\'t cover 7 days as it should for a weekly report.' ) );
         }
             
         $report     =   CompanyReport::forRange(
             $fields[ 'company_id' ],
-            $fields[ 'driver_id' ],
+            $fields[ 'driver_id' ][0],
             $rangeStart->toDateTimeString(),
             $rangeEnd->toDateTimeString()
         )->first();
@@ -153,7 +153,7 @@ class CompaniesService
                     ->where( 'range_end', '>', $rangeEnd->toDateTimeString() );
             })
                 ->where( 'company_id', $fields[ 'company_id' ])            
-                ->where( 'driver_id', $fields[ 'driver_id' ])            
+                ->whereIn( 'driver_id', $fields[ 'driver_id' ])            
                 ->first();
 
             // if ( $conflict instanceof CompanyReport ) {
@@ -169,7 +169,7 @@ class CompaniesService
             $report                 =   new CompanyReport;
             $report->user_id        =   Auth::id();
             $report->company_id     =   $fields[ 'company_id' ];
-            $report->driver_id      =   $fields[ 'driver_id' ];
+            $report->driver_id      =   $fields[ 'driver_id' ][0];
             $report->range_start    =   $rangeStart->toDateTimeString();
             $report->range_end      =   $rangeEnd->toDateTimeString();
             $report->save();
@@ -181,7 +181,7 @@ class CompaniesService
         $company    =   Company::find( $fields[ 'company_id' ]);
         $loads      =   Company::find( $fields[ 'company_id' ] )
             ->loads()
-            ->where( 'brookr_loads_delivery.driver_id', $fields[ 'driver_id' ] )
+            ->whereIn( 'brookr_loads_delivery.driver_id', $fields[ 'driver_id' ] )
             ->where( 'brookr_loads_delivery.created_at', '>=', $rangeStart->toDateTimeString() )
             ->where( 'brookr_loads_delivery.created_at', '<=', $rangeEnd->toDateTimeString() )
             ->where( 'brookr_loads_delivery.status', $options->get( 'brookr_system_delivered_status', 'delivered' ) )
@@ -194,7 +194,7 @@ class CompaniesService
             
         $payments   =   DriversPayment::where( 'created_at', '>=', $rangeStart->toDateTimeString() )
             ->where( 'created_at', '<=', $rangeEnd->toDateTimeString() )
-            ->where( 'driver_id', $fields[ 'driver_id' ])
+            ->whereIn( 'driver_id', $fields[ 'driver_id' ])
             ->get();
 
         $report->driver_advance_payment     =   0;

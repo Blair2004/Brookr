@@ -2,7 +2,8 @@
 namespace Modules\Brookr\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Services\LoadsService;
 use Tendoo\Core\Http\Controllers\BaseController;
@@ -122,5 +123,16 @@ class LoadsController extends BaseController
     {
         $load   =   LoadDelivery::findOrFail( $id );
         return $this->loadsService->unassignDriver( $load );
+    }
+
+    public function getLocations()
+    {
+        return DB::table( 'brookr_loads_delivery' )
+            ->select([ 'delivery_city', 'delivery_city' ])
+            ->get()
+            ->map( fn( $result ) => collect( $result )->values() )
+            ->flatten()
+            ->unique()
+            ->sortDesc();
     }
 }

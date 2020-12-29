@@ -2,6 +2,7 @@
 namespace Modules\Brookr\Services;
 
 use Exception;
+use Illuminate\Http\Request;
 use Tendoo\Core\Models\Role;
 use Tendoo\Core\Models\User;
 use Modules\Brookr\Models\Driver;
@@ -21,6 +22,7 @@ use Modules\Brookr\Events\AfterCreateDriverEvent;
 use Modules\Brookr\Events\AfterUpdateDriverEvent;
 use Modules\Brookr\Events\BeforeCreateDriverEvent;
 use Modules\Brookr\Events\BeforeUpdateDriverEvent;
+use Modules\Brookr\Models\CompanyFuelCharge;
 
 class DriversService 
 {
@@ -382,6 +384,24 @@ class DriversService
         });
     }
 
+    /**
+     * get all drivers sorted by name
+     * @param int total to get
+     * @param string order
+     * @return array
+     */
+    public function getByName( $order = 'asc' )
+    {
+        return DriversDetail::orderBy( 'first_name', $order )
+            ->get()
+            ->map( function( $detail ) {
+            $detail->driver;
+            return $detail;
+        });
+    }
+
+
+
     public function deleteDriver( $id )
     {
         Driver::findOrFail( $id )->delete();
@@ -437,6 +457,24 @@ class DriversService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The payment has been correctly made.' )   
+        ];
+    }
+
+    public function saveFuelExpense( $fields )
+    {
+        $driver             =   Driver::with( 'details.company' )->find( $fields[ 'driver_id' ] );
+        $fuel               =   new CompanyFuelCharge();
+        $fuel->company_id   =   $driver->detail->company->id;
+        $fuel->amount       =   $fields[ 'amount' ];
+        $fuel->driver_id    =   $driver->id;
+        // $fuel->report_id    =   $fields[ 'report_id' ];
+        $fuel->user_id      =   Auth::id();
+        $fuel->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The fuel expense has been saved.' ),
+            'data'      =>  compact( 'fuel' )
         ];
     }
 }

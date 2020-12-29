@@ -411,7 +411,7 @@ class BrookrLoadsCrud extends Crud
             [
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit.loads',
-                'type'          =>      'GOTO',
+                'type'          =>      'OPEN',
                 'index'         =>      'id',
                 'url'           =>      '/dashboard/loads/edit/{id}'
             ], [

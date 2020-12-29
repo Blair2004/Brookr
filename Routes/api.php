@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Brookr\Http\Controllers\DriversController;
+use Modules\Brookr\Services\DriversService;
 
 Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::get( 'api/brookr/profile/avatar', 'SettingsController@getUserAvatar' );
@@ -16,6 +18,7 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::get( 'api/brookr/drivers/payments/{driver_id}', 'DriversController@getDriverPayment' );
     Route::get( 'api/brookr/drivers/driver-expiration', 'DriversController@getByDriverCard' );
     Route::get( 'api/brookr/drivers/is-available', 'DriversController@checkDriverAvailability' );
+    Route::get( 'api/brookr/drivers', 'DriversController@getDrivers' );
     Route::post( 'api/brookr/drivers', 'DriversController@setDriver' );
     
     
@@ -52,6 +55,8 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::delete( 'api/brookr/loads/{id}', 'LoadsController@deleteLoad' );
     Route::get( 'api/brookr/loads/{load}/history', 'LoadsController@getLoadHistory' );
     Route::get( 'api/brookr/loads/{id}/assets/{namespace}', 'LoadsController@getDocumentLink' );
+    Route::get( 'api/brookr/locations', 'LoadsController@getLocations' );
+    Route::post( 'api/brookr/expenses/fuel', [ DriversController::class, 'saveFuelExpense' ]);
 
     Route::post( 'api/brookr/medias/upload', 'SettingsController@uploadMedia' );
 

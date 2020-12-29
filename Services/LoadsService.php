@@ -145,6 +145,7 @@ class LoadsService
         $loadTitle      =   $this->optionService->get( 'brookr_loads_title', 'Load Delivery {id}' );
         $loadTitle      =   str_replace( '{id}', sprintf( '%04d', $load->id ), $loadTitle );
         $loadTitle      =   str_replace( '{date}', Carbon::now()->format( 'Y-m-d' ), $loadTitle );
+        $loadTitle      =   str_replace( '{broker}', ( $load->customer->details->display_name ?? $load->customer->username ), $loadTitle );
         return $loadTitle;
     }
 
@@ -156,7 +157,7 @@ class LoadsService
         
         event( new BeforeEditLoadEvent( $load, $driver, $truck, ( array ) @$fields[ 'drivers' ] ) );
 
-        $load->name                 =   $fields[ 'main' ][ 'name' ] ?? $this->getLoadGeneratedName( $load );
+        $load->name                 =   empty( $fields[ 'main' ][ 'name' ] ) ? $this->getLoadGeneratedName( $load ) : $fields[ 'main' ][ 'name' ];
         $load->brooker_id           =   $fields[ 'general' ][ 'brooker_id' ];
         $load->load_reference       =   $fields[ 'general' ][ 'load_reference' ];
         $load->status               =   $fields[ 'general' ][ 'status' ] ?? 'pending';
