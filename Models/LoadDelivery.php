@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class LoadDelivery extends Model
 {
-    protected $table = 'brookr_loads_delivery';
+    protected $table        = 'brookr_loads_delivery';
+    protected $timestamp    =   false;
 
     protected $casts    =   [
         'visible'   =>  'boolean'
@@ -27,6 +28,16 @@ class LoadDelivery extends Model
     public function driver()
     {
         return $this->hasOne( Driver::class, 'id', 'driver_id' );
+    }
+
+    public function delivery_location()
+    {
+        return $this->hasOne( Location::class, 'id', 'delivery_location_id' );
+    }
+
+    public function pickup_location()
+    {
+        return $this->hasOne( Location::class, 'id', 'pickup_location_id' );
     }
 
     public function customer()

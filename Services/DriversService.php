@@ -1,6 +1,7 @@
 <?php
 namespace Modules\Brookr\Services;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Tendoo\Core\Models\Role;
@@ -393,6 +394,7 @@ class DriversService
     public function getByName( $order = 'asc' )
     {
         return DriversDetail::orderBy( 'first_name', $order )
+            ->with( 'company' )
             ->get()
             ->map( function( $detail ) {
             $detail->driver;
@@ -463,11 +465,12 @@ class DriversService
     public function saveFuelExpense( $fields )
     {
         $driver             =   Driver::with( 'details.company' )->find( $fields[ 'driver_id' ] );
+
         $fuel               =   new CompanyFuelCharge();
-        $fuel->company_id   =   $driver->detail->company->id;
+        $fuel->company_id   =   $driver->details->company->id;
         $fuel->amount       =   $fields[ 'amount' ];
         $fuel->driver_id    =   $driver->id;
-        // $fuel->report_id    =   $fields[ 'report_id' ];
+        $fuel->created_at   =   Carbon::parse( $fields[ 'date' ] )->toDateTimeString();
         $fuel->user_id      =   Auth::id();
         $fuel->save();
 

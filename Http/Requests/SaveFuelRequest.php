@@ -24,7 +24,7 @@ class SaveFuelRequest extends FormRequest
     public function rules()
     {
         return [
-            'fuel'          =>      'required',
+            'amount'        =>      'required',
             'driver_id'     =>      'required',
             'date'          =>      'required',
         ];

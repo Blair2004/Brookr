@@ -122,6 +122,8 @@ class BrookrLoadsCrud extends Crud
                     }
                 }
             }
+
+            $query->orderBy( 'pickup_date', 'desc' );
         }
     }
 

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Modules\Brookr\Models\LoadDelivery;
 use Modules\Brookr\Models\Customer;
 use Modules\Brookr\Services\TrucksService;
+use Illuminate\Support\Str;
+use Modules\Brookr\Models\Location;
 
 if ( ! Auth::user()->allowedTo( 'brookr.create.loads' ) ) {
     throw new Exception( __( 'You\'re not allowed to see this page.' ) );
@@ -29,6 +31,7 @@ $customers      =   Helper::toJsOptions( $rawCustomers, [ 'id', 'fullname' ]);
 $rawDrivers     =   Role::namespace( 'brookr.driver' )->users->sortBy( 'username' );
 $drivers        =   Helper::toJsOptions( $rawDrivers, [ 'id', 'username' ]);
 $trucksService  =   new TrucksService;
+$locations      =   Helper::toJsOptions( Location::orderBy( 'name', 'asc' )->get(), [ 'id', 'name' ] );
 $trucks         =   Helper::toJsOptions( ! empty( $index ) ? $trucksService->getTrucks( 'all' ) : $trucksService->getTrucks( 'available' ), [ 'id', [ 'name', 'model' ], ' - ' ] );
 
 $options        =   app()->make( Options::class );
@@ -142,15 +145,17 @@ return [
                     'description'   =>  __( 'When the loads should be delivered.' ),
                 ], [
                     'label'         =>  __( 'Pickup City' ),
-                    'name'          =>  'pickup_city',
-                    'value'         =>  $load->pickup_city ?? '',
-                    'type'          =>  'text',
+                    'name'          =>  'pickup_location_id',
+                    'value'         =>  $load->pickup_location_id ?? '',
+                    'type'          =>  'select',
+                    'options'       =>  $locations,
                     'description'   =>  __( 'When the loads should be picked up by the driver.' ),
                 ], [
                     'label'         =>  __( 'Delivery City' ),
-                    'name'          =>  'delivery_city',
-                    'value'         =>  $load->delivery_city ?? '',
-                    'type'          =>  'text',
+                    'name'          =>  'delivery_location_id',
+                    'value'         =>  $load->delivery_location_id ?? '',
+                    'type'          =>  'select',
+                    'options'       =>  $locations, 
                     'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
                 ], [
                     'label'         =>  __( 'delivery Document' ),
@@ -177,7 +182,16 @@ return [
                     'description'   =>  __( 'If is publicly visible, any available driver could self-assign to the load delivery.' ),
                     'value'         =>  $load->visible ?? false,
                     'type'          =>  'switch',
-                ], 
+                ], [
+                    'label'         =>  __( 'Creation Date' ),
+                    'name'          =>  'created_at',
+                    'value'         =>  $load->created_at ?? '',
+                    'type'          =>  'ng-datetime',
+                    'data'          =>  [
+                        'startDate' =>  1990
+                    ],
+                    'description'   =>  __( 'Define when the load has been created.' ),
+                ],
             ]
         ], [
             'namespace'     =>  'drivers',

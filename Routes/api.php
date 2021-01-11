@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Brookr\Http\Controllers\DriversController;
+use Modules\Brookr\Http\Controllers\LoadsController;
 use Modules\Brookr\Services\DriversService;
 
 Route::middleware([ 'tendoo.auth' ])->group( function() {
@@ -56,6 +57,9 @@ Route::middleware([ 'tendoo.auth' ])->group( function() {
     Route::get( 'api/brookr/loads/{load}/history', 'LoadsController@getLoadHistory' );
     Route::get( 'api/brookr/loads/{id}/assets/{namespace}', 'LoadsController@getDocumentLink' );
     Route::get( 'api/brookr/locations', 'LoadsController@getLocations' );
+    Route::post( 'api/brookr/locations', 'LoadsController@saveLocation' );
+    Route::delete( 'api/brookr/locations/{id}', [ LoadsController::class, 'deleteLocation' ]);
+    Route::put( 'api/brookr/locations/{id}', [ LoadsController::class, 'updateLocation' ]);
     Route::post( 'api/brookr/expenses/fuel', [ DriversController::class, 'saveFuelExpense' ]);
 
     Route::post( 'api/brookr/medias/upload', 'SettingsController@uploadMedia' );

@@ -32,6 +32,7 @@ use Modules\Brookr\Events\AfterDeleteLoadEvent;
 use Modules\Brookr\Events\BeforeCreateLoadEvent;
 use Modules\Brookr\Events\BeforeDeleteLoadEvent;
 use Modules\Brookr\Models\DriversDetail;
+use Modules\Brookr\Models\Location;
 
 class LoadsService
 {
@@ -70,12 +71,13 @@ class LoadsService
         $load->pickup_reference     =   $fields[ 'general' ][ 'pickup_reference' ];
         $load->status               =   $fields[ 'general' ][ 'status' ] ?? $this->optionService->get( 'brookr_system_unassigned_status', 'pending' );
         $load->pickup_date          =   Carbon::parse( $fields[ 'general' ][ 'pickup_date' ] )->toDateTimeString();
-        $load->pickup_city          =   $fields[ 'general' ][ 'pickup_city' ];
+        $load->pickup_city          =   Location::find( $fields[ 'general' ][ 'pickup_location_id' ] )->name ?? 'N/A';
         $load->delivery_date        =   Carbon::parse( $fields[ 'general' ][ 'delivery_date' ] )->toDateTimeString();
-        $load->delivery_city        =   $fields[ 'general' ][ 'delivery_city' ];
+        $load->delivery_city        =   Location::find( $fields[ 'general' ][ 'delivery_location_id' ] )->name ?? 'N/A';
         $load->empty_trailer        =   $fields[ 'general' ][ 'empty_trailer' ] ?? '';
         $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
         $load->load_trailer         =   $fields[ 'general' ][ 'load_trailer' ] ?? '';
+        $load->created_at           =   $fields[ 'general' ][ 'created_at' ] ?: now()->toDateTimeString();
         $load->note                 =   $fields[ 'general' ][ 'note' ] ?? '';
         $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) || $fields[ 'general' ][ 'visible' ] === 'false' ? false : true;
         $load->user_id              =   Auth::id();
@@ -164,9 +166,9 @@ class LoadsService
         $load->trailer_reference    =   $fields[ 'general' ][ 'trailer_reference' ];
         $load->pickup_reference     =   $fields[ 'general' ][ 'pickup_reference' ];
         $load->pickup_date          =   Carbon::parse( $fields[ 'general' ][ 'pickup_date' ] )->toDateTimeString();
-        $load->pickup_city          =   $fields[ 'general' ][ 'pickup_city' ];
+        $load->pickup_city          =   Location::find( $fields[ 'general' ][ 'pickup_location_id' ] )->name ?? 'N/A';
         $load->delivery_date        =   Carbon::parse( $fields[ 'general' ][ 'delivery_date' ] )->toDateTimeString();
-        $load->delivery_city        =   $fields[ 'general' ][ 'delivery_city' ];
+        $load->delivery_city        =   Location::find( $fields[ 'general' ][ 'delivery_location_id' ] )->name ?? 'N/A';
         $load->lumper_fees          =   $fields[ 'drivers' ][ 'lumper_fees' ] ?? 0;
         $load->escort_fees          =   $fields[ 'drivers' ][ 'escort_fees' ] ?? 0;
         $load->detention_fees       =   $fields[ 'drivers' ][ 'detention_fees' ] ?? 0;
@@ -176,7 +178,7 @@ class LoadsService
         $load->note                 =   $fields[ 'general' ][ 'note' ] ?? '';
         $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) || $fields[ 'general' ][ 'visible' ] === 'false' ? false : true;
         $load->user_id              =   Auth::id();
-        
+        $load->created_at           =   $fields[ 'general' ][ 'created_at' ] ?: now()->toDateTimeString();
         $load->truck_id             =   @$fields[ 'drivers' ][ 'truck_id' ] ?? null;
         $load->driver_id            =   @$fields[ 'drivers' ][ 'driver_id' ] ?? null;
         $load->cost                 =   $fields[ 'general' ][ 'cost' ] ?? 0;

@@ -1,10 +1,12 @@
 <?php
 namespace Modules\Brookr\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Modules\Brookr\Models\LoadDelivery;
+use Modules\Brookr\Models\Location;
 use Modules\Brookr\Services\LoadsService;
 use Tendoo\Core\Http\Controllers\BaseController;
 
@@ -25,6 +27,26 @@ class LoadsController extends BaseController
         }
 
         return $this->loadsService->create( $data );
+    }
+
+    public function deleteLocation( $id )
+    {
+        $delivery   =   LoadDelivery::where( 'delivery_location_id', $id )->first();
+        $pickup     =   LoadDelivery::where( 'pickup_location_id', $id )->first();
+
+        if ( 
+            $pickup instanceof LoadDelivery ||
+            $delivery instanceof LoadDelivery
+        ) {
+            throw new Exception( __( 'The current location is in use.' ) );
+        }
+
+        Location::find( $id )->delete();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The location has been deleted' )
+        ];
     }
 
     public function editLoad( Request $request, $id )
@@ -107,6 +129,41 @@ class LoadsController extends BaseController
         return $this->loadsService->stopDelivery( $id, $request );
     }
 
+    public function saveLocation( Request $request )
+    {
+        $location   =   Location::where( 'name', $request->input( 'main.name' ) )->first();
+        
+        if ( $location instanceof Location ) {
+            return [
+                'status'    =>  'info',
+                'message'   =>  __( 'The location already exists' ),
+            ];
+        }
+
+        $location               =   new Location;
+        $location->name         =   $request->input( 'main.name' );
+        $location->description  =   $request->input( 'general.description' );
+        $location->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The location has been saved.' )
+        ];
+    }
+
+    public function updateLocation( $location_id, Request $request )
+    {
+        $location               =   Location::findOrFail( $location_id );
+        $location->name         =   $request->input( 'main.name' );
+        $location->description  =   $request->input( 'general.description' );
+        $location->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The location has been saved.' )
+        ];
+    }
+
     public function notifyEmail( $namespace, $id )
     {
         $load   =   LoadDelivery::findOrFail( $id );
@@ -127,12 +184,6 @@ class LoadsController extends BaseController
 
     public function getLocations()
     {
-        return DB::table( 'brookr_loads_delivery' )
-            ->select([ 'delivery_city', 'delivery_city' ])
-            ->get()
-            ->map( fn( $result ) => collect( $result )->values() )
-            ->flatten()
-            ->unique()
-            ->sortDesc();
+        return Location::orderBy( 'name', 'asc' )->get();
     }
 }

@@ -176,7 +176,9 @@ class CompaniesService
         }
 
         $drivers    =   [];
-        $fuels      =   CompanyFuelCharge::where( 'report_id', $report->id )
+        $fuels      =   CompanyFuelCharge::where( 'company_id', $report->id )
+            ->where( 'created_at', '>=', $report->range_start )
+            ->where( 'created_at', '<=', $report->range_end )
             ->get();
         $company    =   Company::find( $fields[ 'company_id' ]);
         $loads      =   Company::find( $fields[ 'company_id' ] )
@@ -329,6 +331,7 @@ class CompaniesService
         $fuel->company_id   =   $fields[ 'company_id' ];
         $fuel->amount       =   $fields[ 'amount' ];
         $fuel->driver_id    =   $fields[ 'driver_id' ];
+        $fuel->created_at   =   $fields[ 'date' ];
         $fuel->report_id    =   $fields[ 'report_id' ];
         $fuel->user_id      =   Auth::id();
         $fuel->save();

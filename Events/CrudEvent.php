@@ -9,6 +9,7 @@ use Modules\Brookr\Crud\BrookrCustomersCrud;
 use Modules\Brookr\Crud\BrookrTrucksMaintenancesCrud;
 use Modules\Brookr\Crud\BrookrDriversAssignedLoadsCrud;
 use Modules\Brookr\Crud\BrookrDriversUnassignedLoadsCrud;
+use Modules\Brookr\Crud\LocationCrud;
 
 class CrudEvent
 {
@@ -22,6 +23,7 @@ class CrudEvent
             // case 'brookr.drivers-loads.delivered':      return BrookrLoadsCrud::class;
             case 'brookr.trucks-maintenance':           return BrookrTrucksMaintenancesCrud::class;
             case 'brookr.drivers':                      return DriversCrud::class;
+            case 'brookr.locations':                    return LocationCrud::class;
             case 'brookr.companies':                    return CompaniesCrud::class;
             default :                                   return $namespace;
         }

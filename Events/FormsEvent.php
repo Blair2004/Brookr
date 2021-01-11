@@ -26,6 +26,7 @@ class FormsEvent
             'brookr.advance-payment.drivers',
             'brookr.drivers-loads-delivery',
             'brookr.drivers-delivery-start',
+            'brookr.locations'
         ])) {
             return $this->loadForm( $namespace, $index );
         }

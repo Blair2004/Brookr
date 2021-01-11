@@ -15,6 +15,11 @@ use Tendoo\Core\Http\Controllers\BaseController;
 
 class DriversController extends BaseController
 {
+    /**
+     * @var DriversService;
+     */
+    private $driversService;
+
     public function __construct()
     {
         $this->driversService    =   new DriversService;
