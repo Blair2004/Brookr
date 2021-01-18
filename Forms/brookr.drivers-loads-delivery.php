@@ -29,8 +29,8 @@ return [
                     'validation'    =>  'required',
                     'description'   =>  __( 'Define the shipper arrival time.' )
                 ], [
-                    'label'         =>  __( 'Depart Time' ),
-                    'name'          =>  'depart_time',
+                    'label'         =>  __( 'Shipping Depart Time' ),
+                    'name'          =>  'shipper_depart_time',
                     'type'          =>  'text',
                     'appearance'    =>  'outline',
                     'validation'    =>  'required',
@@ -42,14 +42,21 @@ return [
                     'appearance'    =>  'outline',
                     'validation'    =>  'required',
                     'description'   =>  __( 'Define the receive arrival time.' )
-                ], 
-                [
-                    'label'         =>  __( 'Delivery Document' ),
-                    'name'          =>  'delivery_document_url',
-                    'type'          =>  'file-upload',
+                ], [
+                    'label'         =>  __( 'Receiver Depart Time' ),
+                    'name'          =>  'depart_time',
+                    'type'          =>  'text',
+                    'appearance'    =>  'outline',
                     'validation'    =>  'required',
-                    'description'   =>  __( 'select and attach delivery document to the delivery.' )
-                ],                 
+                    'description'   =>  __( 'Define your depart time.' )
+                ],
+                // [
+                //     'label'         =>  __( 'Delivery Document' ),
+                //     'name'          =>  'delivery_document_url',
+                //     'type'          =>  'file-upload',
+                //     'validation'    =>  'required',
+                //     'description'   =>  __( 'select and attach delivery document to the delivery.' )
+                // ],                 
             ]
         ]
     ]

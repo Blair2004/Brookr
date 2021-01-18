@@ -33,6 +33,8 @@ use Modules\Brookr\Events\BeforeCreateLoadEvent;
 use Modules\Brookr\Events\BeforeDeleteLoadEvent;
 use Modules\Brookr\Models\DriversDetail;
 use Modules\Brookr\Models\Location;
+use Intervention\Image\ImageManager;
+use TCPDF;
 
 class LoadsService
 {
@@ -365,6 +367,7 @@ class LoadsService
         $action                 =   new LoadDeliveryHistory;
         $action->action_time    =   $this->date->now()->toDateTimeString();
         $action->action_type    =   'brookr.start-delivery';
+        $action->action_value   =   $this->date->now()->format( 'h:m a' );
         $action->user_id        =   Auth::id();
         $action->load_id        =   $load->id;
         $action->save();
@@ -375,6 +378,177 @@ class LoadsService
             'status'    =>  'success',
             'message'   =>  __( 'The delivery has successfully started.' )
         ];
+    }
+
+    public function generateDelvieryDocument( LoadDelivery $load, $location )
+    {
+        $pickupLocation         =   Location::find( $load->pickup_location_id )->first();
+        $deliveryLocation       =   Location::find( $load->delivery_location_id )->first();
+
+        $manager = new ImageManager(array('driver' => 'imagick'));
+        
+        $shipperArrivalHistory      =   $load->history()->where( 'action_type', 'brookr.shipper_arrival_time' )->first();
+        $shipperArrivalTime         =   $shipperArrivalHistory instanceof LoadDeliveryHistory ? $shipperArrivalHistory->action_value : 'N/A';
+        
+        $deliveryStartHistory       =   $load->history()->where( 'action_type', 'brookr.shipper_depart_time' )->first();
+        $deliveryStartTime          =   $deliveryStartHistory instanceof LoadDeliveryHistory ? $deliveryStartHistory->action_value : 'N/A';
+        
+        $receiverArrivalHistory     =   $load->history()->where( 'action_type', 'brookr.receiver_arrival_time' )->first();
+        $receiverArrivalTime        =   $receiverArrivalHistory instanceof LoadDeliveryHistory ? $receiverArrivalHistory->action_value : 'N/A';
+        
+        $departReceiverHistory      =   $load->history()->where( 'action_type', 'brookr.depart_time' )->first();
+        $departReceiverTime         =   $departReceiverHistory instanceof LoadDeliveryHistory ? $departReceiverHistory->action_value : 'N/A';
+
+        $image = $manager->make( base_path( 'modules/Brookr/Resources/Images/large.png' ) )
+              // line 1
+            ->text('SMM TRANSPORT INC', 120, 70, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text('407-405-2771.', 420, 70, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Regular.ttf' ) );
+            })
+              
+              // line 2
+            ->text('1774 CRAWFORD AVE.', 120, 85, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Regular.ttf' ) );
+            })
+            ->text( $load->pickup_date, 420, 85, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $load->load_reference, 600, 85, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+              // line 3
+            ->text( 'SAINT CLOUD.', 80, 102, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Regular.ttf' ) );
+            })
+              // line 4
+            ->text( 'FLORIDA 34769', 110, 118, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Regular.ttf' ) );
+            })
+            ->text( $load->pickup_reference, 600, 115, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+              // line 5
+            ->text( $deliveryLocation->name, 105, 135, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $load->truck->name, 490, 145, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $load->driver->details->first_name . ' ' . ( $load->driver->details->last_name ?? '' ), 620, 145, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+              // line 6
+            ->text( $pickupLocation->name . ' - ' . $deliveryLocation->name, 450, 180, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+              // line 7
+            ->text( $pickupLocation->name, 105, 215, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $load->note, 390, 240, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+              // line 8
+            ->text( $load->customer->details->first_name . ' ' . $load->customer->details->last_name, 450, 320, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+              // line 9
+            ->text( 'AT SHIPPER', 130, 405, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text('______________', 130, 405, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text('AT RECEIVER', 300, 405, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text('_______________', 300, 405, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+              // line 10
+            ->text( 'ARRIVED AT:', 130, 435, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $shipperArrivalTime, 205, 435, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text('ARRIVED AT:', 300, 435, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $receiverArrivalTime, 375, 435, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+              // line 11
+            ->text('DEPART:', 130, 470, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $deliveryStartTime, 205, 470, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text('DEPART:', 300, 470, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $departReceiverTime, 370, 470, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+              // line 12
+            ->text('LOAD TRAILER :', 130, 500, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $load->load_trailer, 225, 500, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            
+              // line 13
+            ->text( 'DROP TRAILER :', 130, 535, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $load->drop_trailer, 225, 535, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            // line 14
+            ->text( 'EMPTY TRAILER :', 130, 565, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $load->empty_trailer, 228, 565, function( $font ) {
+                $font->color( '#0042ff' );
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+              // line 15
+            ->text('SMM TRANSPORT INC', 420, 890, function( $font ) {
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
+            })
+            ->text( $load->driver->details->first_name . ' ' . ( $load->driver->details->last_name ?? '' ), 420, 915, function( $font ) {
+                $font->size(25);
+                $font->file( base_path( 'modules/Brookr/Resources/Fonts/Parisienne-Regular.ttf' ) );
+            })
+            ->save(
+                base_path( 'storage/app/public/' . $location . '.png' )
+            );
+        
+        $pdf = new TCPDF( PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        $pdf->setJPEGQuality(100);
+        $pdf->AddPage();
+        $pdf->Image( base_path( 'storage/app/public/' . $location . '.png' ) );
+        $pdf->Output( base_path( 'storage/app/public/' . $location . '.pdf' ), 'F');
     }
 
     public function stopDelivery( $id, Request $request )
@@ -388,17 +562,19 @@ class LoadsService
         }
         
         $filePath                       =   'brookr-uploads';
-        $extension                      =   $request->file('delivery_document_url')->extension();
-        $path                           =   Storage::disk( 'public' )->putFileAs( 
-            $filePath, 
-            $request->file( 'delivery_document_url' ), 
-            'loads/' . $load->id . '-delivery_document_url.' . $extension 
-        );
+        // $extension                      =   $request->file('delivery_document_url')->extension();
+        $location                       =   $filePath . '/loads/' . $load->id . '-delivery_document_url';
+        // $path                           =   Storage::disk( 'public' )->putFileAs( 
+        //     $filePath, 
+        //     $request->file( 'delivery_document_url' ), 
+        //     'loads/' . $load->id . '-delivery_document_url.' . $extension 
+        // );
 
-        $load->delivery_document_url    =   asset( 'storage/' . $path );
         $load->empty_trailer            =   $request->input( 'empty_trailer' );
-        $load->status                   =   $deliveredStatus;
-        $load->save();
+        // $load->status                   =   $deliveredStatus;
+        // $load->save();
+
+        LoadDeliveryHistory::where( 'load_id', $load->id )->delete();
 
         /**
          * Saving the delivery history
@@ -415,8 +591,8 @@ class LoadsService
          * Saving the delivery history
          */
         $deliveryHistory                =   new LoadDeliveryHistory;
-        $deliveryHistory->action_type   =   'brookr.receiver_arrival_time';
-        $deliveryHistory->action_value  =   $request->input( 'receiver_arrival_time' );
+        $deliveryHistory->action_type   =   'brookr.shipper_depart_time';
+        $deliveryHistory->action_value  =   $request->input( 'shipper_depart_time' );
         $deliveryHistory->load_id       =   $load->id;
         $deliveryHistory->user_id       =   Auth::id();
         $deliveryHistory->action_time   =   $this->date->now()->toDateTimeString();
@@ -433,6 +609,20 @@ class LoadsService
         $deliveryHistory->action_time   =   $this->date->now()->toDateTimeString();
         $deliveryHistory->save();
 
+        /**
+         * Saving the delivery history
+         */
+        $deliveryHistory                =   new LoadDeliveryHistory;
+        $deliveryHistory->action_type   =   'brookr.receiver_arrival_time';
+        $deliveryHistory->action_value  =   $request->input( 'receiver_arrival_time' );
+        $deliveryHistory->load_id       =   $load->id;
+        $deliveryHistory->user_id       =   Auth::id();
+        $deliveryHistory->action_time   =   $this->date->now()->toDateTimeString();
+        $deliveryHistory->save();
+
+        $this->generateDelvieryDocument( $load, $location );
+        $load->delivery_document_url    =   asset( 'storage/' . $location . '.png' );
+        $load->save();
 
         event( new AfterEditLoadEvent( $load, $load->driver, $load->truck ) );
 

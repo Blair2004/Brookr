@@ -13,11 +13,16 @@ class ComposerAutoloaderInite59e117dda6ada0005193a5f62d7b074
         }
     }
 
+    /**
+     * @return \Composer\Autoload\ClassLoader
+     */
     public static function getLoader()
     {
         if (null !== self::$loader) {
             return self::$loader;
         }
+
+        require __DIR__ . '/platform_check.php';
 
         spl_autoload_register(array('ComposerAutoloaderInite59e117dda6ada0005193a5f62d7b074', 'loadClassLoader'), true, true);
         self::$loader = $loader = new \Composer\Autoload\ClassLoader();
@@ -25,7 +30,7 @@ class ComposerAutoloaderInite59e117dda6ada0005193a5f62d7b074
 
         $useStaticLoader = PHP_VERSION_ID >= 50600 && !defined('HHVM_VERSION') && (!function_exists('zend_loader_file_encoded') || !zend_loader_file_encoded());
         if ($useStaticLoader) {
-            require_once __DIR__ . '/autoload_static.php';
+            require __DIR__ . '/autoload_static.php';
 
             call_user_func(\Composer\Autoload\ComposerStaticInite59e117dda6ada0005193a5f62d7b074::getInitializer($loader));
         } else {
@@ -47,6 +52,24 @@ class ComposerAutoloaderInite59e117dda6ada0005193a5f62d7b074
 
         $loader->register(true);
 
+        if ($useStaticLoader) {
+            $includeFiles = Composer\Autoload\ComposerStaticInite59e117dda6ada0005193a5f62d7b074::$files;
+        } else {
+            $includeFiles = require __DIR__ . '/autoload_files.php';
+        }
+        foreach ($includeFiles as $fileIdentifier => $file) {
+            composerRequiree59e117dda6ada0005193a5f62d7b074($fileIdentifier, $file);
+        }
+
         return $loader;
+    }
+}
+
+function composerRequiree59e117dda6ada0005193a5f62d7b074($fileIdentifier, $file)
+{
+    if (empty($GLOBALS['__composer_autoload_files'][$fileIdentifier])) {
+        require $file;
+
+        $GLOBALS['__composer_autoload_files'][$fileIdentifier] = true;
     }
 }

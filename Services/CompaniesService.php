@@ -10,6 +10,7 @@ use Modules\Brookr\Models\CompanyReport;
 use Modules\Brookr\Models\CompanyPayment;
 use Modules\Brookr\Models\DriversPayment;
 use Modules\Brookr\Models\CompanyFuelCharge;
+use Modules\Brookr\Models\Driver;
 
 class CompaniesService
 {
@@ -86,7 +87,7 @@ class CompaniesService
      */
     public function getAll()
     {
-        return Company::get();
+        return Company::orderBy( 'name', 'asc' )->get();
     }
 
     /**
@@ -134,7 +135,7 @@ class CompaniesService
             
         $report     =   CompanyReport::forRange(
             $fields[ 'company_id' ],
-            $fields[ 'driver_id' ][0],
+            $fields[ 'driver_id' ],
             $rangeStart->toDateTimeString(),
             $rangeEnd->toDateTimeString()
         )->first();
@@ -169,30 +170,35 @@ class CompaniesService
             $report                 =   new CompanyReport;
             $report->user_id        =   Auth::id();
             $report->company_id     =   $fields[ 'company_id' ];
-            $report->driver_id      =   $fields[ 'driver_id' ][0];
+            // $report->driver_id      =   $fields[ 'driver_id' ][0];
             $report->range_start    =   $rangeStart->toDateTimeString();
             $report->range_end      =   $rangeEnd->toDateTimeString();
-            $report->save();
+            // $report->save();
         }
 
-        $drivers    =   [];
+        $drivers    =   Driver::with( 'details' )->whereIn( 'id', $fields[ 'driver_id' ] )->get();
         $fuels      =   CompanyFuelCharge::where( 'company_id', $report->id )
             ->where( 'created_at', '>=', $report->range_start )
             ->where( 'created_at', '<=', $report->range_end )
             ->get();
         $company    =   Company::find( $fields[ 'company_id' ]);
-        $loads      =   Company::find( $fields[ 'company_id' ] )
+        $loadRequest      =   Company::find( $fields[ 'company_id' ] )
             ->loads()
             ->whereIn( 'brookr_loads_delivery.driver_id', $fields[ 'driver_id' ] )
             ->where( 'brookr_loads_delivery.created_at', '>=', $rangeStart->toDateTimeString() )
             ->where( 'brookr_loads_delivery.created_at', '<=', $rangeEnd->toDateTimeString() )
-            ->where( 'brookr_loads_delivery.status', $options->get( 'brookr_system_delivered_status', 'delivered' ) )
-            ->with( 'customer.details', 'driver.details' )
-            ->get()
-            ->map( function( $load ) use ( &$drivers ) {
-                $drivers[]    =   $load->driver;
-                return $load;
-            });
+            ->where( 'brookr_loads_delivery.status', $options->get( 'brookr_system_delivered_status', 'delivered' ) );
+
+        if ( $fields[ 'delivery_location' ] !== null ) {
+            $loadRequest->where( 'delivery_location_id', $fields[ 'delivery_location' ] );
+        }
+
+        if ( $fields[ 'pickup_location' ] !== null ) {
+            $loadRequest->where( 'pickup_location_id', $fields[ 'pickup_location' ] );
+        }
+
+        $loads  =   $loadRequest->with( 'customer.details', 'driver.details' )
+            ->get();
             
         $payments   =   DriversPayment::where( 'created_at', '>=', $rangeStart->toDateTimeString() )
             ->where( 'created_at', '<=', $rangeEnd->toDateTimeString() )
@@ -279,7 +285,7 @@ class CompaniesService
         $report->additional_payment     =   $gross[ 'escort_fees' ] + $gross[ 'lumper_fees' ] + $gross[ 'detention_fees' ];
         $report->driver_payment         =   ( ( $report->net_after_dispatch * floatval( $company->driver_rate ) ) / 100 ) - $report->driver_advance_payment ;
         $report->net_earning            =   $report->net_after_dispatch - ( $report->total_expenses + $report->driver_advance_payment + $report->fuel_charge ) + $report->additional_payment;
-        $report->save();
+        // $report->save();
 
         foreach([
             'gross_earning',

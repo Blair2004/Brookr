@@ -1,6 +1,8 @@
 {
     "require": {
         "pelmered/fake-car": "^1.4",
-        "twilio/sdk": "^6.4"
+        "twilio/sdk": "^6.4",
+        "intervention/image": "^2.5",
+        "tecnickcom/tcpdf": "^6.3"
     }
 }

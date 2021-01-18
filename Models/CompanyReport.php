@@ -14,10 +14,17 @@ class CompanyReport extends Model
 
     public function scopeForRange( $query, $id, $driver_id, $start, $end )
     {
-        return $query
+        $builder    =   $query
             ->where( 'company_id', $id )
-            ->where( 'driver_id', $driver_id )
             ->where( 'range_start', Carbon::parse( $start )->startOfDay()->toDateTimeString() )
             ->where( 'range_end', Carbon::parse( $end )->endOfDay()->toDateTimeString() );
+
+        // if ( is_array( $driver_id ) ) {
+        //     $builder->whereIn( 'driver_id', $driver_id );
+        // } else {
+        //     $builder->where( 'driver_id', $driver_id );
+        // }
+
+        return $builder;
     }
 }
