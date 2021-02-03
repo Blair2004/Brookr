@@ -31,7 +31,7 @@ $customers      =   Helper::toJsOptions( $rawCustomers, [ 'id', 'fullname' ]);
 $rawDrivers     =   Role::namespace( 'brookr.driver' )->users->sortBy( 'username' );
 $drivers        =   Helper::toJsOptions( $rawDrivers, [ 'id', 'username' ]);
 $trucksService  =   new TrucksService;
-$locations      =   Helper::toJsOptions( Location::orderBy( 'name', 'asc' )->get(), [ 'id', 'name' ] );
+// $locations      =   Helper::toJsOptions( Location::orderBy( 'name', 'asc' )->get(), [ 'id', 'name' ] );
 $trucks         =   Helper::toJsOptions( ! empty( $index ) ? $trucksService->getTrucks( 'all' ) : $trucksService->getTrucks( 'available' ), [ 'id', [ 'name', 'model' ], ' - ' ] );
 
 $options        =   app()->make( Options::class );
@@ -145,17 +145,17 @@ return [
                     'description'   =>  __( 'When the loads should be delivered.' ),
                 ], [
                     'label'         =>  __( 'Pickup City' ),
-                    'name'          =>  'pickup_location_id',
-                    'value'         =>  $load->pickup_location_id ?? '',
-                    'type'          =>  'select',
-                    'options'       =>  $locations,
+                    'name'          =>  'pickup_city',
+                    'value'         =>  $load->pickup_city ?? '',
+                    'type'          =>  'text',
+                    // 'options'       =>  $locations,
                     'description'   =>  __( 'When the loads should be picked up by the driver.' ),
                 ], [
                     'label'         =>  __( 'Delivery City' ),
-                    'name'          =>  'delivery_location_id',
-                    'value'         =>  $load->delivery_location_id ?? '',
-                    'type'          =>  'select',
-                    'options'       =>  $locations, 
+                    'name'          =>  'delivery_city',
+                    'value'         =>  $load->delivery_city ?? '',
+                    'type'          =>  'text',
+                    // 'options'       =>  $locations, 
                     'description'   =>  __( 'Might be empty and will automatically be filled on a driver action.' )
                 ], [
                     'label'         =>  __( 'delivery Document' ),

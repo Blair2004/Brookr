@@ -177,9 +177,9 @@ class CompaniesService
         }
 
         $drivers    =   Driver::with( 'details' )->whereIn( 'id', $fields[ 'driver_id' ] )->get();
-        $fuels      =   CompanyFuelCharge::where( 'company_id', $report->id )
-            ->where( 'created_at', '>=', $report->range_start )
-            ->where( 'created_at', '<=', $report->range_end )
+        $fuels      =   CompanyFuelCharge::where( 'driver_id', $fields[ 'driver_id' ] )
+            ->where( 'created_at', '>=', $rangeStart->toDateTimeString() )
+            ->where( 'created_at', '<=', $rangeEnd->toDateTimeString() )
             ->get();
         $company    =   Company::find( $fields[ 'company_id' ]);
         $loadRequest      =   Company::find( $fields[ 'company_id' ] )
@@ -189,13 +189,13 @@ class CompaniesService
             ->where( 'brookr_loads_delivery.created_at', '<=', $rangeEnd->toDateTimeString() )
             ->where( 'brookr_loads_delivery.status', $options->get( 'brookr_system_delivered_status', 'delivered' ) );
 
-        if ( $fields[ 'delivery_location' ] !== null ) {
-            $loadRequest->where( 'delivery_location_id', $fields[ 'delivery_location' ] );
-        }
+        // if ( $fields[ 'delivery_location' ] !== null ) {
+        //     $loadRequest->where( 'delivery_location_id', $fields[ 'delivery_location' ] );
+        // }
 
-        if ( $fields[ 'pickup_location' ] !== null ) {
-            $loadRequest->where( 'pickup_location_id', $fields[ 'pickup_location' ] );
-        }
+        // if ( $fields[ 'pickup_location' ] !== null ) {
+        //     $loadRequest->where( 'pickup_location_id', $fields[ 'pickup_location' ] );
+        // }
 
         $loads  =   $loadRequest->with( 'customer.details', 'driver.details' )
             ->get();
@@ -318,7 +318,7 @@ class CompaniesService
         });
 
         $fuels->each( function( $fuel ) {
-            $fuel->amount     =   br_currency( $fuel->amount );
+            $fuel->amount       =   br_currency( $fuel->amount );
             $fuel->date          =   Carbon::parse( $fuel->created_at )->format( app()->make( Options::class )->get( 'brookr_system_datetime_format', 'Y-m-d' ) );
         });
 

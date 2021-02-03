@@ -28,19 +28,6 @@ return [
                     'description'   =>  __( 'Name of the location.' ),
                 ], 
             ]
-        ], [
-            'namespace'     =>  'general',
-            'title'         =>  __( 'General Details' ),
-            'description'   =>  __( 'Loads general details.' ),
-            'fields'        =>  [
-                [
-                    'label'         =>  __( 'Description' ),
-                    'name'          =>  'description',
-                    'value'         =>  $load->description ?? '',
-                    'type'          =>  'textarea',
-                    'description'   =>  __( 'more details about the location.' ),
-                ], 
-            ]
         ], 
     ]
 ];

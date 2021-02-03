@@ -467,7 +467,7 @@ class DriversService
         $driver             =   Driver::with( 'details.company' )->find( $fields[ 'driver_id' ] );
 
         $fuel               =   new CompanyFuelCharge();
-        $fuel->company_id   =   $driver->details->company->id;
+        $fuel->company_id   =   $driver->details->company->id ?? 0;
         $fuel->amount       =   $fields[ 'amount' ];
         $fuel->driver_id    =   $driver->id;
         $fuel->created_at   =   Carbon::parse( $fields[ 'date' ] )->toDateTimeString();

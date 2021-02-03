@@ -282,7 +282,7 @@ class BrookrLoadsCrud extends Crud
                 'type'      =>  'select',
                 'props' =>  [
                     'style'     =>  [
-                        'minWidth'      =>  '80px'
+                        'minWidth'      =>  '65px'
                     ]
                 ],
                 'options'   =>  Helper::kvToJsOptions([
@@ -295,7 +295,7 @@ class BrookrLoadsCrud extends Crud
                 'type'      =>  'select',
                 'props' =>  [
                     'style'     =>  [
-                        'minWidth'      =>  '80px'
+                        'minWidth'      =>  '65px'
                     ]
                 ],
                 'options'   =>  Helper::kvToJsOptions( $loadStatus )

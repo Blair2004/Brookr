@@ -15,6 +15,7 @@ use Tendoo\Core\Services\Options;
 use Modules\Brookr\Models\Company;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Tendoo\Core\Services\DateService;
 use Illuminate\Support\Facades\Storage;
 use Modules\Brookr\Models\LoadDelivery;
@@ -34,6 +35,7 @@ use Modules\Brookr\Events\BeforeDeleteLoadEvent;
 use Modules\Brookr\Models\DriversDetail;
 use Modules\Brookr\Models\Location;
 use Intervention\Image\ImageManager;
+use Modules\Brookr\Models\Customer;
 use TCPDF;
 
 class LoadsService
@@ -64,18 +66,20 @@ class LoadsService
         } catch( Exception $e ) {}
 
         event( new BeforeCreateLoadEvent( $driver ?? null, $truck ?? null, $fields ) );
+
+        $customer                   =   Customer::find( $fields[ 'general' ][ 'brooker_id' ] );
         
         $load                       =   new LoadDelivery;
-        $load->name                 =   $fields[ 'main' ][ 'name' ] ?? '';
+        $load->name                 =   ( ( $customer->details->first_name ?? '' ) . ' ' . ( $customer->details->last_name ?? '' ) ); // $fields[ 'main' ][ 'name' ] ?? '';
         $load->brooker_id           =   $fields[ 'general' ][ 'brooker_id' ];
         $load->load_reference       =   $fields[ 'general' ][ 'load_reference' ];
         $load->trailer_reference    =   $fields[ 'general' ][ 'trailer_reference' ];
         $load->pickup_reference     =   $fields[ 'general' ][ 'pickup_reference' ];
         $load->status               =   $fields[ 'general' ][ 'status' ] ?? $this->optionService->get( 'brookr_system_unassigned_status', 'pending' );
         $load->pickup_date          =   Carbon::parse( $fields[ 'general' ][ 'pickup_date' ] )->toDateTimeString();
-        $load->pickup_city          =   Location::find( $fields[ 'general' ][ 'pickup_location_id' ] )->name ?? 'N/A';
+        $load->pickup_city          =   $fields[ 'general' ][ 'pickup_city' ];
         $load->delivery_date        =   Carbon::parse( $fields[ 'general' ][ 'delivery_date' ] )->toDateTimeString();
-        $load->delivery_city        =   Location::find( $fields[ 'general' ][ 'delivery_location_id' ] )->name ?? 'N/A';
+        $load->delivery_city        =   $fields[ 'general' ][ 'delivery_city' ];
         $load->empty_trailer        =   $fields[ 'general' ][ 'empty_trailer' ] ?? '';
         $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
         $load->load_trailer         =   $fields[ 'general' ][ 'load_trailer' ] ?? '';
@@ -161,16 +165,18 @@ class LoadsService
         
         event( new BeforeEditLoadEvent( $load, $driver, $truck, ( array ) @$fields[ 'drivers' ] ) );
 
-        $load->name                 =   empty( $fields[ 'main' ][ 'name' ] ) ? $this->getLoadGeneratedName( $load ) : $fields[ 'main' ][ 'name' ];
+        $customer                   =   Customer::find( $fields[ 'general' ][ 'brooker_id' ] );
+
+        $load->name                 =   ( ( $customer->details->first_name ?? '' ) . ' ' . ( $customer->details->last_name ?? '' ) ); // $fields[ 'main' ][ 'name' ] ?? '';
         $load->brooker_id           =   $fields[ 'general' ][ 'brooker_id' ];
         $load->load_reference       =   $fields[ 'general' ][ 'load_reference' ];
         $load->status               =   $fields[ 'general' ][ 'status' ] ?? 'pending';
         $load->trailer_reference    =   $fields[ 'general' ][ 'trailer_reference' ];
         $load->pickup_reference     =   $fields[ 'general' ][ 'pickup_reference' ];
         $load->pickup_date          =   Carbon::parse( $fields[ 'general' ][ 'pickup_date' ] )->toDateTimeString();
-        $load->pickup_city          =   Location::find( $fields[ 'general' ][ 'pickup_location_id' ] )->name ?? 'N/A';
+        $load->pickup_city          =   $fields[ 'general' ][ 'pickup_city' ];
         $load->delivery_date        =   Carbon::parse( $fields[ 'general' ][ 'delivery_date' ] )->toDateTimeString();
-        $load->delivery_city        =   Location::find( $fields[ 'general' ][ 'delivery_location_id' ] )->name ?? 'N/A';
+        $load->delivery_city        =   $fields[ 'general' ][ 'delivery_city' ];
         $load->lumper_fees          =   $fields[ 'drivers' ][ 'lumper_fees' ] ?? 0;
         $load->escort_fees          =   $fields[ 'drivers' ][ 'escort_fees' ] ?? 0;
         $load->detention_fees       =   $fields[ 'drivers' ][ 'detention_fees' ] ?? 0;

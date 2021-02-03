@@ -158,6 +158,16 @@ class LoadsController extends BaseController
         $location->description  =   $request->input( 'general.description' );
         $location->save();
 
+        LoadDelivery::where( 'delivery_location_id', $location->id )
+            ->update([ 
+                'delivery_city'     =>  $location->name
+            ]);
+
+        LoadDelivery::where( 'pickup_location_id', $location->id )
+            ->update([
+                'pickup_city'   =>  $location->name
+            ]);
+
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The location has been saved.' )

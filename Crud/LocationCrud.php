@@ -2,6 +2,7 @@
 namespace Modules\Brookr\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Modules\Brookr\Models\LoadDelivery;
 use Tendoo\Core\Services\Crud;
 use Tendoo\Core\Services\Field;
 use Tendoo\Core\Services\Helper;
@@ -67,6 +68,20 @@ class LocationCrud extends Crud
         Hook::addFilter( 'crud.entry', [ $this, 'setActions' ], 10, 2 );
     }
 
+    public function hook( $query )
+    {
+        if ( request()->query( 'search' ) ) {
+            $queryParams      =   [];
+            $queryParams[ 'name' ]                          =   request()->query( 'search' );
+
+            foreach( $queryParams as $key => $value ) {
+                $query->where( $key, 'like', '%' . $value . '%' );
+            }
+
+            $query->orderBy( 'created_at', 'desc' );
+        }
+    }
+
     /**
      * Return the label used for the crud 
      * instance
@@ -125,6 +140,18 @@ class LocationCrud extends Crud
      */
     public function filterPutInputs( $inputs, \Modules\Brookr\Models\Location $entry )
     {
+        LoadDelivery::where( 'delivery_location_id', $entry->id )
+            ->get( function( $load ) use ( $entry ) {
+                $load->delivery_city   =   $entry->name;
+                $load->save();
+            });
+
+        LoadDelivery::where( 'pickup_location_id', $entry->id )
+            ->get( function( $load ) use ( $entry ) {
+                $load->pickup_city   =   $entry->name;
+                $load->save();
+            });
+            
         return $inputs;
     }
 
@@ -242,7 +269,7 @@ class LocationCrud extends Crud
                 'url'       =>  url( 'api/brookr/locations/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a licence' )
+                    'title'     =>  __( 'Delete a location' )
                 ]
             ]
         ];
@@ -297,9 +324,9 @@ class LocationCrud extends Crud
     public function getLinks()
     {
         return  [
-            'list'  =>  'brookr.locations',
-            'create'    =>  'brookr.locations/create',
-            'edit'      =>  'brookr.locations/edit/#'
+            'list'      =>  '',
+            'create'    =>  'create',
+            'edit'      =>  'edit/#'
         ];
     }
 
