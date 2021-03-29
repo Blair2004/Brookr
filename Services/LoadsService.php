@@ -83,11 +83,7 @@ class LoadsService
         $load->empty_trailer        =   $fields[ 'general' ][ 'empty_trailer' ] ?? '';
         $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
         $load->load_trailer         =   $fields[ 'general' ][ 'load_trailer' ] ?? '';
-
-        if ( $fields[ 'general' ][ 'created_at' ] !== 'Invalid Date' ) {
-            $load->created_at           =   $fields[ 'general' ][ 'created_at' ] ?: now()->toDateTimeString();
-        }
-
+        $load->created_at           =   $fields[ 'general' ][ 'created_at' ] &&  $fields[ 'general' ][ 'created_at' ] !== 'Invalid Date' ? $fields[ 'general' ][ 'created_at' ] : now()->toDateTimeString();
         $load->note                 =   $fields[ 'general' ][ 'note' ] ?? '';
         $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) || $fields[ 'general' ][ 'visible' ] === 'false' ? false : true;
         $load->user_id              =   Auth::id();
@@ -103,7 +99,7 @@ class LoadsService
          * let's define a name automatically
          * if it's hasn't been provided
          */
-        // $load->name                 =   $fields[ 'main' ][ 'name' ] ?? $this->getLoadGeneratedName( $load );
+        $load->name                 =   $fields[ 'main' ][ 'name' ] ?? $this->getLoadGeneratedName( $load );
         $load->save();
 
         event( new AfterCreateLoadEvent( $load, $driver ?? null, $truck ?? null ) );
@@ -191,9 +187,7 @@ class LoadsService
         $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) || $fields[ 'general' ][ 'visible' ] === 'false' ? false : true;
         $load->user_id              =   Auth::id();
 
-        if ( $fields[ 'general' ][ 'created_at' ] !== 'Invalid Date' ) {
-            $load->created_at           =   $fields[ 'general' ][ 'created_at' ] ?: now()->toDateTimeString();
-        }
+        $load->created_at           =   $fields[ 'general' ][ 'created_at' ] &&  $fields[ 'general' ][ 'created_at' ] !== 'Invalid Date' ? $fields[ 'general' ][ 'created_at' ] : now()->toDateTimeString();
 
         $load->truck_id             =   @$fields[ 'drivers' ][ 'truck_id' ] ?? null;
         $load->driver_id            =   @$fields[ 'drivers' ][ 'driver_id' ] ?? null;
@@ -586,7 +580,7 @@ class LoadsService
 
         $load->empty_trailer            =   $request->input( 'empty_trailer' );
         $load->status                   =   $deliveredStatus;
-        // $load->save();
+        $load->save();
 
         LoadDeliveryHistory::where( 'load_id', $load->id )->delete();
 
