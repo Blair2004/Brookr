@@ -317,9 +317,9 @@ class TrucksService
                 $event->truck->status   =   'available';
                 $event->truck->save();
     
-                $truck      =   Truck::find( $newTruckID );
-                $truck->status  =   'unavailable';
-                $truck->save();
+                // $truck      =   Truck::find( $newTruckID );
+                // $truck->status  =   'unavailable';
+                // $truck->save();
             }
         }
     }
@@ -333,8 +333,8 @@ class TrucksService
     public function handleFreedTruck( BeforeDeleteLoadEvent $event )
     {
         if ( $event->truck instanceof Truck ) {
-            $event->truck->status   =   'available';
-            $event->truck->save();
+            // $event->truck->status   =   'available';
+            // $event->truck->save();
         }
     }
 }

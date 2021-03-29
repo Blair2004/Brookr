@@ -296,7 +296,7 @@ class DriversService
         if ( $event->load instanceof LoadDelivery ) {
             $driver     =   Driver::find( $event->load->driver_id );
             if ( $driver instanceof Driver ) {
-                $driver->brookr_driver_status   =   'unavailable';
+                // $driver->brookr_driver_status   =   'unavailable';
                 $driver->save();
             }
         }
@@ -326,7 +326,7 @@ class DriversService
                     // throw new Exception( __( 'Cannot assign this driver as he is not available.' ) );
                 }
     
-                $driver->brookr_driver_status    =   'unavailable';
+                // $driver->brookr_driver_status    =   'unavailable';
                 $driver->save();
     
                 $event->driver->brookr_driver_status     =   'available';

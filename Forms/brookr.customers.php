@@ -60,39 +60,39 @@ return [
                 ], 
             ]
         ], 
-        [
-            'namespace'     =>  'authentication',
-            'title'         =>  __( 'Authentication' ),
-            'description'   =>  __( 'Every settings about authenting.' ),
-            'fields'        =>  [
-                [
-                    'label'     =>  __( 'Username' ),
-                    'name'      =>  'username',
-                    // 'validation'    =>  'required',
-                    'description'   =>  __( 'Will be used to ensure durin the authentication.' ),
-                    'type'          =>  'text',
-                ], [
-                    'label'     =>  __( 'Email' ),
-                    'name'      =>  'email',
-                    'value'     =>  $customer->email ?? '',
-                    'validation'    =>  'required|email',
-                    'description'   =>  __( 'The email of the customer.' ),
-                    'type'          =>  'text',
-                ], [
-                    'label'     =>  __( 'Password' ),
-                    'name'      =>  'password',
-                    // 'validation'    =>  'required|min:6',
-                    'description'   =>  __( 'Provide a secure provided, which is easy to remember.' ),
-                    'type'          =>  'password',
-                ], [
-                    'label'     =>  __( 'Confirmation' ),
-                    'name'      =>  'confirmation',
-                    'validation'    =>  'same:password',
-                    'description'   =>  __( 'Please repeat the password here. This must be similar to the password.' ),
-                    'type'          =>  'password',
-                ]
-            ]
-        ], 
+        // [
+        //     'namespace'     =>  'authentication',
+        //     'title'         =>  __( 'Authentication' ),
+        //     'description'   =>  __( 'Every settings about authenting.' ),
+        //     'fields'        =>  [
+        //         [
+        //             'label'     =>  __( 'Username' ),
+        //             'name'      =>  'username',
+        //             // 'validation'    =>  'required',
+        //             'description'   =>  __( 'Will be used to ensure durin the authentication.' ),
+        //             'type'          =>  'text',
+        //         ], [
+        //             'label'     =>  __( 'Email' ),
+        //             'name'      =>  'email',
+        //             'value'     =>  $customer->email ?? '',
+        //             'validation'    =>  'required|email',
+        //             'description'   =>  __( 'The email of the customer.' ),
+        //             'type'          =>  'text',
+        //         ], [
+        //             'label'     =>  __( 'Password' ),
+        //             'name'      =>  'password',
+        //             // 'validation'    =>  'required|min:6',
+        //             'description'   =>  __( 'Provide a secure provided, which is easy to remember.' ),
+        //             'type'          =>  'password',
+        //         ], [
+        //             'label'     =>  __( 'Confirmation' ),
+        //             'name'      =>  'confirmation',
+        //             'validation'    =>  'same:password',
+        //             'description'   =>  __( 'Please repeat the password here. This must be similar to the password.' ),
+        //             'type'          =>  'password',
+        //         ]
+        //     ]
+        // ], 
         [
             'namespace'     =>  'address',
             'title'         =>  __( 'Addresses' ),

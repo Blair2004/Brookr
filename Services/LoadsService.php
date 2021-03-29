@@ -83,7 +83,11 @@ class LoadsService
         $load->empty_trailer        =   $fields[ 'general' ][ 'empty_trailer' ] ?? '';
         $load->drop_trailer         =   $fields[ 'general' ][ 'drop_trailer' ] ?? '';
         $load->load_trailer         =   $fields[ 'general' ][ 'load_trailer' ] ?? '';
-        $load->created_at           =   $fields[ 'general' ][ 'created_at' ] ?: now()->toDateTimeString();
+
+        if ( $fields[ 'general' ][ 'created_at' ] !== 'Invalid Date' ) {
+            $load->created_at           =   $fields[ 'general' ][ 'created_at' ] ?: now()->toDateTimeString();
+        }
+
         $load->note                 =   $fields[ 'general' ][ 'note' ] ?? '';
         $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) || $fields[ 'general' ][ 'visible' ] === 'false' ? false : true;
         $load->user_id              =   Auth::id();
@@ -99,7 +103,7 @@ class LoadsService
          * let's define a name automatically
          * if it's hasn't been provided
          */
-        $load->name                 =   $fields[ 'main' ][ 'name' ] ?? $this->getLoadGeneratedName( $load );
+        // $load->name                 =   $fields[ 'main' ][ 'name' ] ?? $this->getLoadGeneratedName( $load );
         $load->save();
 
         event( new AfterCreateLoadEvent( $load, $driver ?? null, $truck ?? null ) );
@@ -186,7 +190,11 @@ class LoadsService
         $load->note                 =   $fields[ 'general' ][ 'note' ] ?? '';
         $load->visible              =   empty( $fields[ 'general' ][ 'visible' ] ) || $fields[ 'general' ][ 'visible' ] === 'false' ? false : true;
         $load->user_id              =   Auth::id();
-        $load->created_at           =   $fields[ 'general' ][ 'created_at' ] ?: now()->toDateTimeString();
+
+        if ( $fields[ 'general' ][ 'created_at' ] !== 'Invalid Date' ) {
+            $load->created_at           =   $fields[ 'general' ][ 'created_at' ] ?: now()->toDateTimeString();
+        }
+
         $load->truck_id             =   @$fields[ 'drivers' ][ 'truck_id' ] ?? null;
         $load->driver_id            =   @$fields[ 'drivers' ][ 'driver_id' ] ?? null;
         $load->cost                 =   $fields[ 'general' ][ 'cost' ] ?? 0;
@@ -388,8 +396,8 @@ class LoadsService
 
     public function generateDelvieryDocument( LoadDelivery $load, $location )
     {
-        $pickupLocation         =   Location::find( $load->pickup_location_id )->first();
-        $deliveryLocation       =   Location::find( $load->delivery_location_id )->first();
+        // $pickupLocation         =   Location::find( $load->pickup_city_id )->first();
+        // $deliveryLocation       =   Location::find( $load->delivery_city_id )->first();
 
         $manager = new ImageManager(array('driver' => 'imagick'));
         
@@ -439,7 +447,7 @@ class LoadsService
                 $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
             })
               // line 5
-            ->text( $deliveryLocation->name, 105, 135, function( $font ) {
+            ->text( $load->delivery_city, 105, 135, function( $font ) {
                 $font->color( '#0042ff' );
                 $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
             })
@@ -452,12 +460,12 @@ class LoadsService
                 $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
             })
               // line 6
-            ->text( $pickupLocation->name . ' - ' . $deliveryLocation->name, 450, 180, function( $font ) {
+            ->text( $load->pickup_city . ' - ' . $load->delivery_city, 450, 180, function( $font ) {
                 $font->color( '#0042ff' );
                 $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
             })
               // line 7
-            ->text( $pickupLocation->name, 105, 215, function( $font ) {
+            ->text( $load->pickup_city, 105, 215, function( $font ) {
                 $font->color( '#0042ff' );
                 $font->file( base_path( 'modules/Brookr/Resources/Fonts/open-sans/OpenSans-Bold.ttf' ) );
             })
@@ -577,7 +585,7 @@ class LoadsService
         // );
 
         $load->empty_trailer            =   $request->input( 'empty_trailer' );
-        // $load->status                   =   $deliveredStatus;
+        $load->status                   =   $deliveredStatus;
         // $load->save();
 
         LoadDeliveryHistory::where( 'load_id', $load->id )->delete();
@@ -627,6 +635,7 @@ class LoadsService
         $deliveryHistory->save();
 
         $this->generateDelvieryDocument( $load, $location );
+
         $load->delivery_document_url    =   asset( 'storage/' . $location . '.png' );
         $load->save();
 

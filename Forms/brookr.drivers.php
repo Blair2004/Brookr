@@ -116,7 +116,7 @@ return [
                     'appearance'    =>  'outline',
                     'name'          =>  'driving_license_expiration',
                     'value'         =>  $details->driving_license_expiration ?? '',
-                    'type'          =>  'datetime',
+                    'type'          =>  'ng-datetime',
                     'data'          =>  [
                         'startDate'     =>  '1900',
                     ],
@@ -150,7 +150,7 @@ return [
                     'appearance'    =>  'outline',
                     'name'          =>  'work_hired_date',
                     'value'         =>  $details->work_hired_date ?? '',
-                    'type'          =>  'datetime',
+                    'type'          =>  'ng-datetime',
                     'data'          =>  [
                         'startDate'     =>  '1900',
                     ],
@@ -159,7 +159,7 @@ return [
                     'appearance'    =>  'outline',
                     'name'          =>  'work_terminated_date',
                     'value'         =>  $details->work_terminated_date ?? '',
-                    'type'          =>  'datetime',
+                    'type'          =>  'ng-datetime',
                     'data'          =>  [
                         'startDate'     =>  '1900',
                     ],
